@@ -1,0 +1,184 @@
+import { HttpClient, HttpHeaders, } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import Chart from 'chart.js';
+import * as saveAs from 'file-saver';
+import { throwIfEmpty } from 'rxjs';
+import { isElementAccessChain } from 'typescript';
+import WaveSurfer from 'wavesurfer.js';
+import SpectrogramPlugin from 'wavesurfer.js/src/plugin/spectrogram';
+import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline';
+import Regions from 'wavesurfer.js/src/plugin/regions';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+
+@Component({
+  selector: 'app-preprocessing',
+  templateUrl: './preprocessing.component.html',
+  styleUrls: ['./preprocessing.component.scss']
+})
+export class PreprocessingComponent implements OnInit {
+
+  public canvas : any;
+  public ctx;
+  public datasets: any;
+  public data: any;
+  public myChartData;
+  public clicked: boolean = true;
+  public clicked1: boolean = false;
+  public clicked2: boolean = false;
+
+  public wavesurfer: WaveSurfer = null;
+  public slider:number = 10 ;
+  public spectogram: any = null;
+  public colorMap: any =null;
+  // Define a default variable for selected file.
+  
+  fileName: string;
+  fileToUpload: File | null = null;
+  filesList: any;
+  public formData : FormData;
+
+
+  preprocess : boolean = false;
+  preprocessError : boolean = false;
+  
+  staticAlertClosed5:boolean=true;
+  staticAlertClosed6:boolean=true;
+  succesMsg: string =" Success"
+  errorMsg: string = "Error"
+
+
+  PreprocessingSteps = [
+    {
+      library: "Librosa",
+      preprocess : "Linear-frequency power spectrogram",
+      description: "Represents the time on the x-axis, the frequency in Hz on a linear scale on the y-axis, and the power in dB.",
+      api: "/api/preprocess/linear_frequency_power_spectrogram"
+    },
+    {
+      library: "Librosa",
+      preprocess : "Log-frequency power spectrogram",
+      description: "Such features can be obtained from a spectrogram by converting the linear frequency axis (measured in Hertz) into a logarithmic axis (measured in pitches). The resulting representation is also called log-frequency spectrogram.",
+      api: "/api/preprocess/log_frequency_power_spectrogram"
+    },
+    {
+      library: "librosa.feature.chroma_stft",
+      preprocess : "Chroma STFT",
+      description: "Compute a chromagram from a waveform or power spectrogram. This implementation is derived from chromagram_E (Ellis, Daniel P.W. “Chroma feature analysis and synthesis” 2007/04/21 http://labrosa.ee.columbia.edu/matlab/chroma-ansyn/)",
+      api: '/api/preprocess/chroma_stft'
+    },
+    {
+      library: "librosa.feature.chroma_cqt",
+      preprocess : "Chroma CQT",
+      description: "Constant-Q chromagram",
+      api: '/api/preprocess/chroma_cqt'
+    },
+    {
+      library: "librosa.feature.chroma_cens      ",
+      preprocess : "Chroma CENS",
+      description: "Computes the chroma variant “Chroma Energy Normalized” (CENS)" +
+      "To compute CENS features, following steps are taken after obtaining chroma vectors using chroma_cqt:\n"+
+      "1) L-1 normalization of each chroma vector, "+
+      '2) Quantization of amplitude based on “log-like” amplitude thresholds,'+
+      "3) (optional) Smoothing with sliding window."+ 
+      "4) Default window length = 41 frames."+      
+      " CENS features are robust to dynamics, timbre and articulation, thus these are commonly used in audio matching and retrieval applications."+
+      "Meinard Müller and Sebastian Ewert “Chroma Toolbox: MATLAB implementations for extracting variants of chroma-based audio features”" +
+      "In Proceedings of the International Conference on Music Information Retrieval (ISMIR), 2011.",
+      api: '/api/preprocess/chroma_cens'
+    },
+    {
+      library: "librosa.feature.melspectrogram",
+      preprocess : "Melspectrogram",
+      description: "Compute a mel-scaled spectrogram. If a spectrogram input S is provided, then it is mapped directly onto the mel basis by mel_f.dot(S)."+
+      "If a time-series input y, sr is provided, then its magnitude spectrogram S is first computed, and then mapped onto the mel scale by mel_f.dot(S**power)."+
+      "By default, power=2 operates on a power spectrum.",
+      api: '/api/preprocess/melspectrogram'
+    },
+  ]
+  
+  separatedFilenames :any;
+  separatedFileBlobs: any = [];
+  separatedFileWavesurfer: any = [];  
+  image:Blob
+  imageURL:SafeUrl
+
+
+  constructor(private http: HttpClient, private sanitizer: DomSanitizer) { }
+
+  ngOnInit(): void {
+  }
+
+  onFileSelected(event) {
+    const file:File = event.target.files[0];
+    if (file) {
+        this.fileToUpload = file
+        this.fileName = file.name;
+        console.log(file.type)
+        this.initWaveSurfer(this.fileToUpload)
+    }
+  }
+
+  initWaveSurfer(file){
+    this.wavesurfer = WaveSurfer.create({
+      container: '#waveform',
+      backgroundColor:'black',
+      progressColor: '#3B8686',
+      // backend: 'MediaElement',
+      scrollParent: true,
+      plugins: [
+        Regions.create({
+          regions: [
+          
+        ]
+        }),
+        TimelinePlugin.create({
+          container: '#wave-timeline',
+          // formatTimeCallback: this.formatTimeCallback,
+          timeInterval: 0.05,
+          // primaryLabelInterval: this.primaryLabelInterval,
+          // secondaryLabelInterval: this.secondaryLabelInterval,
+          // ... other timeline options
+        }),
+        
+      ]
+    });
+
+
+    // this.wavesurfer = this.wavesurfer.addPlugin(this.spectogram).initPlugin("spectogram");
+    console.log(this.wavesurfer.getActivePlugins());
+    
+    // this.wavesurfer.load(fileName);
+    this.wavesurfer.loadBlob(file)
+  }
+
+  preprocessFile(preprocessApi: string){
+    this.formData = new FormData();
+    this.formData.append("title", this.fileName); 
+    this.formData.append("audiofile", this.fileToUpload);
+    this.http.post(preprocessApi, this.formData, {responseType: 'blob'}).subscribe(
+      response => {
+        this.preprocess =true;
+        this.preprocessError =false;
+        console.log(response)
+        this.image = response
+        this.imageURL = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(this.image))
+        
+      },
+      error => {
+        console.error(error);
+        this.preprocess =true;
+        this.preprocessError = true;
+
+      }
+    );
+  }
+
+
+  setZoom(event){
+    this.slider = event
+    console.log("==>event: ", event);
+    this.wavesurfer.zoom(Number(event));
+  }
+
+
+}

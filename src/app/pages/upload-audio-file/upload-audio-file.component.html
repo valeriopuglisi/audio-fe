@@ -1,0 +1,215 @@
+
+<script src="https://unpkg.com/wavesurfer.js"></script>
+<div class=" content">
+  <ngb-alert [type]="'success'" *ngIf="!staticAlertClosed5" [dismissible]="false">
+    <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close" (click)="staticAlertClosed5 = true">
+      <i class="tim-icons icon-simple-remove"></i>
+    </button>
+    <span>
+      {{ this.succesMsg }}
+    </span>
+  </ngb-alert>
+  <ngb-alert [type]="'warning'" *ngIf="!staticAlertClosed6" [dismissible]="false">
+    <button type="button" aria-hidden="true" class="close" data-dismiss="alert" aria-label="Close" (click)="staticAlertClosed6 = true">
+      <i class="tim-icons icon-simple-remove"></i>
+    </button>
+    <span>
+      {{ this.errorMsg }}
+    </span>
+  </ngb-alert>
+  <div class=" row">
+    <div class=" col-12">
+      <div class=" card card-chart">
+        <div class=" card-header">
+          <div class=" row">
+            <div class=" col-sm-12 text-center">
+              <h5 class=" card-category">Step 1</h5>
+              <h2 class=" card-title">Audio Selection</h2>
+            </div> 
+          </div>
+        </div>
+        <div class=" card-body text-center">
+          <input 
+          type="file" 
+          class="file-input"     
+          (change)="onFileSelected($event)"
+          accept="audio/*"
+          #fileUpload
+          >
+          <div class="row">
+            
+            <!-- Upload file from pc -->
+            <div class="col-sm-12">
+              <h2 class=" card-title">Upload</h2>
+              <div class="file-upload">   
+                {{fileName || "No file uploaded yet."}}
+                <button mat-mini-fab color="primary" class="upload-btn"
+                (click)="fileUpload.click()">
+                <i>attach_file</i>
+              </button>
+              <div *ngIf="this.fileToUpload">
+                <button  
+                class="btn btn-warnings" data-action="play" 
+                (click)="uploadFile()" >
+                <i class="glyphicon glyphicon-play"></i>
+                Upload
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        
+        <!-- Select file from Server -->
+        <div class="col-sm-12">
+          <h5 class="card-title">or</h5>
+          <h2 class="card-title">Select a File</h2>
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="text-center">#</th>
+                <th>ID</th>
+                <th>Title</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let file of this.filesList | keyvalue; let i = index">
+              <tr>
+                <td class="text-center">{{i}}</td>
+                <td>{{ file.key }} </td>
+                <td>{{ file.value.title }} </td>
+                <td class="td-actions text-right">
+                  <button 
+                  type="button" 
+                  rel="tooltip" 
+                  class="btn btn-info btn-sm btn-icon"
+                  (click)="this.downloadFile(file.value.title)"
+                  >
+                    <i class="tim-icons icon-cloud-download-93"></i>
+                  </button>
+                  
+                  <button type="button" rel="tooltip" class="btn btn-danger btn-sm btn-icon">
+                    <i class="tim-icons icon-simple-remove"></i>
+                  </button>
+                </td>
+              </tr>
+              
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Audio Player -->
+<div class=" row" *ngIf="this.fileName && this.fileName!==''">
+  <div class=" col-12">
+    <div class=" card card-chart">
+      <div class=" card-header">
+        <div class=" row">
+          <div class=" col-sm-12 text-center">
+            <h5 class=" card-category">Step 2</h5>
+            <h2 class=" card-title">Audio Player & Visualizer</h2>
+          </div>
+        </div>
+      </div>
+      <div  class=" card-body" id="demo">
+        <div id="waveform">
+          <div class="progress progress-striped active" id="progress-bar">
+            <div class="progress-bar progress-bar-info"></div>
+          </div> 
+          <!-- Here be waveform -->
+        </div>
+        <div id="wave-spectrogram"></div>
+        <div id="wave-timeline"></div>
+        <div class="controls text-center">
+          <button class="btn btn-warnings" data-action="play" (click)="this.wavesurfer.play()" >
+            <i class="tim-icons icon-triangle-right-17"></i>Play
+          </button>
+          
+          <button class="btn btn-warnings" data-action="play" (click)="this.wavesurfer.pause()" >          
+            <i class=" tim-icons icon-button-pause"></i>Pause
+          </button>
+          
+          <button 
+          class="btn btn-warnings" 
+          data-action="play" 
+          (click)="separateFile()" >          
+          <i class=" tim-icons icon-zoom-split"></i>Analyze
+        </button>
+        </div>
+      
+    </div>
+  </div>
+</div>
+</div>
+
+<div class=" row" *ngIf="this.fileName && this.fileName!==''">
+  <div class=" col-12">
+    <div class=" card card-chart">
+      <div class=" card-header">
+        <div class=" row">
+          <div class=" col-sm-12 text-center">
+            <h5 class=" card-category">Step 3</h5>
+            <h2 class=" card-title">Audio Analysis Results</h2>
+          </div>
+        </div>
+      </div>
+      <div  class=" card-body" id="demo" >
+        <div class="row">
+          <div class="col-sm-12 col-md-12" *ngFor="let separatedFile of this.separatedFilenames; let i = index">
+            
+            <h4> {{separatedFile}} </h4>
+            <div align="right">
+              <button 
+              class="btn btn-warnings" 
+              (click)="this.saveSeparatedFile(i)"
+               >          
+                <i class=" tim-icons icon-cloud-download-93"></i>
+              </button>
+            </div>
+            <div [id]="'waveform-'+ i">
+          
+              <!-- <div class="progress progress-striped active" id="progress-bar">
+                <div class="progress-bar progress-bar-info"></div>
+              </div>  -->
+              <!-- Here be waveform -->
+            </div>
+            <div [id]="'wave-spectrogram-' + i"></div>
+            <div [id]="'wave-timeline-' + i"></div>
+            <div class="controls text-center">
+              <button 
+              class="btn btn-warnings" 
+              data-action="play" 
+              (click)="this.separatedFileWavesurfer[i].play()" >
+                <i class="tim-icons icon-triangle-right-17"></i>Play
+              </button>
+              
+              <button 
+              class="btn btn-warnings" 
+              data-action="play" 
+              (click)="this.separatedFileWavesurfer[i].pause()"
+               >          
+                <i class=" tim-icons icon-button-pause"></i>Pause
+              </button>
+              
+              <!-- <button 
+              class="btn btn-warnings" 
+              data-action="play" 
+              (click)="separateFile()" >          
+              <i class=" tim-icons icon-zoom-split"></i>Analyze
+            </button> -->
+            </div>
+          </div>
+        </div>
+        
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div>

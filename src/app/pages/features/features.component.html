@@ -1,0 +1,40 @@
+<div class="content">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class=" card card-chart">
+                <div class=" card-header">
+                  <div class=" row">
+                    <div class=" col-sm-12 text-center">
+                      <h5 class=" card-category">Features</h5>
+                      <h2 class=" card-title">Deep Learning Audio Analysis</h2>
+                    </div>
+                  </div>
+                </div>
+                <div  class=" card-body" id="demo">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th class="text-center">#</th>
+                        <th>Task</th>
+                        <th>System</th>
+                        <th>Dataset</th>
+                        <th>Performance</th>
+                      </tr>
+                    </thead>
+                    <tbody *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps; let i = index">
+                      <tr>
+                        <td class="text-center">{{i}}</td>
+                        <td>{{ AudioAnalysisStep.task }} </td>
+                        <td>{{ AudioAnalysisStep.system }} </td>
+                        <td>{{ AudioAnalysisStep.dataset }} </td>
+                        <td>{{ AudioAnalysisStep.performance }} </td>
+                      </tr>
+                      
+                    </tbody>
+                  </table>
+                  
+                </div>
+              </div>
+        </div>
+    </div>
+</div>
