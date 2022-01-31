@@ -14,10 +14,10 @@ import { PipelinesComponent } from "src/app/pages/pipelines/pipelines.component"
 // import { RtlComponent } from "../../pages/rtl/rtl.component";
 
 export const AdminLayoutRoutes: Routes = [
-  { path: "upload-file", component: UploadAudioFileComponent},
+  { path: "welcome", component: PipelinesComponent },
   { path: "preprocessing", component: PreprocessingComponent},
   { path: "features", component: FeaturesComponent},  
-  { path: "pipelines", component: PipelinesComponent},
+  { path: "pipelines", component: UploadAudioFileComponent},
   { path: "dashboard", component: DashboardComponent },
   { path: "icons", component: IconsComponent },
   { path: "maps", component: MapComponent },

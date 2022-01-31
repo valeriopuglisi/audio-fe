@@ -37,7 +37,7 @@ export class PreprocessingComponent implements OnInit {
   filesList: any;
   public formData : FormData;
 
-
+  preprocessTitle: string = "";
   preprocess : boolean = false;
   preprocessError : boolean = false;
   
@@ -93,6 +93,60 @@ export class PreprocessingComponent implements OnInit {
       "If a time-series input y, sr is provided, then its magnitude spectrogram S is first computed, and then mapped onto the mel scale by mel_f.dot(S**power)."+
       "By default, power=2 operates on a power spectrum.",
       api: '/api/preprocess/melspectrogram'
+    },
+    {
+      library: "librosa.feature.melspectrogram",
+      preprocess : "Mel-frequency spectrogram",
+      description: "Display of mel-frequency spectrogram coefficients, with custom arguments for mel filterbank construction (default is fmax=sr/2)",
+      api: '/api/preprocess/melfrequencyspectrogram'
+    },
+    {
+      library: "librosa.feature.mfcc",
+      preprocess : "Mel-frequency cepstral coefficients (MFCCs)",
+      description: "Mel-frequency cepstral coefficients (MFCCs)",
+      api: '/api/preprocess/mfcc'
+    },
+    {
+      library: "librosa.feature.mfcc",
+      preprocess : "Compare different DCT bases",
+      description: "Compare different DCT bases",
+      api: '/api/preprocess/comparedct'
+    },
+    {
+      library: "librosa.feature.rms",
+      preprocess : "Root-Mean-Square (RMS) ",
+      description: "Compute root-mean-square (RMS) value for each frame, either from the audio samples y or from a spectrogram S."+
+      "Computing the RMS value from audio samples is faster as it doesn’t require a STFT calculation." +
+      "However, using a spectrogram will give a more accurate representation of energy over time because its frames can be windowed,"+
+      "thus prefer using S if it’s already available.",
+      api: '/api/preprocess/rms'
+    },
+    {
+      library: "librosa.feature.spectral_centroid",
+      preprocess : "Spectral Centroid",
+      description: "Compute the spectral centroid."+
+      "Each frame of a magnitude spectrogram is normalized and treated as a distribution over frequency bins,"+
+      "from which the mean (centroid) is extracted per frame."+
+      "More precisely, the centroid at frame t is defined as centroid[t] = sum_k S[k, t] * freq[k] / (sum_j S[j, t]).",
+      api: '/api/preprocess/spectral_centroid'
+    },
+    {
+      library: "librosa.feature.spectral_bandwidth",
+      preprocess : "Spectral Bandwidth",
+      description: "Compute p’th-order spectral bandwidth. "+
+      "The spectral bandwidth 1 at frame t is computed by [1]: "+
+      "(sum_k S[k, t] * (freq[k, t] - centroid[t])**p)**(1/p). "+
+      "[1] Klapuri, A., & Davy, M. (Eds.). (2007). Signal processing methods for music transcription, chapter 5. Springer Science & Business Media.",
+      api: '/api/preprocess/spectral_bandwidth'
+    },
+    {
+      library: "librosa.feature.spectral_contrast",
+      preprocess : "Spectral Contrast",
+      description: "Compute spectral contrast. "+
+      "Each frame of a spectrogram S is divided into sub-bands."+
+      "For each sub-band, the energy contrast is estimated by comparing the mean energy in the top quantile (peak energy) to that of the bottom quantile (valley energy)." +
+      "High contrast values generally correspond to clear, narrow-band signals, while low contrast values correspond to broad-band noise. 1",
+      api: '/api/preprocess/spectral_contrast'
     },
   ]
   
@@ -151,7 +205,8 @@ export class PreprocessingComponent implements OnInit {
     this.wavesurfer.loadBlob(file)
   }
 
-  preprocessFile(preprocessApi: string){
+  preprocessFile(preprocessApi: string, description:string){
+    this.preprocessTitle = description; 
     this.formData = new FormData();
     this.formData.append("title", this.fileName); 
     this.formData.append("audiofile", this.fileToUpload);
@@ -172,7 +227,6 @@ export class PreprocessingComponent implements OnInit {
       }
     );
   }
-
 
   setZoom(event){
     this.slider = event

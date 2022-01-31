@@ -1,10 +1,10 @@
 <div class="content container-fluid">
     <div class=" row">
-        <div class=" col-12">
+        <div class=" col-sm-12 col-md-6">
             <div class=" card card-chart">
                 <div class=" card-header">
                     <div class=" row">
-                        <div class=" col-sm-12 text-left">
+                        <div class=" col-sm-12 text-center">
                             <h5 class=" card-category">Step 1</h5>
                             <h2 class=" card-title">Audio Selection</h2>
                         </div> 
@@ -12,7 +12,7 @@
                 </div>
                 <div class=" card-body">
                     <!-- Upload file from pc -->
-                    <div class="col-sm-12 col-md-12  text-left" >
+                    <div class="col-sm-12 col-md-6  text-center" >
                         <div class="file-upload">   
                             <input 
                             type="file" 
@@ -23,141 +23,148 @@
                             > 
                         </div>
                     </div>
-                    
-                    <div class="col-md-12" id="demo">
-                        <div id="waveform">
-                            <div class="progress progress-striped active" id="progress-bar">
-                                <div class="progress-bar progress-bar-info"></div>
-                            </div> 
-                            <!-- Here be waveform -->
-                        </div>
-                        <div id="wave-spectrogram"></div>
-                        <div id="wave-timeline"></div>
-                        <div class="controls text-center">
-                            <div class="row">
-                                <div class="col-sm-7">
-                                    <button 
-                                    class="btn btn-warnings" 
-                                    (click)="this.wavesurfer.play()" 
-                                    >
-                                    <i class="tim-icons icon-triangle-right-17"></i>Play
-                                </button>
-                                
-                                <button 
-                                class="btn btn-warnings" 
-                                (click)="this.wavesurfer.pause()" 
-                                >          
-                                <i class=" tim-icons icon-button-pause"></i>Pause
-                            </button>
-                        
-                    </div>
-                    
-                    <div class="col-sm-1">
-                        <i class="glyphicon glyphicon-zoom-in"></i>
-                    </div>
-                    
-                    <div class="col-sm-3">
-                        <input 
-                        [(ngModel)]="slider" 
-                        (ngModelChange)="setZoom($event)"
-                        data-action="zoom" 
-                        type="range" 
-                        [min]="0" 
-                        [max]="10000" 
-                        
-                        style="width: 100%" />
-                    </div>
-                    
-                    <div class="col-sm-1">
-                        <i class="glyphicon glyphicon-zoom-out"></i>
-                    </div>
-                    
-                    
-                </div>
-            </div>
-            
-        </div>
-        
-        
-        
-        
-        
-    </div>
 
-    <div class="col-sm-12" *ngIf="this.fileToUpload">
-        <div class=" card card-chart">
-            <div class=" card-header">
-              <div class=" row">
-                <div class=" col-sm-12 text-center">
-                  <h5 class=" card-category">Features</h5>
-                  <h2 class=" card-title">Deep Learning Audio Analysis</h2>
-                </div>
-              </div>
-            </div>
-            <div  class=" card-body" id="demo">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th class="text-center">#</th>
-                    <th>library</th>
-                    <th>preprocess</th>
-                    <th>description</th>
-                    <th>api</th>
-                  </tr>
-                </thead>
-                <tbody *ngFor="let preprocessStep of this.PreprocessingSteps; let i = index">
-                  <tr>
-                    <td class="text-center">{{i}}</td>
-                    <td>{{ preprocessStep.library }} </td>
-                    <td>{{ preprocessStep.preprocess }} </td>
-                    <td>{{ preprocessStep.description }} </td>                    
-                    <td> <button class="btn btn-warnings" (click)="preprocessFile(preprocessStep.api)"> Preprocess </button></td>
-                  </tr>
+  
+                    <div class="col-md-12" [ngStyle]="{ display: !this.fileToUpload ? 'none' : 'block' }"  
+                    >
+                      <div id="waveform">
+                          <div class="progress progress-striped active" id="progress-bar">
+                              <div class="progress-bar progress-bar-info"></div>
+                          </div> 
+                          <!-- Here be waveform -->
+                      </div>
+                      <div id="wave-spectrogram"></div>
+                      <div id="wave-timeline"></div>
+                      <div class="controls text-center">
+                          <div class="row">
+                              <div class="col-sm-7">
+                                  <button 
+                                  class="btn btn-warnings" 
+                                  (click)="this.wavesurfer.play()" 
+                                  >
+                                  <i class="tim-icons icon-triangle-right-17"></i>Play
+                                  </button>
+                                  
+                                  <button 
+                                  class="btn btn-warnings" 
+                                  (click)="this.wavesurfer.pause()" 
+                                  >          
+                                    <i class=" tim-icons icon-button-pause"></i>Pause
+                                  </button>
+                      
+                                </div>
                   
-                </tbody>
-              </table>
-              
-            </div>
-          </div>
-    </div>
+                                <div class="col-sm-1">
+                                    <i class="glyphicon glyphicon-zoom-in"></i>
+                                </div>
+                                
+                                <div class="col-sm-3">
+                                    <input 
+                                    [(ngModel)]="slider" 
+                                    (ngModelChange)="setZoom($event)"
+                                    data-action="zoom" 
+                                    type="range" 
+                                    [min]="0" 
+                                    [max]="10000" 
+                                    
+                                    style="width: 100%" />
+                                </div>
+                                
+                                <div class="col-sm-1">
+                                    <i class="glyphicon glyphicon-zoom-out"></i>
+                                </div>
+                  
+                  
+                          </div>
+                      </div>
+          
+                  </div>
 
+                </div>
+              </div>  
 
-    <div class="col-sm-12" *ngIf="this.preprocess">
-        <div class=" card card-chart">
-            <div class=" card-header">
-              <div class=" row">
-                <div class=" col-sm-12 text-center">
-                  <h5 class=" card-category">Preprocessing</h5>
-                  <h2 class=" card-title">Audio Result</h2>
-                  <img [src]="imageURL">
+        </div>
+
+        
+          
+        <div class="col-sm-12 col-md-6" >
+            <div class=" card card-chart">
+                <div class=" card-header">
+                  <div class=" row">
+                    <div class=" col-sm-12 text-center">
+                      <h5 class=" card-category">Features</h5>
+                      <h2 class=" card-title">Deep Learning Audio Analysis</h2>
+                    </div>
+                  </div>
+                </div>
+                <div  class="card-body" >
+                  <div style="overflow:auto; height:30vh">
+                    <table class="table" >
+                      <thead>
+                        <tr>
+                          <!-- <th class="text-center">#</th> -->
+                          <!-- <th>library</th> -->
+                          <th>preprocess</th>
+                          <th>description</th>
+                          <th>api</th>
+                        </tr>
+                      </thead>
+                      <tbody *ngFor="let preprocessStep of this.PreprocessingSteps; let i = index">
+                        <tr>
+                          <!-- <td class="text-center">{{i}}</td> -->
+                          <!-- <td>{{ preprocessStep.library }} </td> -->
+                          <td>{{ preprocessStep.preprocess }} </td>
+                          <td style="width: 10%;">{{ preprocessStep.description }} </td>                    
+                          <td> <button 
+                            class="btn btn-primary btn-fab btn-icon btn-round" 
+                            (click)="preprocessFile(preprocessStep.api, preprocessStep.preprocess)"
+                            [disabled]="this.fileToUpload ? false : true"
+                            > 
+                            <i class="tim-icons icon-triangle-right-17"></i></button></td>
+                        </tr>
+                        
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  
                 </div>
               </div>
-            </div>
-            <div  class=" card-body" id="demo">
-             
-            </div>
-          </div>
-    </div>
+        </div>
 
-    <div class="col-sm-12" *ngIf="this.preprocessError">
-        <div class=" card card-chart">
-            <div class=" card-header">
-              <div class=" row">
-                <div class=" col-sm-12 text-center">
-                  <h5 class=" card-category">Preprocessing</h5>
-                  <h2 class=" card-title">Audio Error</h2>
-                  Something went wrong !!!
+
+        <div class="col-sm-12" *ngIf="this.preprocess">
+            <div class=" card card-chart">
+                <div class=" card-header">
+                  <div class=" row">
+                    <div class=" col-sm-12 text-center">
+                      <h5 class=" card-category">Preprocessing</h5>
+                      <h2 class=" card-title">{{this.preprocessTitle}}</h2>
+                      <img [src]="imageURL">
+                    </div>
+                  </div>
+                </div>
+                <div  class=" card-body" id="demo">
+                
                 </div>
               </div>
-            </div>
-            <div  class=" card-body" id="demo">
-             
-            </div>
-          </div>
+        </div>
+
+        <div class="col-sm-12" *ngIf="this.preprocessError">
+            <div class=" card card-chart">
+                <div class=" card-header">
+                  <div class=" row">
+                    <div class=" col-sm-12 text-center">
+                      <h5 class=" card-category">Preprocessing</h5>
+                      <h2 class=" card-title">Audio Error</h2>
+                      Something went wrong !!!
+                    </div>
+                  </div>
+                </div>
+                <div  class=" card-body" id="demo">
+                
+                </div>
+              </div>
+        </div>
     </div>
-
-
-</div>
-</div>
-</div>   
 </div>

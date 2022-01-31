@@ -10,7 +10,7 @@ declare interface RouteInfo {
 export const ROUTES: RouteInfo[] = [
   
   {
-    path: "/upload-file",
+    path: "/welcome",
     title: "Audio Analysis",
     rtlTitle: "لوحة القيادة",
     icon: "icon-sound-wave",
