@@ -128,7 +128,8 @@ export class FeaturesComponent implements OnInit {
       dataset: "Libri3Mix", 
       task:	"Speech Separation", 
       system: "SepFormer",
-      performance: "SDRi= 18.7 dB (test-clean)"
+      performance: "SDRi= 18.7 dB (test-clean)",
+      api: "/api/audioseparation/sepformer_wsj03mix"
     },
     {
       dataset: "LibryParty", 
@@ -385,7 +386,10 @@ export class FeaturesComponent implements OnInit {
   }
 
   separateFile(){
-    this.http.post("/api/audioseparation", this.formData).subscribe(
+    this.formData = new FormData();
+    this.formData.append("title", this.fileName); 
+    this.formData.append("audiofile", this.fileToUpload);
+    this.http.post("/api/audioseparation/sepformer_wsj03mix", this.formData).subscribe(
       response => {
         this.separatedFilenames = response;
         console.log(this.separatedFilenames);
@@ -408,28 +412,6 @@ export class FeaturesComponent implements OnInit {
         let wavesurfer = WaveSurfer.create({
           container: '#waveform-' + index,
           backgroundColor:'black',
-          // waveColor: '#fb6340',
-          // progressColor: '#f5365c',
-          // loaderColor: 'purple',
-          // cursorColor: 'navy',
-          // barWidth: 2,
-          // barHeight: 1, // the height of the wave
-          // barGap: null, // the optional spacing between bars of the wave, if not provided will be calculated in legacy format
-          // plugins: [
-          //   TimelinePlugin.create({
-          //       container: '#wave-timeline-' + index,
-          //       // formatTimeCallback: this.formatTimeCallback,
-          //       // timeInterval: this.timeInterval,
-          //       // primaryLabelInterval: this.primaryLabelInterval,
-          //       // secondaryLabelInterval: this.secondaryLabelInterval,
-          //       // ... other timeline options
-          //   }),
-          //   SpectrogramPlugin.create({
-          //     container: '#wave-spectrogram-' + index,
-          //     labels: true,
-          //     colorMap: colorMap
-          //   })
-          // ]
         });
         // this.wavesurfer = this.wavesurfer.addPlugin(this.spectogram).initPlugin("spectogram");
         console.log(wavesurfer.getActivePlugins());
