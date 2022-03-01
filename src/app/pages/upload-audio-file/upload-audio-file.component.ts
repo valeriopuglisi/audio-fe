@@ -9,13 +9,42 @@ import SpectrogramPlugin from 'wavesurfer.js/src/plugin/spectrogram';
 import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline';
 
 
+interface AudioAnalysisStep {
+  task:	string;
+  dataset: string; 
+  system: string;
+  performance: string;
+  api:string;
+}
+
+interface PipelineStep {
+    file: File | null,
+    fileName: string,
+    task:string,
+    api:string,
+    dataset:string,
+    performance:string,
+    system:string,
+    analysisResult:string,
+    separatedFilenames :string[],
+    separatedFileBlobs: Blob[],
+    separatedFileWavesurfer: any[], 
+    processing: boolean,
+    processing_error: string | null,
+    processed: boolean,
+    
+}
+
+
+
+
 @Component({
   selector: 'app-upload-audio-file',
   templateUrl: './upload-audio-file.component.html',
   styleUrls: ['./upload-audio-file.component.scss']
 })
 export class UploadAudioFileComponent implements OnInit {
-
+  
   public canvas : any;
   public ctx;
   public datasets: any;
@@ -24,7 +53,7 @@ export class UploadAudioFileComponent implements OnInit {
   public clicked: boolean = true;
   public clicked1: boolean = false;
   public clicked2: boolean = false;
-
+  
   public wavesurfer: any = null;
   public spectogram: any = null;
   public colorMap: any =null;
@@ -39,195 +68,447 @@ export class UploadAudioFileComponent implements OnInit {
   staticAlertClosed6:boolean=true;
   succesMsg: string =" Success"
   errorMsg: string = "Error"
-
-
-  AudioAnalysisSteps = [
-  {
-    dataset: "LibriSpeech", 
-    task:	"Speech Recognition",
-    system: "wav2vec2",
-    performance: "WER=1.90% (test-clean)"
-  },
-  {
-    dataset: "LibriSpeech", 
-    task:	"Speech Recognition	", 
-    system: "CNN + Transformer", 
-    performance:"WER=2.46% (test-clean)"
-  },
-  {
-    dataset: "TIMIT", 
-    task:	"Speech Recognition	",
-    system: "CRDNN + distillation",
-    performance: "PER=13.1% (test)"
-  },
-  {
-    dataset: "TIMIT", 
-    task:	"Speech Recognition	",
-    system:"wav2vec2 + CTC/Att.",
-    performance:	"PER=8.04% (test)"
-  },
-  {
-    dataset: "CommonVoice (English)", 
-    task: "Speech Recognition",	
-    system: "wav2vec2 + CTC",
-    performance:	"WER=15.69% (test)"
-  },
-  {
-    dataset: "CommonVoice (French)", 
-    task: "Speech Recognition",	
-    system:"wav2vec2 + CTC", 
-    performance: "WER=9.96% (test)"
-  },
-  {
-    dataset: "CommonVoice (Italian)", 
-    task: "	Speech Recognition",
-    system:	"wav2vec2 + seq2seq",
-    performance: "WER=9.86% (test)"
-  },
-  {
-    dataset: "CommonVoice (Kinyarwanda)" , 
-    task: "Speech Recognition",
-    system:	"wav2vec2 + seq2seq", 
-    performance:	"WER=18.91% (test)",
-  },
-  {
-    dataset: "AISHELL (Mandarin)", 
-    task: "Speech Recognition",
-    system:	"wav2vec2 + seq2seq", 
-    performance:	"CER=5.58% (test)",
-  },
-  {
-    dataset: "Fisher-callhome (spanish)", 
-    task:	"Speech translation",
-    system:	"conformer (ST + ASR)", 
-    performance: "BLEU=48.04 (test)"
-  },
-  {
-    dataset: "VoxCeleb2", 
-    task:	"Speaker Verification	",
-    system: "ECAPA-TDNN",
-    performance:	"EER=0.69% (vox1-test)"
-  },
-  {
-    dataset: "AMI", 
-    task:	"Speaker Diarization	",
-    system:"ECAPA-TDNN",
-    performance:	"DER=3.01% (eval)"
-  },
-  {
-    dataset: "VoiceBank",
-    task:	"Speech Enhancement", 
-    system: "MetricGAN+",
-    performance: "PESQ=3.08 (test)"
-  },
-  {
-    dataset: "WSJ2MIX", 
-    task:	"Speech Separation", 
-    system: "SepFormer",
-    performance: "SDRi=22.6 dB (test)"
-  },
-  {
-    dataset: "WSJ3MIX", 
-    task:	"Speech Separation", 
-    system: "SepFormer",
-    performance: "SDRi=20.0 dB (test)"
-  },
-  {
-    dataset: "WHAM!", 
-    task:	"Speech Separation", 
-    system: "SepFormer",
-    performance: "SDRi= 16.4 dB (test)"
-  },
-  {
-    dataset: "WHAMR!", 
-    task:	"Speech Separation", 
-    system: "SepFormer",
-    performance: "SDRi= 14.0 dB (test)"
-  },
-  {
-    dataset: "Libri2Mix", 
-    task:	"Speech Separation", 
-    system: "SepFormer",
-    performance: "SDRi= 20.6 dB (test-clean)"
-  },
-  {
-    dataset: "Libri3Mix", 
-    task:	"Speech Separation", 
-    system: "SepFormer",
-    performance: "SDRi= 18.7 dB (test-clean)"
-  },
-  {
-    dataset: "LibryParty", 
-    task:	"Voice Activity Detection",
-    system: "CRDNN",
-    performance:	"F-score=0.9477 (test)"
-  },
-  {
-    dataset: "IEMOCAP", 
-    task:	"Emotion Recognition", 
-    system: "wav2vec", 
-    performance:	"Accuracy=79.8% (test)"
-  },
-  {
-    dataset: "CommonLanguage", 
-    task:	"Language Recognition	", 
-    system: "ECAPA-TDNN",	
-    performance: "Accuracy=84.9% (test)"
-  },
-  {
-    dataset: "Timers and Such", 
-    task:	"Spoken, Language Understanding",
-    system:	"CRDNN Intent",
-    performance: "Accuracy=89.2% (test)"
-  },
-  {
-    dataset: "SLURP", 
-    task:"Spoken, Language Understanding", 
-    system:	"CRDNN	Intent", 
-    performance:"Accuracy=87.54% (test)"
-  },
-  {
-    dataset: "VoxLingua 107", 
-    task:"Identification",
-    system:"ECAPA-TDNN	Sentence Accuracy=93.3% (test)"
-  },
-  ]
+  process : boolean =false;
+  processError : boolean =false;
   
+  AudioAnalysisSteps = [
+    // {
+    //   task:	"Automatic Speech Recognition",
+    //   dataset: "LibriSpeech", 
+    //   system: "wav2vec2",
+    //   performance: "WER=1.90% (test-clean)"
+    // },
+    // {
+    //   task:	"Automatic Speech Recognition	", 
+    //   dataset: "LibriSpeech", 
+    //   system: "CNN + Transformer", 
+    //   performance:"WER=2.46% (test-clean)"
+    // },
+    // {
+    //   task:	"Automatic Speech Recognition	",
+    //   dataset: "TIMIT", 
+    //   system: "CRDNN + distillation",
+    //   performance: "PER=13.1% (test)"
+    // },
+    // {
+    //   task:	"Automatic Speech Recognition	",
+    //   dataset: "TIMIT", 
+    //   system:"wav2vec2 + CTC/Att.",
+    //   performance:	"PER=8.04% (test)"
+    // },
+    {
+      task: "Automatic Speech Recognition",	
+      dataset: "CommonVoice (English)", 
+      system: "wav2vec2 + CTC",
+      performance:	"WER=15.69% (test)",
+      api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_en'
+    },
+    {
+      task: "Automatic Speech Recognition",	
+      dataset: "CommonVoice (French)", 
+      system:"wav2vec2 + CTC", 
+      performance: "WER=9.96% (test)",
+      api : '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_fr'
+    },
+    {
+      task: "	Automatic Speech Recognition",
+      dataset: "CommonVoice (Italian)", 
+      system:	"wav2vec2 + seq2seq",
+      performance: "WER=9.86% (test)",
+      api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_it'
+    },
+    {
+      task: "Automatic Speech Recognition",
+      dataset: "CommonVoice (Kinyarwanda)" , 
+      system:	"wav2vec2 + seq2seq", 
+      performance:	"WER=18.91% (test)",
+      api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_rw'
+    },
+    {
+      task: "Automatic Speech Recognition",
+      dataset: "AISHELL (Mandarin)", 
+      system:	"wav2vec2 + seq2seq", 
+      performance:	"CER=5.58% (test)",
+      api: '/api/automatic_speech_recognition/asr_wav2vec2_transformer_aishell_mandarin_chinese'
+      
+    },
+    // {
+    //   task:	"Speech translation",
+    //   dataset: "Fisher-callhome (spanish)", 
+    //   system:	"conformer (ST + ASR)", 
+    //   performance: "BLEU=48.04 (test)"
+    // },
+    // {
+    //   task:	"Speaker Verification	",
+    //   dataset: "VoxCeleb2", 
+    //   system: "ECAPA-TDNN",
+    //   performance:	"EER=0.69% (vox1-test)"
+    // },
+    // {
+    //   task:	"Speaker Diarization	",
+    //   dataset: "AMI", 
+    //   system:"ECAPA-TDNN",
+    //   performance:	"DER=3.01% (eval)"
+    // },
+    {
+      task:	"Speech Enhancement", 
+      dataset: "VoiceBank",
+      system: "MetricGAN+",
+      performance: "PESQ=3.08 (test)",
+      api: '/api/speech_enhancement/enhancement_metricganplus_voicebank'
+    },
+    {
+      task:	"Speech Separation", 
+      dataset: "WSJ2MIX", 
+      system: "SepFormer",
+      performance: "SDRi=22.6 dB (test)",
+      api: '/api/audioseparation/speech_separation_sepformer_wsj02mix'
+    },
+    {
+      task:	"Speech Separation", 
+      dataset: "WSJ3MIX", 
+      system: "SepFormer",
+      performance: "SDRi=20.0 dB (test)",
+      api: '/api/audioseparation/speech_separation_sepformer_wsj02mix'
+
+    },
+    {
+      task:	"Speech Separation", 
+      dataset: "WHAM!", 
+      system: "SepFormer",
+      performance: "SDRi= 16.4 dB (test)",
+      api: '/api/audioseparation/speech_separation_sepformer_wham'
+    },
+    {
+      task:	"Speech Separation", 
+      dataset: "WHAMR!", 
+      system: "SepFormer",
+      performance: "SDRi= 14.0 dB (test)",
+      api: '/api/audioseparation/speech_separation_sepformer_whamr'
+    },
+    // {
+    //   task:	"Speech Separation", 
+    //   dataset: "Libri2Mix", 
+    //   system: "SepFormer",
+    //   performance: "SDRi= 20.6 dB (test-clean)",
+     
+    // },
+    // {
+    //   task:	"Speech Separation", 
+    //   dataset: "Libri3Mix", 
+    //   system: "SepFormer",
+    //   performance: "SDRi= 18.7 dB (test-clean)",
+    // },
+    {
+      task:	"Voice Activity Detection",
+      dataset: "LibryParty", 
+      system: "CRDNN",
+      performance:	"F-score=0.9477 (test)",
+      api: '/api/voice_activity_detection/vad_crdnn_libriparty'
+    },
+    {
+      task:	"Emotion Recognition", 
+      dataset: "IEMOCAP", 
+      system: "wav2vec", 
+      performance:	"Accuracy=79.8% (test)",
+      api: '/api/emotion_recognition/wav2vec2_IEMOCAP'
+    },
+    {
+      task:	"Language Identification", 
+      dataset: "CommonLanguage", 
+      system: "ECAPA-TDNN",	
+      performance: "Accuracy=84.9% (test)",
+      api: '/api/language_id/langid_commonlanguage_ecapa'
+    },
+    // {
+    //   task:	"Spoken, Language Understanding",
+    //   dataset: "Timers and Such", 
+    //   system:	"CRDNN Intent",
+    //   performance: "Accuracy=89.2% (test)"
+    // },
+    // {
+    //   task:"Spoken, Language Understanding", 
+    //   dataset: "SLURP", 
+    //   system:	"CRDNN	Intent", 
+    //   performance:"Accuracy=87.54% (test)"
+    // },
+    {
+      task:"Language Identification",
+      dataset: "VoxLingua 107", 
+      system:"ECAPA-TDNN Sentence", 
+      performance: "Accuracy=93.3% (test)",
+      api: '/api/language_id/langid_voxlingua107_ecapa'
+    },
+  ]
+
+  AudioAnalysisSteps1 = {
+    "Voice Activity Detection":[
+      {
+        task:	"Voice Activity Detection",
+        dataset: "LibryParty", 
+        system: "CRDNN",
+        performance:	"F-score=0.9477 (test)",
+        api: '/api/voice_activity_detection/vad_crdnn_libriparty'
+      },
+    ],
+    "Automatic Speech Recognition": [
+    {
+      task:	"Automatic Speech Recognition",
+      dataset: "LibriSpeech (English)", 
+      system: "wav2vec2",
+      performance: "WER=1.90% (test-clean)"
+    },
+    {
+      task:	"Automatic Speech Recognition",
+      dataset: "LibriSpeech (English)", 
+      system: "CRDNN + Transformer LM",
+      performance: "WER=8.51% (test-clean)",
+      api: '/api/automatic_speech_recognition/asr_crdnntransformerlm_librispeech_en'
+
+    },
+    {
+      task:	"Automatic Speech Recognition",
+      dataset: "LibriSpeech (English)", 
+      system: "CRDNN + RNN +LM",
+      performance: "WER=3.09% (test-clean)", 
+      api: '/api/automatic_speech_recognition/asr_crdnnrnnlm_librispeech_en'
+    },
+    {
+      task:	"Automatic Speech Recognition",
+      dataset: "LibriSpeech (English)", 
+      system: "Conformer + Transformer LM",
+      performance: "WER=3.09% (test-clean)",
+      api: '/api/automatic_speech_recognition/asr_conformer_transformerlm_librispeech_en'
+    },
+
+    {
+      task:	"Automatic Speech Recognition	", 
+      dataset: "LibriSpeech (English)", 
+      system: "CNN + Transformer", 
+      performance:"WER=2.46% (test-clean)"
+    },
+    {
+      task:	"Automatic Speech Recognition	",
+      dataset: "TIMIT", 
+      system: "CRDNN + distillation",
+      performance: "PER=13.1% (test)"
+    },
+    {
+      task:	"Automatic Speech Recognition	",
+      dataset: "TIMIT", 
+      system:"wav2vec2 + CTC/Att.",
+      performance:	"PER=8.04% (test)"
+    },
+    {
+      task: "Automatic Speech Recognition",	
+      dataset: "CommonVoice (English)", 
+      system: "wav2vec2 + CTC",
+      performance:	"WER=15.69% (test)",
+      api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_en'
+    },
+    {
+      task: "Automatic Speech Recognition",	
+      dataset: "CommonVoice (French)", 
+      system:"wav2vec2 + CTC", 
+      performance: "WER=9.96% (test)",
+      api : '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_fr'
+    },
+    {
+      task: "Automatic Speech Recognition",
+      dataset: "CommonVoice (Italian)", 
+      system:	"wav2vec2 + seq2seq",
+      performance: "WER=9.86% (test)",
+      api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_it'
+    },
+    {
+      task: "Automatic Speech Recognition",
+      dataset: "CommonVoice (Kinyarwanda)" , 
+      system:	"wav2vec2 + seq2seq", 
+      performance:	"WER=18.91% (test)",
+      api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_rw'
+    },
+    {
+      task: "Automatic Speech Recognition",
+      dataset: "AISHELL (Mandarin)", 
+      system:	"wav2vec2 + seq2seq", 
+      performance:	"CER=5.58% (test)",
+      api: '/api/automatic_speech_recognition/asr_wav2vec2_transformer_aishell_mandarin_chinese'
+      
+    },
+
+    ],
+    "Speech Translation":[
+      {
+        task:	"Speech Translation",
+        dataset: "Fisher-callhome (spanish)", 
+        system:	"conformer (ST + ASR)", 
+        performance: "BLEU=48.04 (test)",
+        api:""
+      },
+    ],
+    "Speaker Verification": [
+      {
+        task:	"Speaker Verification	",
+        dataset: "VoxCeleb2", 
+        system: "ECAPA-TDNN",
+        performance:	"EER=0.69% (vox1-test)",
+        api:""
+      },
+    ],
+    "Speaker Diarization": [
+      {
+        task:	"Speaker Diarization	",
+        dataset: "AMI", 
+        system:"ECAPA-TDNN",
+        performance:	"DER=3.01% (eval)",
+        api:"",
+      },
+    ],
+    "Speech Enhancement":[
+      {
+        task:	"Speech Enhancement", 
+        dataset: "VoiceBank",
+        system: "MetricGAN+",
+        performance: "PESQ=3.08 (test)",
+        api: '/api/speech_enhancement/enhancement_metricganplus_voicebank'
+      },
+      {
+        task:	"Speech Enhancement", 
+        dataset: "WHAMR!",
+        system: "SepFormer",
+        performance: "PESQ=3.08 (test)",
+        api: '/api/speech_enhancement/enhancement_sepformer_whamr'
+      },
+      {
+        task:	"Speech Enhancement", 
+        dataset: "WHAM!",
+        system: "SepFormer",
+        performance: "PESQ=3.08 (test)",
+        api: '/api/speech_enhancement/enhancement_sepformer_wham'
+      },
+    ],
+    "Speech Separation":[
+      {
+        task:	"Speech Separation", 
+        dataset: "WSJ2MIX", 
+        system: "SepFormer",
+        performance: "SDRi=22.6 dB (test)",
+        api: '/api/audioseparation/speech_separation_sepformer_wsj02mix'
+      },
+      {
+        task:	"Speech Separation", 
+        dataset: "WSJ3MIX", 
+        system: "SepFormer",
+        performance: "SDRi=20.0 dB (test)",
+        api: '/api/audioseparation/speech_separation_sepformer_wsj03mix'
+  
+      },
+      {
+        task:	"Speech Separation", 
+        dataset: "WHAM!", 
+        system: "SepFormer",
+        performance: "SDRi= 16.4 dB (test)",
+        api: '/api/audioseparation/speech_separation_sepformer_wham'
+      },
+      {
+        task:	"Speech Separation", 
+        dataset: "WHAMR!", 
+        system: "SepFormer",
+        performance: "SDRi= 14.0 dB (test)",
+        api: '/api/audioseparation/speech_separation_sepformer_whamr'
+      },
+      {
+        task:	"Speech Separation", 
+        dataset: "Libri2Mix", 
+        system: "SepFormer",
+        performance: "SDRi= 20.6 dB (test-clean)",
+        api: ""
+       
+      },
+      {
+        task:	"Speech Separation", 
+        dataset: "Libri3Mix", 
+        system: "SepFormer",
+        performance: "SDRi= 18.7 dB (test-clean)",
+        api: ""
+      },
+    ],
+       
+    "Emotion Recognition":[
+      {
+        task:	"Emotion Recognition", 
+        dataset: "IEMOCAP", 
+        system: "wav2vec", 
+        performance:	"Accuracy=79.8% (test)",
+        api: '/api/emotion_recognition/wav2vec2_IEMOCAP'
+      },
+    ],
+    "Language Identification": [
+      {
+        task:	"Language Identification", 
+        dataset: "CommonLanguage", 
+        system: "ECAPA-TDNN",	
+        performance: "Accuracy=84.9% (test)",
+        api: '/api/language_id/langid_commonlanguage_ecapa'
+      },
+      {
+        task:"Language Identification",
+        dataset: "VoxLingua 107", 
+        system:"ECAPA-TDNN Sentence", 
+        performance: "Accuracy=93.3% (test)",
+        api: '/api/language_id/langid_voxlingua107_ecapa'
+      },
+    ],
+    "Spoken, Language Understanding":[
+      {
+        task:	"Spoken, Language Understanding",
+        dataset: "Timers and Such", 
+        system:	"CRDNN Intent",
+        performance: "Accuracy=89.2% (test)",
+        api:""
+      },
+      {
+        task:"Spoken, Language Understanding", 
+        dataset: "SLURP", 
+        system:	"CRDNN	Intent", 
+        performance:"Accuracy=87.54% (test)",
+        api:""
+      },
+    ]    
+  }
+
+  pipeline : PipelineStep [] = []
+  pipelineFiles: File[] = []
   separatedFilenames :any;
   separatedFileBlobs: any = [];
-  separatedFileWavesurfer: any = [];  
-
-
-  
-
-
-  
-
+  separatedFileWavesurfer: any = []; 
   public files: any[] = [];
-
+  
   constructor(private http: HttpClient){}
-
+  
   ngOnInit() {
-      this.getFiles();
+    this.getFiles();
   }
-
+  
+  
   onFileSelected(event) {
-
     const file:File = event.target.files[0];
     if (file) {
-        this.fileToUpload = file
-        this.fileName = file.name;
-        console.log(file.type)
-        this.formData.append("title", this.fileName); 
-        this.formData.append("audiofile", file);
-        WaveSurfer.util.fetchFile({ 
-          url: '../../assets/hot-colormap.json', 
-          responseType: 'json' }).on('success', colorMap => {
+      this.pipelineFiles.push(file);
+      console.log("==> onFileSelected: this.pipelineFiles = ", this.pipelineFiles)
+      this.fileToUpload = file
+      this.fileName = file.name;
+      console.log(file.type)
+      this.formData.append("title", this.fileName); 
+      this.formData.append("audiofile", file);
+      WaveSurfer.util.fetchFile({ 
+        url: '../../assets/hot-colormap.json', 
+        responseType: 'json' }).on('success', colorMap => {
           this.initWaveSurfer(colorMap, this.fileToUpload)
-         })
+        })
+      }
     }
-  }
-
+    
   getFiles(){
     this.http.get("/api/audiofiles").subscribe(
       response => {
@@ -239,10 +520,9 @@ export class UploadAudioFileComponent implements OnInit {
         console.error(error)
       }
       
-    )
+      )
   }
-
-
+          
   uploadFile(){
     this.http.post("/api/audiofiles", this.formData).subscribe(
       response => {
@@ -252,9 +532,17 @@ export class UploadAudioFileComponent implements OnInit {
         console.error(error);
         
       }
-    );
+      );
   }
 
+  selectPipelineFile(file){
+    console.log("selectPipelineFile(file): ", file);
+    this.pipeline[this.pipeline.length -1].file = file;
+    this.pipeline[this.pipeline.length -1].fileName = file.name;
+    console.log(this.pipeline);
+
+  }
+      
   downloadFile(filename:string){
     this.http.get("/api/audiofiles/"+ filename, { responseType: 'blob' }).subscribe(
       data => {
@@ -266,261 +554,179 @@ export class UploadAudioFileComponent implements OnInit {
         WaveSurfer.util.fetchFile({ 
           url: '../../assets/hot-colormap.json', 
           responseType: 'json' }).on('success', colorMap => {
-          this.initWaveSurfer(colorMap, this.fileToUpload)
-         })
-      }
-    )
-  }
-
-  separateFile(){
-    this.http.post("/api/audioseparation", this.formData).subscribe(
-      response => {
-        this.separatedFilenames = response;
-        console.log(this.separatedFilenames);
-        for (let i = 0; i < this.separatedFilenames.length; i++) {
-          const separatedFilename = this.separatedFilenames[i];
-          this.downloadSeparatedFile(separatedFilename, i) 
+            this.initWaveSurfer(colorMap, this.fileToUpload)
+          })
         }
-      },
-      error => {
-        console.error(error);
-        
-      }
-    );
+        )
   }
-
-
-  downloadSeparatedFile(filename:string, index:number){
-    this.http.get("/api/audioseparation/"+ filename, { responseType: 'blob' }).subscribe(
-      data => {
-        let wavesurfer = WaveSurfer.create({
-          container: '#waveform-' + index,
-          backgroundColor:'black',
-          // waveColor: '#fb6340',
-          // progressColor: '#f5365c',
-          // loaderColor: 'purple',
-          // cursorColor: 'navy',
-          // barWidth: 2,
-          // barHeight: 1, // the height of the wave
-          // barGap: null, // the optional spacing between bars of the wave, if not provided will be calculated in legacy format
-          // plugins: [
-          //   TimelinePlugin.create({
-          //       container: '#wave-timeline-' + index,
-          //       // formatTimeCallback: this.formatTimeCallback,
-          //       // timeInterval: this.timeInterval,
-          //       // primaryLabelInterval: this.primaryLabelInterval,
-          //       // secondaryLabelInterval: this.secondaryLabelInterval,
-          //       // ... other timeline options
-          //   }),
-          //   SpectrogramPlugin.create({
-          //     container: '#wave-spectrogram-' + index,
-          //     labels: true,
-          //     colorMap: colorMap
-          //   })
-          // ]
-        });
-        // this.wavesurfer = this.wavesurfer.addPlugin(this.spectogram).initPlugin("spectogram");
-        console.log(wavesurfer.getActivePlugins());
-        
-        // this.wavesurfer.load(fileName);
-        // wavesurfer.loadBlob(data);
-        this.separatedFileWavesurfer.push(wavesurfer)  
-        console.log("==>this.separatedFileWavesurfer[i]: ");
-        console.log(this.separatedFileWavesurfer[index]);
-        this.separatedFileWavesurfer[index].loadBlob(data);
-        this.separatedFileBlobs.push(data); 
-      }
-    )
-  }
-
-  saveSeparatedFile(index:number){
-    console.log(this.separatedFileBlobs)
-    console.log(this.separatedFilenames)
-    saveAs(this.separatedFileBlobs[index], this.separatedFilenames[index]);
-  }
-
+  
   deleteFile(f){
     this.files = this.files.filter(function(w){ return w.name != f.name });
     
   }
+  
+  addStep(){
+    if(this.pipeline.length == 0 || this.pipeline[this.pipeline.length-1].api !== ""){
+      this.pipeline.push(
+        {
+          file: null,
+          fileName: null,
+          task:"",
+          api:"",
+          dataset:"",
+          performance:"",
+          system:"", analysisResult: "",
+          separatedFilenames : [],
+          separatedFileBlobs: [],
+          separatedFileWavesurfer: [],  
+          processing: false,
+          processing_error: null,
+          processed: false,
 
-  deleteFromArray(index) {
-    console.log(this.files);
-    this.files.splice(index, 1);
+        }
+      )
+    }
+  }
+  
+  onSelectTask(task:string){
+    this.pipeline[this.pipeline.length-1].task = task;    
+    console.log("==> selectTask: this.pipeline = ", this.pipeline)
+    console.log("==> onSelectTask: task = ", task)
   }
 
- 
+  onSelectTaskMethod(step:any){
+    this.pipeline[this.pipeline.length-1].task = step.task;
+    this.pipeline[this.pipeline.length-1].api = step.api;
+    this.pipeline[this.pipeline.length-1].dataset = step.dataset;
+    this.pipeline[this.pipeline.length-1].system = step.system;  
+    this.pipeline[this.pipeline.length-1].performance = step.performance; 
+    console.log("==> selectTask: this.pipeline = ", this.pipeline)
+    console.log("==> onSelectTask: step = ", step)
+  }
 
+  
+  onRunTask(step: any, step_index){
+    console.log("==> step: ", step)
+    switch (step.task) {
+      case "Automatic Speech Recognition":
+        this.analyzeFile(step);
+        break;
+
+      case "Language Identification":
+        this.analyzeFile(step);
+        break;
+      
+      case "Voice Activity Detection":
+        this.analyzeFile(step);
+        break;
+
+      case "Emotion Recognition":
+          this.analyzeFile(step);
+        break;
+  
+      case "Speech Enhancement":
+        this.separateFile(step, step_index);
+        break;
+
+      case "Speech Separation":
+        this.separateFile(step, step_index);
+        break;
+    
+      default:
+        break;
+    }
+  }
+
+  deletePipelineStep(step){
+    this.pipeline = this.pipeline.filter( element => element == step)
+    console.log("deletePipelineStep(step) => pipeline:", this.pipeline);
+  }
+
+
+
+  analyzeFile(step:PipelineStep,){
+    console.log("==> analyzeApi : ", step.api)
+    step.processing =true;
+    this.formData = new FormData();
+    this.formData.append("title", step.fileName); 
+    this.formData.append("audiofile", step.file);
+    this.http.post(step.api, this.formData).subscribe(
+      response => {
+        step.processing =false;
+        step.processing_error = null;  
+        step.analysisResult = response.toString();    
+        step.processed = true;     
+      },
+      error => {
+        console.error(error);
+        step.processing =false;
+        step.processing_error = error;  
+        step.processed = true;
+      }
+    );
+    console.log("==> Analyze File: ", this.pipeline);
+  }
+
+  separateFile(step:PipelineStep,step_index){
+    step.processing = true;
+    this.formData = new FormData();
+    this.formData.append("title", step.fileName); 
+    this.formData.append("audiofile", step.file);
+    this.http.post(step.api , this.formData).subscribe(
+      (response: string[]) => {
+        step.separatedFilenames = response;
+        console.log("separateFile() => step.separatedFilenames: ", step.separatedFilenames);
+        for (let i = 0; i < step.separatedFilenames.length; i++) {
+          const separatedFilename = step.separatedFilenames[i];
+          this.downloadSeparatedFile(step, step.api, separatedFilename, step_index, i) 
+        }
+        step.processing =false;
+        step.processing_error = null; 
+        step.processed = true;
+      },
+      error => {
+        console.error(error);
+        step.processing =false;
+        step.processing_error = error; 
+        step.processed = true;
+      }
+    );
+  }
+
+  downloadSeparatedFile(step: PipelineStep, api:string, filename:string, step_index, index:number){
+    this.http.get(api + "/"+ filename, { responseType: 'blob' }).subscribe(
+      data => {
+        let wavesurfer = WaveSurfer.create({
+          container: '#waveform-' + step_index+'-'+index,
+          backgroundColor:'black',
+        });
+        step.separatedFileWavesurfer.push(wavesurfer)  
+        step.separatedFileWavesurfer[index].loadBlob(data);
+        step.separatedFileBlobs.push(data); 
+        this.pipelineFiles.push(new File([data], filename))
+        console.log("==> this.pipelineFiles: ",this.pipelineFiles)
+      }
+    )
+  }
+
+  saveSeparatedFile(step:PipelineStep, index:number){
+    console.log(step.separatedFileBlobs)
+    console.log(step.separatedFilenames)
+    saveAs(step.separatedFileBlobs[index], step.separatedFilenames[index]);
+  }
+   
   initWaveSurfer(colorMap, fileName){
     this.wavesurfer = WaveSurfer.create({
       container: '#waveform',
       backgroundColor:'black',
-      // waveColor: '#fb6340',
-      // progressColor: '#f5365c',
-      // loaderColor: 'purple',
-      // cursorColor: 'navy',
-      // barWidth: 2,
-      // barHeight: 1, // the height of the wave
-      // barGap: null, // the optional spacing between bars of the wave, if not provided will be calculated in legacy format
-      plugins: [
-        TimelinePlugin.create({
-            container: '#wave-timeline',
-            // formatTimeCallback: this.formatTimeCallback,
-            // timeInterval: this.timeInterval,
-            // primaryLabelInterval: this.primaryLabelInterval,
-            // secondaryLabelInterval: this.secondaryLabelInterval,
-            // ... other timeline options
-        }),
-        SpectrogramPlugin.create({
-          container: "#wave-spectrogram",
-          labels: true,
-          colorMap: colorMap
-        })
-      ]
-    });
-    // this.wavesurfer = this.wavesurfer.addPlugin(this.spectogram).initPlugin("spectogram");
-    console.log(this.wavesurfer.getActivePlugins()  );
-    
-    // this.wavesurfer.load(fileName);
-    this.wavesurfer.loadBlob(fileName)
+     });
+     this.wavesurfer.loadBlob(fileName)
   }
-
-
-  /**
- * Use formatTimeCallback to style the notch labels as you wish, such
- * as with more detail as the number of pixels per second increases.
- *
- * Here we format as M:SS.frac, with M suppressed for times < 1 minute,
- * and frac having 0, 1, or 2 digits as the zoom increases.
- *
- * Note that if you override the default function, you'll almost
- * certainly want to override timeInterval, primaryLabelInterval and/or
- * secondaryLabelInterval so they all work together.
- *
- * @param: seconds
- * @param: pxPerSec
- */
-formatTimeCallback(seconds, pxPerSec) {
-  seconds = Number(seconds);
-  var minutes = Math.floor(seconds / 60);
-  seconds = seconds % 60;
-
-  // fill up seconds with zeroes
-  var secondsStr = Math.round(seconds).toString();
-  if (pxPerSec >= 25 * 10) {
-      secondsStr = seconds.toFixed(2);
-  } else if (pxPerSec >= 25 * 1) {
-      secondsStr = seconds.toFixed(1);
-  }
-
-  if (minutes > 0) {
-      if (seconds < 10) {
-          secondsStr = '0' + secondsStr;
-      }
-      return `${minutes}:${secondsStr}`;
-  }
-  return secondsStr;
+  
+                  
 }
-
-/**
-* Use timeInterval to set the period between notches, in seconds,
-* adding notches as the number of pixels per second increases.
-*
-* Note that if you override the default function, you'll almost
-* certainly want to override formatTimeCallback, primaryLabelInterval
-* and/or secondaryLabelInterval so they all work together.
-*
-* @param: pxPerSec
-*/
-timeInterval(pxPerSec) {
-  var retval = 1;
-  if (pxPerSec >= 25 * 100) {
-      retval = 0.01;
-  } else if (pxPerSec >= 25 * 40) {
-      retval = 0.025;
-  } else if (pxPerSec >= 25 * 10) {
-      retval = 0.1;
-  } else if (pxPerSec >= 25 * 4) {
-      retval = 0.25;
-  } else if (pxPerSec >= 25) {
-      retval = 1;
-  } else if (pxPerSec * 5 >= 25) {
-      retval = 5;
-  } else if (pxPerSec * 15 >= 25) {
-      retval = 15;
-  } else {
-      retval = Math.ceil(0.5 / pxPerSec) * 60;
-  }
-  return retval;
-}
-
-/**
-* Return the cadence of notches that get labels in the primary color.
-* EG, return 2 if every 2nd notch should be labeled,
-* return 10 if every 10th notch should be labeled, etc.
-*
-* Note that if you override the default function, you'll almost
-* certainly want to override formatTimeCallback, primaryLabelInterval
-* and/or secondaryLabelInterval so they all work together.
-*
-* @param pxPerSec
-*/
-primaryLabelInterval(pxPerSec) {
-  var retval = 1;
-  if (pxPerSec >= 25 * 100) {
-      retval = 10;
-  } else if (pxPerSec >= 25 * 40) {
-      retval = 4;
-  } else if (pxPerSec >= 25 * 10) {
-      retval = 10;
-  } else if (pxPerSec >= 25 * 4) {
-      retval = 4;
-  } else if (pxPerSec >= 25) {
-      retval = 1;
-  } else if (pxPerSec * 5 >= 25) {
-      retval = 5;
-  } else if (pxPerSec * 15 >= 25) {
-      retval = 15;
-  } else {
-      retval = Math.ceil(0.5 / pxPerSec) * 60;
-  }
-  return retval;
-}
-
-/**
-* Return the cadence of notches to get labels in the secondary color.
-* EG, return 2 if every 2nd notch should be labeled,
-* return 10 if every 10th notch should be labeled, etc.
-*
-* Secondary labels are drawn after primary labels, so if
-* you want to have labels every 10 seconds and another color labels
-* every 60 seconds, the 60 second labels should be the secondaries.
-*
-* Note that if you override the default function, you'll almost
-* certainly want to override formatTimeCallback, primaryLabelInterval
-* and/or secondaryLabelInterval so they all work together.
-*
-* @param pxPerSec
-*/
-secondaryLabelInterval(pxPerSec) {
-  // draw one every 10s as an example
-  return Math.floor(10 / this.timeInterval(pxPerSec));
-}
-
-
-
-  // Create function which you use in (change)-event of your file input tag:
-  handleFileInput(files: FileList) {
-    this.fileToUpload = files.item(0);
-  }
-
-  public updateOptions() {
-    this.myChartData.data.datasets[0].data = this.data;
-    this.myChartData.update();
-  }
-
-}
-function importedSaveAs(blob: any, fileName: string) {
-  throw new Error('Function not implemented.');
-}
-
+                
+                
+                
+                
+                

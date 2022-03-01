@@ -8,248 +8,247 @@
         style="width: 20vh; height: 20vh;">
       </a>
     </div>
-
-      <div class=" col-sm-12 col-md-12">
-          <div class=" card card-chart">
-              <div class=" card-header">
-                  <div class=" row">
-                      <div class=" col-sm-12 text-center">
-                          <h5 class=" card-category">Step 1</h5>
-                          <h2 class=" card-title">Audio Selection</h2>
-                      </div> 
-                  </div>
-              </div>
-              <div class=" card-body">
-                  <!-- Upload file from pc -->
-                  <div class="col-sm-12 col-md-6  text-center" >
-                      <div class="file-upload">   
-                          <input 
-                          type="file" 
-                          class="file-input"     
-                          (change)="onFileSelected($event)"
-                          accept="audio/*"
-                          #fileUpload
-                          > 
-                      </div>
-                  </div>
-
-
-                  <div class="col-md-12" [ngStyle]="{ display: !this.fileToUpload ? 'none' : 'block' }"  
-                  >
-                    <div id="waveform">
-                        <div class="progress progress-striped active" id="progress-bar">
-                            <div class="progress-bar progress-bar-info"></div>
-                        </div> 
-                        <!-- Here be waveform -->
-                    </div>
-                    <div id="wave-spectrogram"></div>
-                    <div id="wave-timeline"></div>
-                    <div class="controls text-center">
-                        <div class="row">
-                            <div class="col-sm-7">
-                                <button 
-                                class="btn btn-warnings" 
-                                (click)="this.wavesurfer.play()" 
-                                >
-                                <i class="tim-icons icon-triangle-right-17"></i>Play
-                                </button>
-                                
-                                <button 
-                                class="btn btn-warnings" 
-                                (click)="this.wavesurfer.pause()" 
-                                >          
-                                  <i class=" tim-icons icon-button-pause"></i>Pause
-                                </button>
-
-                                <button 
-                                  class="btn btn-warnings" 
-                                  data-action="play" 
-                                  (click)="separateFile()" >          
-                                  <i class=" tim-icons icon-zoom-split"></i>Analyze
-                                </button>
-                    
-                              </div>
-                
-                              <div class="col-sm-1">
-                                  <i class="glyphicon glyphicon-zoom-in"></i>
-                              </div>
-                              
-                              <div class="col-sm-3">
-                                  <input 
-                                  [(ngModel)]="slider" 
-                                  (ngModelChange)="setZoom($event)"
-                                  data-action="zoom" 
-                                  type="range" 
-                                  [min]="0" 
-                                  [max]="10000" 
-                                  
-                                  style="width: 100%" />
-                              </div>
-                              
-                              <div class="col-sm-1">
-                                  <i class="glyphicon glyphicon-zoom-out"></i>
-                              </div>
-                
-                
-                        </div>
-                    </div>
-        
-                </div>
-
-              </div>
-            </div>  
-
-      </div>
-
-      
-        
-      <div class="col-sm-12 col-md-12" >
-          <div class=" card card-chart">
-              <div class=" card-header">
-                <div class=" row">
-                  <div class=" col-sm-12 text-center">
-                    <h5 class=" card-category">Features</h5>
-                    <h2 class=" card-title">Deep Learning Audio Analysis</h2>
-                  </div>
-                </div>
-              </div>
-              <div  class="card-body" >
-                <div style="overflow:auto; height:30vh">
-                  <table class="table" >
-                    <thead>
-                      <tr>
-                        <th class="text-center">#</th>
-                        <th>Task</th>
-                        <th>System</th>
-                        <th>Dataset</th>
-                        <th>Performance</th>
-                        <th>api</th>
-                      </tr>
-                    </thead>
-                    <tbody *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps; let i = index">
-                      <tr>
-                      
-                        <td class="text-center">{{i}}</td>
-                        <td>{{ AudioAnalysisStep.task }} </td>
-                        <td>{{ AudioAnalysisStep.system }} </td>
-                        <td>{{ AudioAnalysisStep.dataset }} </td>
-                        <td>{{ AudioAnalysisStep.performance }} </td>                
-                        <td> <button 
-                          class="btn btn-primary btn-fab btn-icon btn-round" 
-                          (click)="preprocessFile(AudioAnalysisStep.api, AudioAnalysisStep.preprocess)"
-                          [disabled]="this.fileToUpload ? false : true"
-                          > 
-                          <i class="tim-icons icon-triangle-right-17"></i></button></td>
-                      </tr>
-                      
-                    </tbody>
-                  </table>
-                </div>
-                
-                
-              </div>
-            </div>
-      </div>
-
-
-      <!-- <div class="col-sm-12" *ngIf="this.preprocess">
-          <div class=" card card-chart">
-              <div class=" card-header">
-                <div class=" row">
-                  <div class=" col-sm-12 text-center">
-                    <h5 class=" card-category">Preprocessing</h5>
-                    <h2 class=" card-title">{{this.preprocessTitle}}</h2>
-                    <img [src]="imageURL">
-                  </div>
-                </div>
-              </div>
-              <div  class=" card-body" id="demo">
-              
-              </div>
-            </div>
-      </div> -->
-
-      <div class=" row" *ngIf="this.fileName && this.fileName!==''">
-        <div class=" col-12">
-          <div class=" card card-chart">
-            <div class=" card-header">
-              <div class=" row">
-                <div class=" col-sm-12 text-center">
-                  <h5 class=" card-category">Step 3</h5>
-                  <h2 class=" card-title">Audio Analysis Results</h2>
-                </div>
-              </div>
-            </div>
-            <div  class=" card-body" id="demo" >
-              <div class="row">
-                <div class="col-sm-12 col-md-12" *ngFor="let separatedFile of this.separatedFilenames; let i = index">
-                  
-                  <h4> {{separatedFile}} </h4>
-                  <div align="right">
-                    <button 
-                    class="btn btn-warnings" 
-                    (click)="this.saveSeparatedFile(i)"
-                     >          
-                      <i class=" tim-icons icon-cloud-download-93"></i>
-                    </button>
-                  </div>
-                  <div [id]="'waveform-'+ i">
-                
-                    <!-- <div class="progress progress-striped active" id="progress-bar">
-                      <div class="progress-bar progress-bar-info"></div>
-                    </div>  -->
-                    <!-- Here be waveform -->
-                  </div>
-                  <div [id]="'wave-spectrogram-' + i"></div>
-                  <div [id]="'wave-timeline-' + i"></div>
-                  <div class="controls text-center">
-                    <button 
-                    class="btn btn-warnings" 
-                    data-action="play" 
-                    (click)="this.separatedFileWavesurfer[i].play()" >
-                      <i class="tim-icons icon-triangle-right-17"></i>Play
-                    </button>
-                    
-                    <button 
-                    class="btn btn-warnings" 
-                    data-action="play" 
-                    (click)="this.separatedFileWavesurfer[i].pause()"
-                     >          
-                      <i class=" tim-icons icon-button-pause"></i>Pause
-                    </button>
-                    
-                    <!-- <button 
-                    class="btn btn-warnings" 
-                    data-action="play" 
-                    (click)="separateFile()" >          
-                    <i class=" tim-icons icon-zoom-split"></i>Analyze
-                  </button> -->
-                  </div>
-                </div>
-              </div>
-              
-            
+    
+    <div class=" col-sm-12 col-md-6">
+      <div class=" card card-chart">
+        <div class=" card-header">
+          <div class=" row">
+            <div class=" col-sm-12 text-center">
+              <h5 class=" card-category">Step 1</h5>
+              <h2 class=" card-title">Audio Selection</h2>
+            </div> 
           </div>
+        </div>
+        <div class=" card-body">
+          <!-- Upload file from pc -->
+          <div class="col-sm-12 col-md-6  text-center" >
+            <div class="file-upload">   
+              <input 
+              type="file" 
+              class="file-input"     
+              (change)="onFileSelected($event)"
+              accept="audio/*"
+              #fileUpload
+              > 
+            </div>
+          </div>
+          
+          
+          <div class="col-md-12" [ngStyle]="{ display: !this.fileToUpload ? 'none' : 'block' }"  
+          >
+          <div id="waveform">
+            <div class="progress progress-striped active" id="progress-bar">
+              <div class="progress-bar progress-bar-info"></div>
+            </div> 
+            <!-- Here be waveform -->
+          </div>
+          <div id="wave-spectrogram"></div>
+          <div id="wave-timeline"></div>
+          <div class="controls text-center">
+            <div class="row">
+              <div class="col-sm-7">
+                <button 
+                class="btn btn-warnings" 
+                (click)="this.wavesurfer.play()" 
+                >
+                <i class="tim-icons icon-triangle-right-17"></i>Play
+              </button>
+              
+              <button 
+              class="btn btn-warnings" 
+              (click)="this.wavesurfer.pause()" 
+              >          
+              <i class=" tim-icons icon-button-pause"></i>Pause
+            </button>
+          </div>
+          
+          <div class="col-sm-1">
+            <i class="glyphicon ui-1_simple-remove"></i>
+          </div>
+          
+          <div class="col-sm-3">
+            <input 
+            [(ngModel)]="slider" 
+            (ngModelChange)="setZoom($event)"
+            data-action="zoom" 
+            type="range" 
+            [min]="0" 
+            [max]="10000" 
+            
+            style="width: 100%" />
+          </div>
+          
+          <div class="col-sm-1">
+            <i class="tim-icons ui-1_simple-add"></i>
+          </div>
+          
+          
         </div>
       </div>
       
-      </div>
-
-      <div class="col-sm-12" *ngIf="this.preprocessError">
-          <div class=" card card-chart">
-              <div class=" card-header">
-                <div class=" row">
-                  <div class=" col-sm-12 text-center">
-                    <h5 class=" card-category">Preprocessing</h5>
-                    <h2 class=" card-title">Audio Error</h2>
-                    Something went wrong !!!
-                  </div>
-                </div>
-              </div>
-              <div  class=" card-body" id="demo">
-              
-              </div>
-            </div>
-      </div>
+    </div>
+    
   </div>
+</div>  
+</div>
+
+<div *ngIf="this.fileToUpload" class="col-sm-12 col-md-6 text-center">
+  <div class="card card-chart" style="overflow: auto; height: 49vh;">
+    <div class="card-header">
+      <div class=" row">
+        <div class=" col-sm-12 text-center">
+          <h5 class=" card-category">Step 2</h5>
+          <h2 class=" card-title">Select Task</h2>
+        </div> 
+      </div>
+    </div>
+    <div class="row">
+      <div 
+      class="col-sm-12 col-md-6"
+      *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps1 | keyvalue; let i = index"> 
+        <button type="button" 
+        class="btn btn-primary" (click)="onSelectTask(AudioAnalysisStep.key)"> {{AudioAnalysisStep.key}} </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-sm-12 col-md-12" *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps1 | keyvalue; let i = index">  
+  <!-- AudioAnalysisStep.key: {{AudioAnalysisStep.key}} ==> {{this.selectedTask}} -->
+  <div *ngIf="AudioAnalysisStep.key == this.selectedTask">
+  <div class="card card-chart">
+    <div class=" card-header">
+      <div class=" row">
+        <div class=" col-sm-12 text-center">
+          <h5 class=" card-category">Speechbrain</h5>
+          <h2 class=" card-title">{{ AudioAnalysisStep.key }}</h2>
+        </div>
+      </div>
+    </div>
+    <div  class="card-body" >
+      <div style="overflow:auto; height: 60vh;">
+        <table class="table" >
+          <thead>
+            <tr>
+              <th class="text-center">#</th>
+              <th>System</th>
+              <th>Dataset</th>
+              <th>Performance</th>
+              <th>api</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let step of AudioAnalysisStep.value">
+            <tr>
+              <td class="text-center">{{i}}</td>
+              <td>{{ step.system }} </td>
+              <td>{{ step.dataset }} </td>
+              <td>{{ step.performance }} </td>
+              <td> <button 
+                class="btn btn-primary btn-fab btn-icon btn-round" 
+                (click)="processFile(step)"
+                [disabled]="this.fileToUpload ? false : true"
+                > 
+                <i class="tim-icons icon-triangle-right-17"></i></button></td>
+              </tr>
+              
+            </tbody>
+          </table>
+        </div>
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-sm-12" *ngIf="this.process">
+  <div class=" card card-chart">
+    <div class=" card-header">
+      <div class=" row">
+        <div class=" col-sm-12 text-center">
+          <h5 class=" card-category">Step 3</h5>
+          <h2 class=" card-title">{{this.analysisStep.task}}: {{this.analysisStep.system}} {{this.analysisStep.dataset}}</h2>
+        </div>
+      </div>
+    </div>
+    <div  class=" card-body" id="demo" >
+      <div class="row" 
+      *ngIf="this.analysisStep.task !== 'Speech Separation' && this.analysisStep.task !== 'Speech Enhancement'">
+      <div class="col-12 text-center">
+        <h5>
+          {{this.analysisResult}}
+        </h5>
+      </div>
+    </div>
+    
+    
+    <div class="row" 
+    *ngIf="this.analysisStep.task == 'Speech Separation' || this.analysisStep.task == 'Speech Enhancement'">
+    <div class="col-sm-12 col-md-12" *ngFor="let separatedFile of this.separatedFilenames; let i = index"> 
+      <h4> {{separatedFile}} </h4>
+      <div align="right">
+        <button 
+        class="btn btn-warnings" 
+        (click)="this.saveSeparatedFile(i)"
+        >          
+        <i class=" tim-icons icon-cloud-download-93"></i>
+      </button>
+    </div>
+    <div [id]="'waveform-'+ i">
+      
+      <!-- <div class="progress progress-striped active" id="progress-bar">
+        <div class="progress-bar progress-bar-info"></div>
+      </div>  -->
+      <!-- Here be waveform -->
+    </div>
+    <div [id]="'wave-spectrogram-' + i"></div>
+    <div [id]="'wave-timeline-' + i"></div>
+    <div class="controls text-center">
+      <button 
+      class="btn btn-warnings" 
+      data-action="play" 
+      (click)="this.separatedFileWavesurfer[i].play()" >
+      <i class="tim-icons icon-triangle-right-17"></i>Play
+    </button>
+    
+    <button 
+    class="btn btn-warnings" 
+    data-action="play" 
+    (click)="this.separatedFileWavesurfer[i].pause()"
+    >          
+    <i class=" tim-icons icon-button-pause"></i>Pause
+  </button>
+  
+  <!-- <button 
+    class="btn btn-warnings" 
+    data-action="play" 
+    (click)="separateFile()" >          
+    <i class=" tim-icons icon-zoom-split"></i>Analyze
+  </button> -->
+</div>
+</div>
+</div>
+
+
+</div>
+</div>
+</div>
+
+<div class="col-sm-12" *ngIf="this.processError">
+  <div class=" card card-chart">
+    <div class=" card-header">
+      <div class=" row">
+        <div class=" col-sm-12 text-center">
+          <h5 class=" card-category">Processing</h5>
+          <h2 class=" card-title">Audio Error</h2>
+          Something went wrong !!!
+        </div>
+      </div>
+    </div>
+    <div  class=" card-body" id="demo">
+      
+    </div>
+  </div>
+</div>
+</div>
 </div>

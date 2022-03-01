@@ -14,160 +14,420 @@ import * as saveAs from 'file-saver';
 })
 export class FeaturesComponent implements OnInit {
 
+  analysisStep ={
+    task:	"",
+    dataset: "", 
+    system: "",
+    performance: ""
+  }
   
-  AudioAnalysisSteps = [
+  // AudioAnalysisSteps = [
+  //   // {
+  //   //   task:	"Automatic Speech Recognition",
+  //   //   dataset: "LibriSpeech", 
+  //   //   system: "wav2vec2",
+  //   //   performance: "WER=1.90% (test-clean)"
+  //   // },
+  //   // {
+  //   //   task:	"Automatic Speech Recognition	", 
+  //   //   dataset: "LibriSpeech", 
+  //   //   system: "CNN + Transformer", 
+  //   //   performance:"WER=2.46% (test-clean)"
+  //   // },
+  //   // {
+  //   //   task:	"Automatic Speech Recognition	",
+  //   //   dataset: "TIMIT", 
+  //   //   system: "CRDNN + distillation",
+  //   //   performance: "PER=13.1% (test)"
+  //   // },
+  //   // {
+  //   //   task:	"Automatic Speech Recognition	",
+  //   //   dataset: "TIMIT", 
+  //   //   system:"wav2vec2 + CTC/Att.",
+  //   //   performance:	"PER=8.04% (test)"
+  //   // },
+  //   {
+  //     task: "Automatic Speech Recognition",	
+  //     dataset: "CommonVoice (English)", 
+  //     system: "wav2vec2 + CTC",
+  //     performance:	"WER=15.69% (test)",
+  //     api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_en'
+  //   },
+  //   {
+  //     task: "Automatic Speech Recognition",	
+  //     dataset: "CommonVoice (French)", 
+  //     system:"wav2vec2 + CTC", 
+  //     performance: "WER=9.96% (test)",
+  //     api : '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_fr'
+  //   },
+  //   {
+  //     task: "	Automatic Speech Recognition",
+  //     dataset: "CommonVoice (Italian)", 
+  //     system:	"wav2vec2 + seq2seq",
+  //     performance: "WER=9.86% (test)",
+  //     api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_it'
+  //   },
+  //   {
+  //     task: "Automatic Speech Recognition",
+  //     dataset: "CommonVoice (Kinyarwanda)" , 
+  //     system:	"wav2vec2 + seq2seq", 
+  //     performance:	"WER=18.91% (test)",
+  //     api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_rw'
+  //   },
+  //   {
+  //     task: "Automatic Speech Recognition",
+  //     dataset: "AISHELL (Mandarin)", 
+  //     system:	"wav2vec2 + seq2seq", 
+  //     performance:	"CER=5.58% (test)",
+  //     api: '/api/automatic_speech_recognition/asr_wav2vec2_transformer_aishell_mandarin_chinese'
+      
+  //   },
+  //   // {
+  //   //   task:	"Speech translation",
+  //   //   dataset: "Fisher-callhome (spanish)", 
+  //   //   system:	"conformer (ST + ASR)", 
+  //   //   performance: "BLEU=48.04 (test)"
+  //   // },
+  //   // {
+  //   //   task:	"Speaker Verification	",
+  //   //   dataset: "VoxCeleb2", 
+  //   //   system: "ECAPA-TDNN",
+  //   //   performance:	"EER=0.69% (vox1-test)"
+  //   // },
+  //   // {
+  //   //   task:	"Speaker Diarization	",
+  //   //   dataset: "AMI", 
+  //   //   system:"ECAPA-TDNN",
+  //   //   performance:	"DER=3.01% (eval)"
+  //   // },
+  //   {
+  //     task:	"Speech Enhancement", 
+  //     dataset: "VoiceBank",
+  //     system: "MetricGAN+",
+  //     performance: "PESQ=3.08 (test)",
+  //     api: '/api/speech_enhancement/enhancement_metricganplus_voicebank'
+  //   },
+  //   {
+  //     task:	"Speech Separation", 
+  //     dataset: "WSJ2MIX", 
+  //     system: "SepFormer",
+  //     performance: "SDRi=22.6 dB (test)",
+  //     api: '/api/audioseparation/speech_separation_sepformer_wsj02mix'
+  //   },
+  //   {
+  //     task:	"Speech Separation", 
+  //     dataset: "WSJ3MIX", 
+  //     system: "SepFormer",
+  //     performance: "SDRi=20.0 dB (test)",
+  //     api: '/api/audioseparation/speech_separation_sepformer_wsj02mix'
+
+  //   },
+  //   {
+  //     task:	"Speech Separation", 
+  //     dataset: "WHAM!", 
+  //     system: "SepFormer",
+  //     performance: "SDRi= 16.4 dB (test)",
+  //     api: '/api/audioseparation/speech_separation_sepformer_wham'
+  //   },
+  //   {
+  //     task:	"Speech Separation", 
+  //     dataset: "WHAMR!", 
+  //     system: "SepFormer",
+  //     performance: "SDRi= 14.0 dB (test)",
+  //     api: '/api/audioseparation/speech_separation_sepformer_whamr'
+  //   },
+  //   // {
+  //   //   task:	"Speech Separation", 
+  //   //   dataset: "Libri2Mix", 
+  //   //   system: "SepFormer",
+  //   //   performance: "SDRi= 20.6 dB (test-clean)",
+     
+  //   // },
+  //   // {
+  //   //   task:	"Speech Separation", 
+  //   //   dataset: "Libri3Mix", 
+  //   //   system: "SepFormer",
+  //   //   performance: "SDRi= 18.7 dB (test-clean)",
+  //   // },
+  //   {
+  //     task:	"Voice Activity Detection",
+  //     dataset: "LibryParty", 
+  //     system: "CRDNN",
+  //     performance:	"F-score=0.9477 (test)",
+  //     api: '/api/voice_activity_detection/vad_crdnn_libriparty'
+  //   },
+  //   {
+  //     task:	"Emotion Recognition", 
+  //     dataset: "IEMOCAP", 
+  //     system: "wav2vec", 
+  //     performance:	"Accuracy=79.8% (test)",
+  //     api: '/api/emotion_recognition/wav2vec2_IEMOCAP'
+  //   },
+  //   {
+  //     task:	"Language Identification", 
+  //     dataset: "CommonLanguage", 
+  //     system: "ECAPA-TDNN",	
+  //     performance: "Accuracy=84.9% (test)",
+  //     api: '/api/language_id/langid_commonlanguage_ecapa'
+  //   },
+  //   // {
+  //   //   task:	"Spoken, Language Understanding",
+  //   //   dataset: "Timers and Such", 
+  //   //   system:	"CRDNN Intent",
+  //   //   performance: "Accuracy=89.2% (test)"
+  //   // },
+  //   // {
+  //   //   task:"Spoken, Language Understanding", 
+  //   //   dataset: "SLURP", 
+  //   //   system:	"CRDNN	Intent", 
+  //   //   performance:"Accuracy=87.54% (test)"
+  //   // },
+  //   {
+  //     task:"Language Identification",
+  //     dataset: "VoxLingua 107", 
+  //     system:"ECAPA-TDNN Sentence", 
+  //     performance: "Accuracy=93.3% (test)",
+  //     api: '/api/language_id/langid_voxlingua107_ecapa'
+  //   },
+  // ]
+  
+  
+  AudioAnalysisSteps1 = {
+    "Automatic Speech Recognition": [
     {
-      dataset: "LibriSpeech", 
-      task:	"Speech Recognition",
+      task:	"Automatic Speech Recognition",
+      dataset: "LibriSpeech (English)", 
       system: "wav2vec2",
       performance: "WER=1.90% (test-clean)"
     },
+
     {
-      dataset: "LibriSpeech", 
-      task:	"Speech Recognition	", 
+      task:	"Automatic Speech Recognition",
+      dataset: "LibriSpeech (English)", 
+      system: "CRDNN + Transformer LM",
+      performance: "WER=8.51% (test-clean)",
+      api: '/api/automatic_speech_recognition/asr_crdnntransformerlm_librispeech_en'
+
+    },
+    {
+      task:	"Automatic Speech Recognition",
+      dataset: "LibriSpeech (English)", 
+      system: "CRDNN + RNN +LM",
+      performance: "WER=3.09% (test-clean)", 
+      api: '/api/automatic_speech_recognition/asr_crdnnrnnlm_librispeech_en'
+    },
+    {
+      task:	"Automatic Speech Recognition",
+      dataset: "LibriSpeech (English)", 
+      system: "Conformer + Transformer LM",
+      performance: "WER=3.09% (test-clean)",
+      api: '/api/automatic_speech_recognition/asr_conformer_transformerlm_librispeech_en'
+    },
+
+    {
+      task:	"Automatic Speech Recognition	", 
+      dataset: "LibriSpeech (English)", 
       system: "CNN + Transformer", 
       performance:"WER=2.46% (test-clean)"
     },
     {
+      task:	"Automatic Speech Recognition	",
       dataset: "TIMIT", 
-      task:	"Speech Recognition	",
       system: "CRDNN + distillation",
       performance: "PER=13.1% (test)"
     },
     {
+      task:	"Automatic Speech Recognition	",
       dataset: "TIMIT", 
-      task:	"Speech Recognition	",
       system:"wav2vec2 + CTC/Att.",
       performance:	"PER=8.04% (test)"
     },
     {
+      task: "Automatic Speech Recognition",	
       dataset: "CommonVoice (English)", 
-      task: "Speech Recognition",	
       system: "wav2vec2 + CTC",
-      performance:	"WER=15.69% (test)"
+      performance:	"WER=15.69% (test)",
+      api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_en'
     },
     {
+      task: "Automatic Speech Recognition",	
       dataset: "CommonVoice (French)", 
-      task: "Speech Recognition",	
       system:"wav2vec2 + CTC", 
-      performance: "WER=9.96% (test)"
+      performance: "WER=9.96% (test)",
+      api : '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_fr'
     },
     {
+      task: "Automatic Speech Recognition",
       dataset: "CommonVoice (Italian)", 
-      task: "	Speech Recognition",
       system:	"wav2vec2 + seq2seq",
-      performance: "WER=9.86% (test)"
+      performance: "WER=9.86% (test)",
+      api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_it'
     },
     {
+      task: "Automatic Speech Recognition",
       dataset: "CommonVoice (Kinyarwanda)" , 
-      task: "Speech Recognition",
       system:	"wav2vec2 + seq2seq", 
       performance:	"WER=18.91% (test)",
+      api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_rw'
     },
     {
+      task: "Automatic Speech Recognition",
       dataset: "AISHELL (Mandarin)", 
-      task: "Speech Recognition",
       system:	"wav2vec2 + seq2seq", 
       performance:	"CER=5.58% (test)",
+      api: '/api/automatic_speech_recognition/asr_wav2vec2_transformer_aishell_mandarin_chinese'
+      
     },
-    {
-      dataset: "Fisher-callhome (spanish)", 
-      task:	"Speech translation",
-      system:	"conformer (ST + ASR)", 
-      performance: "BLEU=48.04 (test)"
-    },
-    {
-      dataset: "VoxCeleb2", 
-      task:	"Speaker Verification	",
-      system: "ECAPA-TDNN",
-      performance:	"EER=0.69% (vox1-test)"
-    },
-    {
-      dataset: "AMI", 
-      task:	"Speaker Diarization	",
-      system:"ECAPA-TDNN",
-      performance:	"DER=3.01% (eval)"
-    },
-    {
-      dataset: "VoiceBank",
-      task:	"Speech Enhancement", 
-      system: "MetricGAN+",
-      performance: "PESQ=3.08 (test)"
-    },
-    {
-      dataset: "WSJ2MIX", 
-      task:	"Speech Separation", 
-      system: "SepFormer",
-      performance: "SDRi=22.6 dB (test)"
-    },
-    {
-      dataset: "WSJ3MIX", 
-      task:	"Speech Separation", 
-      system: "SepFormer",
-      performance: "SDRi=20.0 dB (test)"
-    },
-    {
-      dataset: "WHAM!", 
-      task:	"Speech Separation", 
-      system: "SepFormer",
-      performance: "SDRi= 16.4 dB (test)"
-    },
-    {
-      dataset: "WHAMR!", 
-      task:	"Speech Separation", 
-      system: "SepFormer",
-      performance: "SDRi= 14.0 dB (test)"
-    },
-    {
-      dataset: "Libri2Mix", 
-      task:	"Speech Separation", 
-      system: "SepFormer",
-      performance: "SDRi= 20.6 dB (test-clean)"
-    },
-    {
-      dataset: "Libri3Mix", 
-      task:	"Speech Separation", 
-      system: "SepFormer",
-      performance: "SDRi= 18.7 dB (test-clean)",
-      api: "/api/audioseparation/sepformer_wsj03mix"
-    },
-    {
-      dataset: "LibryParty", 
-      task:	"Voice Activity Detection",
-      system: "CRDNN",
-      performance:	"F-score=0.9477 (test)"
-    },
-    {
-      dataset: "IEMOCAP", 
-      task:	"Emotion Recognition", 
-      system: "wav2vec", 
-      performance:	"Accuracy=79.8% (test)"
-    },
-    {
-      dataset: "CommonLanguage", 
-      task:	"Language Recognition	", 
-      system: "ECAPA-TDNN",	
-      performance: "Accuracy=84.9% (test)"
-    },
-    {
-      dataset: "Timers and Such", 
-      task:	"Spoken, Language Understanding",
-      system:	"CRDNN Intent",
-      performance: "Accuracy=89.2% (test)"
-    },
-    {
-      dataset: "SLURP", 
-      task:"Spoken, Language Understanding", 
-      system:	"CRDNN	Intent", 
-      performance:"Accuracy=87.54% (test)"
-    },
-    {
-      dataset: "VoxLingua 107", 
-      task:"Identification",
-      system:"ECAPA-TDNN Sentence", 
-      performance: "Accuracy=93.3% (test)"
-    },
-  ] 
+
+    ],
+    "Speech Translation":[
+      {
+        task:	"Speech translation",
+        dataset: "Fisher-callhome (spanish)", 
+        system:	"conformer (ST + ASR)", 
+        performance: "BLEU=48.04 (test)",
+        api:""
+      },
+    ],
+    "Speaker Verification": [
+      {
+        task:	"Speaker Verification	",
+        dataset: "VoxCeleb2", 
+        system: "ECAPA-TDNN",
+        performance:	"EER=0.69% (vox1-test)",
+        api:""
+      },
+    ],
+    "Speaker Diarization": [
+      {
+        task:	"Speaker Diarization	",
+        dataset: "AMI", 
+        system:"ECAPA-TDNN",
+        performance:	"DER=3.01% (eval)",
+        api:""
+      },
+    ],
+    "Speech Enhancement":[
+      {
+        task:	"Speech Enhancement", 
+        dataset: "VoiceBank",
+        system: "MetricGAN+",
+        performance: "PESQ=3.08 (test)",
+        api: '/api/speech_enhancement/enhancement_metricganplus_voicebank'
+      },
+      {
+        task:	"Speech Enhancement", 
+        dataset: "WHAMR!",
+        system: "SepFormer",
+        performance: "PESQ=3.08 (test)",
+        api: '/api/speech_enhancement/enhancement_sepformer_whamr'
+      },
+      {
+        task:	"Speech Enhancement", 
+        dataset: "WHAM!",
+        system: "SepFormer",
+        performance: "PESQ=3.08 (test)",
+        api: '/api/speech_enhancement/enhancement_sepformer_wham'
+      },
+    ],
+    "Speech Separation":[
+      {
+        task:	"Speech Separation", 
+        dataset: "WSJ2MIX", 
+        system: "SepFormer",
+        performance: "SDRi=22.6 dB (test)",
+        api: '/api/audioseparation/speech_separation_sepformer_wsj02mix'
+      },
+      {
+        task:	"Speech Separation", 
+        dataset: "WSJ3MIX", 
+        system: "SepFormer",
+        performance: "SDRi=20.0 dB (test)",
+        api: '/api/audioseparation/speech_separation_sepformer_wsj03mix'
+  
+      },
+      {
+        task:	"Speech Separation", 
+        dataset: "WHAM!", 
+        system: "SepFormer",
+        performance: "SDRi= 16.4 dB (test)",
+        api: '/api/audioseparation/speech_separation_sepformer_wham'
+      },
+      {
+        task:	"Speech Separation", 
+        dataset: "WHAMR!", 
+        system: "SepFormer",
+        performance: "SDRi= 14.0 dB (test)",
+        api: '/api/audioseparation/speech_separation_sepformer_whamr'
+      },
+      {
+        task:	"Speech Separation", 
+        dataset: "Libri2Mix", 
+        system: "SepFormer",
+        performance: "SDRi= 20.6 dB (test-clean)",
+        api: null
+       
+      },
+      {
+        task:	"Speech Separation", 
+        dataset: "Libri3Mix", 
+        system: "SepFormer",
+        performance: "SDRi= 18.7 dB (test-clean)",
+        api: null
+      },
+    ],
+    "Voice Activity Detection":[
+      {
+        task:	"Voice Activity Detection",
+        dataset: "LibryParty", 
+        system: "CRDNN",
+        performance:	"F-score=0.9477 (test)",
+        api: '/api/voice_activity_detection/vad_crdnn_libriparty'
+      },
+    ],   
+    "Emotion Recognition":[
+      {
+        task:	"Emotion Recognition", 
+        dataset: "IEMOCAP", 
+        system: "wav2vec", 
+        performance:	"Accuracy=79.8% (test)",
+        api: '/api/emotion_recognition/wav2vec2_IEMOCAP'
+      },
+    ],
+    "Language Identification": [
+      {
+        task:	"Language Identification", 
+        dataset: "CommonLanguage", 
+        system: "ECAPA-TDNN",	
+        performance: "Accuracy=84.9% (test)",
+        api: '/api/language_id/langid_commonlanguage_ecapa'
+      },
+      {
+        task:"Language Identification",
+        dataset: "VoxLingua 107", 
+        system:"ECAPA-TDNN Sentence", 
+        performance: "Accuracy=93.3% (test)",
+        api: '/api/language_id/langid_voxlingua107_ecapa'
+      },
+    ],
+    "Spoken Language Understanding":[
+      {
+        task:	"Spoken, Language Understanding",
+        dataset: "Timers and Such", 
+        system:	"CRDNN Intent",
+        performance: "Accuracy=89.2% (test)",
+        api:""
+      },
+      {
+        task:"Spoken, Language Understanding", 
+        dataset: "SLURP", 
+        system:	"CRDNN	Intent", 
+        performance:"Accuracy=87.54% (test)",
+        api:""
+      },
+    ]    
+  }
+
   public canvas : any;
   public ctx;
   public datasets: any;
@@ -187,123 +447,20 @@ export class FeaturesComponent implements OnInit {
   fileToUpload: File | null = null;
   filesList: any;
   public formData : FormData;
+  selectedTask: string = "";
+  process : boolean = false;
+  processError : boolean = false;
+  analysisTitle: string = "";
+  analysisResult: string = "";
+  separatedFilenames :any = [];
+  separatedFileBlobs: any = [];
+  separatedFileWavesurfer: any = [];  
 
-  preprocessTitle: string = "";
-  preprocess : boolean = false;
-  preprocessError : boolean = false;
-  
   staticAlertClosed5:boolean=true;
   staticAlertClosed6:boolean=true;
   succesMsg: string =" Success"
   errorMsg: string = "Error"
-
-
-  PreprocessingSteps = [
-    {
-      library: "Librosa",
-      preprocess : "Linear-frequency power spectrogram",
-      description: "Represents the time on the x-axis, the frequency in Hz on a linear scale on the y-axis, and the power in dB.",
-      api: "/api/preprocess/linear_frequency_power_spectrogram"
-    },
-    {
-      library: "Librosa",
-      preprocess : "Log-frequency power spectrogram",
-      description: "Such features can be obtained from a spectrogram by converting the linear frequency axis (measured in Hertz) into a logarithmic axis (measured in pitches). The resulting representation is also called log-frequency spectrogram.",
-      api: "/api/preprocess/log_frequency_power_spectrogram"
-    },
-    {
-      library: "librosa.feature.chroma_stft",
-      preprocess : "Chroma STFT",
-      description: "Compute a chromagram from a waveform or power spectrogram. This implementation is derived from chromagram_E (Ellis, Daniel P.W. “Chroma feature analysis and synthesis” 2007/04/21 http://labrosa.ee.columbia.edu/matlab/chroma-ansyn/)",
-      api: '/api/preprocess/chroma_stft'
-    },
-    {
-      library: "librosa.feature.chroma_cqt",
-      preprocess : "Chroma CQT",
-      description: "Constant-Q chromagram",
-      api: '/api/preprocess/chroma_cqt'
-    },
-    {
-      library: "librosa.feature.chroma_cens      ",
-      preprocess : "Chroma CENS",
-      description: "Computes the chroma variant “Chroma Energy Normalized” (CENS)" +
-      "To compute CENS features, following steps are taken after obtaining chroma vectors using chroma_cqt:\n"+
-      "1) L-1 normalization of each chroma vector, "+
-      '2) Quantization of amplitude based on “log-like” amplitude thresholds,'+
-      "3) (optional) Smoothing with sliding window."+ 
-      "4) Default window length = 41 frames."+      
-      " CENS features are robust to dynamics, timbre and articulation, thus these are commonly used in audio matching and retrieval applications."+
-      "Meinard Müller and Sebastian Ewert “Chroma Toolbox: MATLAB implementations for extracting variants of chroma-based audio features”" +
-      "In Proceedings of the International Conference on Music Information Retrieval (ISMIR), 2011.",
-      api: '/api/preprocess/chroma_cens'
-    },
-    {
-      library: "librosa.feature.melspectrogram",
-      preprocess : "Melspectrogram",
-      description: "Compute a mel-scaled spectrogram. If a spectrogram input S is provided, then it is mapped directly onto the mel basis by mel_f.dot(S)."+
-      "If a time-series input y, sr is provided, then its magnitude spectrogram S is first computed, and then mapped onto the mel scale by mel_f.dot(S**power)."+
-      "By default, power=2 operates on a power spectrum.",
-      api: '/api/preprocess/melspectrogram'
-    },
-    {
-      library: "librosa.feature.melspectrogram",
-      preprocess : "Mel-frequency spectrogram",
-      description: "Display of mel-frequency spectrogram coefficients, with custom arguments for mel filterbank construction (default is fmax=sr/2)",
-      api: '/api/preprocess/melfrequencyspectrogram'
-    },
-    {
-      library: "librosa.feature.mfcc",
-      preprocess : "Mel-frequency cepstral coefficients (MFCCs)",
-      description: "Mel-frequency cepstral coefficients (MFCCs)",
-      api: '/api/preprocess/mfcc'
-    },
-    {
-      library: "librosa.feature.mfcc",
-      preprocess : "Compare different DCT bases",
-      description: "Compare different DCT bases",
-      api: '/api/preprocess/comparedct'
-    },
-    {
-      library: "librosa.feature.rms",
-      preprocess : "Root-Mean-Square (RMS) ",
-      description: "Compute root-mean-square (RMS) value for each frame, either from the audio samples y or from a spectrogram S."+
-      "Computing the RMS value from audio samples is faster as it doesn’t require a STFT calculation." +
-      "However, using a spectrogram will give a more accurate representation of energy over time because its frames can be windowed,"+
-      "thus prefer using S if it’s already available.",
-      api: '/api/preprocess/rms'
-    },
-    {
-      library: "librosa.feature.spectral_centroid",
-      preprocess : "Spectral Centroid",
-      description: "Compute the spectral centroid."+
-      "Each frame of a magnitude spectrogram is normalized and treated as a distribution over frequency bins,"+
-      "from which the mean (centroid) is extracted per frame."+
-      "More precisely, the centroid at frame t is defined as centroid[t] = sum_k S[k, t] * freq[k] / (sum_j S[j, t]).",
-      api: '/api/preprocess/spectral_centroid'
-    },
-    {
-      library: "librosa.feature.spectral_bandwidth",
-      preprocess : "Spectral Bandwidth",
-      description: "Compute p’th-order spectral bandwidth. "+
-      "The spectral bandwidth 1 at frame t is computed by [1]: "+
-      "(sum_k S[k, t] * (freq[k, t] - centroid[t])**p)**(1/p). "+
-      "[1] Klapuri, A., & Davy, M. (Eds.). (2007). Signal processing methods for music transcription, chapter 5. Springer Science & Business Media.",
-      api: '/api/preprocess/spectral_bandwidth'
-    },
-    {
-      library: "librosa.feature.spectral_contrast",
-      preprocess : "Spectral Contrast",
-      description: "Compute spectral contrast. "+
-      "Each frame of a spectrogram S is divided into sub-bands."+
-      "For each sub-band, the energy contrast is estimated by comparing the mean energy in the top quantile (peak energy) to that of the bottom quantile (valley energy)." +
-      "High contrast values generally correspond to clear, narrow-band signals, while low contrast values correspond to broad-band noise. 1",
-      api: '/api/preprocess/spectral_contrast'
-    },
-  ]
   
-  separatedFilenames :any;
-  separatedFileBlobs: any = [];
-  separatedFileWavesurfer: any = [];  
   image:Blob
   imageURL:SafeUrl
 
@@ -348,7 +505,6 @@ export class FeaturesComponent implements OnInit {
       ]
     });
 
-
     // this.wavesurfer = this.wavesurfer.addPlugin(this.spectogram).initPlugin("spectogram");
     console.log(this.wavesurfer.getActivePlugins());
     
@@ -356,27 +512,42 @@ export class FeaturesComponent implements OnInit {
     this.wavesurfer.loadBlob(file)
   }
 
-  preprocessFile(preprocessApi: string, description:string){
-    this.preprocessTitle = description; 
-    this.formData = new FormData();
-    this.formData.append("title", this.fileName); 
-    this.formData.append("audiofile", this.fileToUpload);
-    this.http.post(preprocessApi, this.formData, {responseType: 'blob'}).subscribe(
-      response => {
-        this.preprocess =true;
-        this.preprocessError =false;
-        console.log(response)
-        this.image = response
-        this.imageURL = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(this.image))
-        
-      },
-      error => {
-        console.error(error);
-        this.preprocess =true;
-        this.preprocessError = true;
+  processFile(processApi, description:string){
+    this.analysisStep = processApi;
+    this.analysisTitle = description; 
+    console.log("==> processFile : processApi = ");
+    console.log(processApi)
 
-      }
-    );
+    switch (processApi.task) {
+      case "Automatic Speech Recognition":
+        this.analyzeFile(processApi.api);
+        break;
+
+      case "Language Identification":
+        this.analyzeFile(processApi.api);
+        break;
+      
+      case "Voice Activity Detection":
+        this.analyzeFile(processApi.api);
+        break;
+
+      case "Emotion Recognition":
+          this.analyzeFile(processApi.api);
+        break;
+  
+      case "Speech Enhancement":
+        this.separateFile(processApi.api);
+        break;
+
+      case "Speech Separation":
+        this.separateFile(processApi.api);
+        break;
+    
+      default:
+        break;
+    }
+
+    
   }
 
   setZoom(event){
@@ -385,42 +556,60 @@ export class FeaturesComponent implements OnInit {
     this.wavesurfer.zoom(Number(event));
   }
 
-  separateFile(){
+
+  analyzeFile(api:string){
+    console.log("==> analyzeApi : ", api)
     this.formData = new FormData();
     this.formData.append("title", this.fileName); 
     this.formData.append("audiofile", this.fileToUpload);
-    this.http.post("/api/audioseparation/sepformer_wsj03mix", this.formData).subscribe(
+    this.http.post(api, this.formData).subscribe(
       response => {
+        this.process =true;
+        this.processError =false;
+        console.log(response)  
+        this.analysisResult = response.toString();         
+      },
+      error => {
+        console.error(error);
+        this.process =false;
+        this.processError = true;
+
+      }
+    );
+  }
+
+  separateFile(api:string){
+    this.formData = new FormData();
+    this.formData.append("title", this.fileName); 
+    this.formData.append("audiofile", this.fileToUpload);
+    this.http.post(api , this.formData).subscribe(
+      response => {
+        this.process =true;
+        this.processError =false;
         this.separatedFilenames = response;
         console.log(this.separatedFilenames);
         for (let i = 0; i < this.separatedFilenames.length; i++) {
           const separatedFilename = this.separatedFilenames[i];
-          this.downloadSeparatedFile(separatedFilename, i) 
+          this.downloadSeparatedFile(api, separatedFilename, i) 
         }
       },
       error => {
         console.error(error);
+        this.process =false;
+        this.processError = true;
         
       }
     );
   }
 
-
-  downloadSeparatedFile(filename:string, index:number){
-    this.http.get("/api/audioseparation/"+ filename, { responseType: 'blob' }).subscribe(
+  downloadSeparatedFile(api:string, filename:string, index:number){
+    this.http.get(api + "/"+ filename, { responseType: 'blob' }).subscribe(
       data => {
         let wavesurfer = WaveSurfer.create({
           container: '#waveform-' + index,
           backgroundColor:'black',
         });
-        // this.wavesurfer = this.wavesurfer.addPlugin(this.spectogram).initPlugin("spectogram");
-        console.log(wavesurfer.getActivePlugins());
-        
-        // this.wavesurfer.load(fileName);
-        // wavesurfer.loadBlob(data);
         this.separatedFileWavesurfer.push(wavesurfer)  
-        console.log("==>this.separatedFileWavesurfer[i]: ");
-        console.log(this.separatedFileWavesurfer[index]);
         this.separatedFileWavesurfer[index].loadBlob(data);
         this.separatedFileBlobs.push(data); 
       }
@@ -431,6 +620,11 @@ export class FeaturesComponent implements OnInit {
     console.log(this.separatedFileBlobs)
     console.log(this.separatedFilenames)
     saveAs(this.separatedFileBlobs[index], this.separatedFilenames[index]);
+  }
+
+  onSelectTask(task:string){
+  console.log("==> task: ", task);
+  this.selectedTask = task
   }
 
 

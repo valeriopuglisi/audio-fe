@@ -23,46 +23,36 @@
         <div class=" card-header">
           <div class=" row">
             <div class=" col-sm-12 text-center">
-              <h5 class=" card-category">Step 1</h5>
+              <h5 class=" card-category">Step 0</h5>
               <h2 class=" card-title">Audio Selection</h2>
             </div> 
           </div>
         </div>
         <div class=" card-body text-center">
+        
+        <!-- Upload file from pc -->
+        <div class="col-sm-12" *ngIf="this.fileToUpload == null">
+          <h2 class=" card-title">Insert Audio to Analyse </h2>
+          <label for="step">Choose a file:</label>
           <input 
-          type="file" 
-          class="file-input"     
-          (change)="onFileSelected($event)"
-          accept="audio/*"
-          #fileUpload
+            id = "step"
+            type="file" 
+            (change)="onFileSelected($event)"
+            accept="audio/*"
           >
-          <div class="row">
-            
-            <!-- Upload file from pc -->
-            <div class="col-sm-12">
-              <h2 class=" card-title">Upload</h2>
-              <div class="file-upload">   
-                {{fileName || "No file uploaded yet."}}
-                <button mat-mini-fab color="primary" class="upload-btn"
-                (click)="fileUpload.click()">
-                <i>attach_file</i>
-              </button>
-              <div *ngIf="this.fileToUpload">
-                <button  
-                class="btn btn-warnings" data-action="play" 
-                (click)="uploadFile()" >
-                <i class="glyphicon glyphicon-play"></i>
-                Upload
-              </button>
-            </div>
-          </div>
+          <div *ngIf="this.fileToUpload">
+            <button  
+            class="btn btn-warnings" data-action="play" 
+            (click)="uploadFile()" >
+            <i class="glyphicon glyphicon-play"></i>
+            Upload
+          </button>
         </div>
-        
-        
+
+
         <!-- Select file from Server -->
-        <div class="col-sm-12">
-          <h5 class="card-title">or</h5>
-          <h2 class="card-title">Select a File</h2>
+        <div style=" overflow: auto;height: 40vh;">
+          <h2 class="card-title">Download a File</h2>
           <table class="table">
             <thead>
               <tr>
@@ -97,119 +87,219 @@
           </table>
         </div>
       </div>
-      
-    </div>
-  </div>
-</div>
-</div>
 
-<!-- Audio Player -->
-<div class=" row" *ngIf="this.fileName && this.fileName!==''">
-  <div class=" col-12">
-    <div class=" card card-chart">
-      <div class=" card-header">
-        <div class=" row">
-          <div class=" col-sm-12 text-center">
-            <h5 class=" card-category">Step 2</h5>
-            <h2 class=" card-title">Audio Player & Visualizer</h2>
+        <!-- Here be waveform -->
+        <div class=" col-sm-12"  *ngIf="this.fileName && this.fileName!==''" >
+          <h2 class=" card-title">Audio Player & Visualizer</h2>
+          <h3 class=" card-title">{{this.fileName}}</h3>
+          <div  class=" card-body" id="demo">
+            <div id="waveform">
+              <div class="progress progress-striped active" id="progress-bar">
+                <div class="progress-bar progress-bar-info"></div>
+              </div> 
+            </div>
+            <div class="controls text-center">
+              <button class="btn btn-warnings" data-action="play" 
+              (click)="this.wavesurfer.play()" >
+                <i class="tim-icons icon-triangle-right-17"></i>Play
+              </button>
+              
+              <button class="btn btn-warnings" data-action="play" 
+              (click)="this.wavesurfer.pause()" >          
+                <i class=" tim-icons icon-button-pause"></i>Pause
+              </button>
+
+              <button class="btn btn-warnings" data-action="play" 
+              (click)="this.addStep()" >
+                <i class="tim-icons ui-1_simple-add"></i>Add Step
+              </button>
+                    
+            </div>
+
           </div>
         </div>
       </div>
-      <div  class=" card-body" id="demo">
-        <div id="waveform">
-          <div class="progress progress-striped active" id="progress-bar">
-            <div class="progress-bar progress-bar-info"></div>
-          </div> 
-          <!-- Here be waveform -->
-        </div>
-        <div id="wave-spectrogram"></div>
-        <div id="wave-timeline"></div>
-        <div class="controls text-center">
-          <button class="btn btn-warnings" data-action="play" (click)="this.wavesurfer.play()" >
-            <i class="tim-icons icon-triangle-right-17"></i>Play
-          </button>
-          
-          <button class="btn btn-warnings" data-action="play" (click)="this.wavesurfer.pause()" >          
-            <i class=" tim-icons icon-button-pause"></i>Pause
-          </button>
-          
-          <button 
-          class="btn btn-warnings" 
-          data-action="play" 
-          (click)="separateFile()" >          
-          <i class=" tim-icons icon-zoom-split"></i>Analyze
-        </button>
-        </div>
       
     </div>
   </div>
 </div>
-</div>
 
-<div class=" row" *ngIf="this.fileName && this.fileName!==''">
+<div class=" row"  *ngFor="let step of this.pipeline; let i  = index;">
   <div class=" col-12">
     <div class=" card card-chart">
       <div class=" card-header">
-        <div class=" row">
+        <div class=" row" >
+          <div class="col-sm-12 text-right">
+            <button type="button"  
+            class="btn btn-fab" 
+            (click)="deletePipelineStep(step)"> 
+            <i class="tim-icons icon-simple-remove"></i>
+            </button>
+          </div>
           <div class=" col-sm-12 text-center">
-            <h5 class=" card-category">Step 3</h5>
-            <h2 class=" card-title">Audio Analysis Results</h2>
+            <h5 class=" card-category">Step {{i + 1}}</h5>
+            <h2 *ngIf="step.fileName" class="card-title text-center">File: {{step.fileName}}</h2>
+            <h2 *ngIf="step.task" class="card-title">Task: {{step.task}} - {{step.system}} - {{step.dataset}} - {{step.performance}}</h2>
           </div>
         </div>
       </div>
       <div  class=" card-body" id="demo" >
         <div class="row">
-          <div class="col-sm-12 col-md-12" *ngFor="let separatedFile of this.separatedFilenames; let i = index">
-            
+
+          <div class="col-sm-12">
+            <!-- Here select audio file from pipeline -->
+          <div *ngIf="!step.fileName" style=" overflow: auto;height: 40vh;" >
+            <h2 class="card-title text-center">Select audio from pipeline</h2>
+            <table class="table" >
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th>Title</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let file of this.pipelineFiles; let i = index">
+                <tr>
+                  <td class="text-center">{{i}}</td>
+                  <td>{{ file.name }} </td>
+                  <td class="td-actions text-right">
+                    <button 
+                    type="button" 
+                    rel="tooltip" 
+                    class="btn btn-info btn-sm btn-icon"
+                    (click)="this.selectPipelineFile(file)"
+                    >
+                      <i class="tim-icons icon-check-2"></i>
+                    </button>
+                  </td>
+                </tr>
+                
+              </tbody>
+            </table>
+          </div>
+          </div>
+        </div>
+
+
+        <div class="row" *ngIf="step.api == '' && step.fileName">
+          <div class="col-sm-12 col-md-12"> 
+            <button type="button"  
+            class="btn btn-primary" 
+            *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps1 | keyvalue;"
+            (click)="onSelectTask(AudioAnalysisStep.key)"> 
+              {{AudioAnalysisStep.key}} 
+            </button>
+          </div>
+          <div class="col-sm-12 col-md-12" 
+          *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps1 | keyvalue;">  
+            <div *ngIf="AudioAnalysisStep.key == step.task">
+              <div class="card card-chart">
+                <div class=" card-header">
+                  <div class=" row">
+                    <div class=" col-sm-12 text-center">
+                      <h5 class=" card-category">Speechbrain</h5>
+                      <h2 class=" card-title">{{ AudioAnalysisStep.key }}</h2>
+                    </div>
+                  </div>
+                </div>
+                <div  class="card-body" >
+                  <div style="overflow:auto; height: 60vh;">
+                    <table class="table" >
+                      <thead>
+                        <tr>
+                          <th class="text-center">#</th>
+                          <th>System</th>
+                          <th>Dataset</th>
+                          <th>Performance</th>
+                          <th>api</th>
+                        </tr>
+                      </thead>
+                      <tbody *ngFor="let step of AudioAnalysisStep.value">
+                        <tr>
+                          
+                          <td class="text-center">{{i}}</td>
+                          <td>{{ step.system }} </td>
+                          <td>{{ step.dataset }} </td>
+                          <td>{{ step.performance }} </td>
+                          <td> <button 
+                            class="btn btn-primary btn-fab btn-icon btn-round" 
+                            (click)="onSelectTaskMethod(step)"
+                            [disabled]="step.api !== '' ? false : true"
+                            > 
+                            <i class="tim-icons icon-triangle-right-17"></i></button></td>
+                          </tr>
+                          
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12 col-md-12 text-center" *ngIf="step.task !== '' && step.api !== '' && step.processed==false ">
+            <button type="button"  class="btn btn-primary" 
+              (click)="onRunTask(step, i)"> 
+              Run
+            </button>
+          </div>
+
+          <div class="col-sm-12 text-center" *ngIf="step.processing">
+            <div class="lds-facebook"><div></div><div></div><div></div></div>
+          </div>
+          
+          <div class="col-sm-12 col-md-12 text-center" *ngIf="step.analysisResult"> {{step.analysisResult}}</div>
+
+          <div class="col-sm-12 col-md-12" *ngFor="let separatedFile of step.separatedFilenames; let j = index">  
             <h4> {{separatedFile}} </h4>
             <div align="right">
               <button 
               class="btn btn-warnings" 
-              (click)="this.saveSeparatedFile(i)"
+              (click)="this.saveSeparatedFile(step, j)"
                >          
                 <i class=" tim-icons icon-cloud-download-93"></i>
               </button>
             </div>
-            <div [id]="'waveform-'+ i">
-          
-              <!-- <div class="progress progress-striped active" id="progress-bar">
-                <div class="progress-bar progress-bar-info"></div>
-              </div>  -->
+            <div [id]="'waveform-'+ i +'-'+j">
               <!-- Here be waveform -->
             </div>
-            <div [id]="'wave-spectrogram-' + i"></div>
-            <div [id]="'wave-timeline-' + i"></div>
+            <div [id]="'wave-spectrogram-'+i+'-'+j"></div>
+            <div [id]="'wave-timeline-'+i+'-'+j"></div>
             <div class="controls text-center">
               <button 
               class="btn btn-warnings" 
               data-action="play" 
-              (click)="this.separatedFileWavesurfer[i].play()" >
+              (click)="step.separatedFileWavesurfer[j].play()" >
                 <i class="tim-icons icon-triangle-right-17"></i>Play
               </button>
               
               <button 
               class="btn btn-warnings" 
               data-action="play" 
-              (click)="this.separatedFileWavesurfer[i].pause()"
+              (click)="step.separatedFileWavesurfer[j].pause()"
                >          
                 <i class=" tim-icons icon-button-pause"></i>Pause
               </button>
               
-              <!-- <button 
-              class="btn btn-warnings" 
-              data-action="play" 
-              (click)="separateFile()" >          
-              <i class=" tim-icons icon-zoom-split"></i>Analyze
-            </button> -->
             </div>
+          </div>
+
+          <div class="col-sm-12 col-md-12 text-center" *ngIf="step.processed">
+            <button class="btn btn-warnings" data-action="play" 
+              (click)="this.addStep()" >
+                <i class="tim-icons ui-1_simple-add"></i>Add Step
+              </button>
           </div>
         </div>
         
       
     </div>
   </div>
-</div>
-
+  </div>
 </div>
 
 </div>
