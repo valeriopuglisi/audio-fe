@@ -256,7 +256,8 @@ export class UploadAudioFileComponent implements OnInit {
       task:	"Automatic Speech Recognition",
       dataset: "LibriSpeech (English)", 
       system: "wav2vec2",
-      performance: "WER=1.90% (test-clean)"
+      performance: "WER=1.90% (test-clean)",
+      api:""
     },
     {
       task:	"Automatic Speech Recognition",
@@ -285,19 +286,22 @@ export class UploadAudioFileComponent implements OnInit {
       task:	"Automatic Speech Recognition	", 
       dataset: "LibriSpeech (English)", 
       system: "CNN + Transformer", 
-      performance:"WER=2.46% (test-clean)"
+      performance:"WER=2.46% (test-clean)",
+      api:""
     },
     {
       task:	"Automatic Speech Recognition	",
       dataset: "TIMIT", 
       system: "CRDNN + distillation",
-      performance: "PER=13.1% (test)"
+      performance: "PER=13.1% (test)",
+      api:""
     },
     {
       task:	"Automatic Speech Recognition	",
       dataset: "TIMIT", 
       system:"wav2vec2 + CTC/Att.",
-      performance:	"PER=8.04% (test)"
+      performance:	"PER=8.04% (test)",
+      api:""
     },
     {
       task: "Automatic Speech Recognition",	
@@ -604,7 +608,6 @@ export class UploadAudioFileComponent implements OnInit {
     console.log("==> onSelectTask: step = ", step)
   }
 
-  
   onRunTask(step: any, step_index){
     console.log("==> step: ", step)
     switch (step.task) {
@@ -638,14 +641,12 @@ export class UploadAudioFileComponent implements OnInit {
   }
 
   deletePipelineStep(step){
-    this.pipeline = this.pipeline.filter( element => element == step)
+    this.pipeline = this.pipeline.filter( element => element !== step)
     console.log("deletePipelineStep(step) => pipeline:", this.pipeline);
   }
 
-
-
-  analyzeFile(step:PipelineStep,){
-    console.log("==> analyzeApi : ", step.api)
+  analyzeFile(step:PipelineStep){
+    console.log("==> analyzeFile(step:PipelineStep) => step.api : ", step.api)
     step.processing =true;
     this.formData = new FormData();
     this.formData.append("title", step.fileName); 
@@ -722,8 +723,7 @@ export class UploadAudioFileComponent implements OnInit {
      });
      this.wavesurfer.loadBlob(fileName)
   }
-  
-                  
+                
 }
                 
                 
