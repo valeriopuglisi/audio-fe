@@ -291,7 +291,12 @@
           <div class="col-sm-12 col-md-12 text-center" *ngIf="step.processed">
             <button class="btn btn-warnings" data-action="play" 
               (click)="this.addStep()" >
-                <i class="tim-icons ui-1_simple-add"></i>Add Step
+                <i class="tim-icons icon-simple-add"></i>Add Step
+              </button>
+
+              <button class="btn btn-warnings" data-action="play" 
+              (click)="this.savePipeline()" >
+                <i class="tim-icons icon-pin"></i>Save Pipeline
               </button>
           </div>
         </div>

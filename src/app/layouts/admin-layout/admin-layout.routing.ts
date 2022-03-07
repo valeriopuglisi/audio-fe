@@ -11,6 +11,7 @@ import { UploadAudioFileComponent } from "src/app/pages/upload-audio-file/upload
 import { FeaturesComponent } from "src/app/pages/features/features.component";
 import { PreprocessingComponent } from "src/app/pages/preprocessing/preprocessing.component";
 import { PipelinesComponent } from "src/app/pages/pipelines/pipelines.component";
+import { StoredPipelinesComponent } from "src/app/pages/stored-pipelines/stored-pipelines.component";
 // import { RtlComponent } from "../../pages/rtl/rtl.component";
 
 export const AdminLayoutRoutes: Routes = [
@@ -18,6 +19,7 @@ export const AdminLayoutRoutes: Routes = [
   { path: "preprocessing", component: PreprocessingComponent},
   { path: "features", component: FeaturesComponent},  
   { path: "pipelines", component: UploadAudioFileComponent},
+  { path: "stored-pipelines", component: StoredPipelinesComponent},
   { path: "dashboard", component: DashboardComponent },
   { path: "icons", component: IconsComponent },
   { path: "maps", component: MapComponent },

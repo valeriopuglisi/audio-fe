@@ -545,9 +545,7 @@ export class FeaturesComponent implements OnInit {
     
       default:
         break;
-    }
-
-    
+    }    
   }
 
   setZoom(event){

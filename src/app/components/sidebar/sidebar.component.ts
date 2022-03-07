@@ -38,6 +38,13 @@ export const ROUTES: RouteInfo[] = [
     class: ""
   },
   {
+    path: "/stored-pipelines",
+    title: "Stored Pipelines",
+    rtlTitle: "لوحة القيادة",
+    icon: "icon-atom",
+    class: ""
+  },
+  {
     path: "/dashboard",
     title: "Dashboard",
     rtlTitle: "لوحة القيادة",

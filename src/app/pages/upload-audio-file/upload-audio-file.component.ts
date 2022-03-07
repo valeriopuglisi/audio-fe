@@ -36,6 +36,17 @@ interface PipelineStep {
 }
 
 
+interface PipelineStepToStore {
+  task:string,
+  api:string,
+  dataset:string,
+  performance:string,
+  system:string,
+  inputFilename: string,
+  outputFilenames :string[],
+}
+
+
 
 
 @Component({
@@ -72,30 +83,34 @@ export class UploadAudioFileComponent implements OnInit {
   processError : boolean =false;
   
   AudioAnalysisSteps = [
-    // {
-    //   task:	"Automatic Speech Recognition",
-    //   dataset: "LibriSpeech", 
-    //   system: "wav2vec2",
-    //   performance: "WER=1.90% (test-clean)"
-    // },
-    // {
-    //   task:	"Automatic Speech Recognition	", 
-    //   dataset: "LibriSpeech", 
-    //   system: "CNN + Transformer", 
-    //   performance:"WER=2.46% (test-clean)"
-    // },
-    // {
-    //   task:	"Automatic Speech Recognition	",
-    //   dataset: "TIMIT", 
-    //   system: "CRDNN + distillation",
-    //   performance: "PER=13.1% (test)"
-    // },
-    // {
-    //   task:	"Automatic Speech Recognition	",
-    //   dataset: "TIMIT", 
-    //   system:"wav2vec2 + CTC/Att.",
-    //   performance:	"PER=8.04% (test)"
-    // },
+    {
+      task:	"Automatic Speech Recognition",
+      dataset: "LibriSpeech", 
+      system: "wav2vec2",
+      performance: "WER=1.90% (test-clean)",
+      api:''
+    },
+    {
+      task:	"Automatic Speech Recognition	", 
+      dataset: "LibriSpeech", 
+      system: "CNN + Transformer", 
+      performance:"WER=2.46% (test-clean)",
+      api:''
+    },
+    {
+      task:	"Automatic Speech Recognition	",
+      dataset: "TIMIT", 
+      system: "CRDNN + distillation",
+      performance: "PER=13.1% (test)",
+      api:''
+    },
+    {
+      task:	"Automatic Speech Recognition	",
+      dataset: "TIMIT", 
+      system:"wav2vec2 + CTC/Att.",
+      performance:	"PER=8.04% (test)",
+      api:''
+    },
     {
       task: "Automatic Speech Recognition",	
       dataset: "CommonVoice (English)", 
@@ -132,24 +147,31 @@ export class UploadAudioFileComponent implements OnInit {
       api: '/api/automatic_speech_recognition/asr_wav2vec2_transformer_aishell_mandarin_chinese'
       
     },
-    // {
-    //   task:	"Speech translation",
-    //   dataset: "Fisher-callhome (spanish)", 
-    //   system:	"conformer (ST + ASR)", 
-    //   performance: "BLEU=48.04 (test)"
-    // },
-    // {
-    //   task:	"Speaker Verification	",
-    //   dataset: "VoxCeleb2", 
-    //   system: "ECAPA-TDNN",
-    //   performance:	"EER=0.69% (vox1-test)"
-    // },
-    // {
-    //   task:	"Speaker Diarization	",
-    //   dataset: "AMI", 
-    //   system:"ECAPA-TDNN",
-    //   performance:	"DER=3.01% (eval)"
-    // },
+    {
+      task:	"Speech translation",
+      dataset: "Fisher-callhome (spanish)", 
+      system:	"conformer (ST + ASR)", 
+      performance: "BLEU=48.04 (test)",
+      api:''
+
+      
+    },
+    {
+      task:	"Speaker Verification	",
+      dataset: "VoxCeleb2", 
+      system: "ECAPA-TDNN",
+      performance:	"EER=0.69% (vox1-test)",
+      api:''
+
+    },
+    {
+      task:	"Speaker Diarization	",
+      dataset: "AMI", 
+      system:"ECAPA-TDNN",
+      performance:	"DER=3.01% (eval)",
+      api:''
+
+    },
     {
       task:	"Speech Enhancement", 
       dataset: "VoiceBank",
@@ -481,7 +503,8 @@ export class UploadAudioFileComponent implements OnInit {
     ]    
   }
 
-  pipeline : PipelineStep [] = []
+  pipeline : PipelineStep [] = [];
+  pipelineToStore: any = {};
   pipelineFiles: File[] = []
   separatedFilenames :any;
   separatedFileBlobs: any = [];
@@ -492,6 +515,34 @@ export class UploadAudioFileComponent implements OnInit {
   
   ngOnInit() {
     this.getFiles();
+  }
+
+  savePipeline(){
+    for (let i = 0; i < this.pipeline.length; i++) {
+      let element = this.pipeline[i];
+      let pipelineElement : PipelineStepToStore = {
+        task : element.task,
+        system : element.system,
+        dataset: element.dataset,
+        performance: element.performance,
+        api: element.api,
+        inputFilename: element.fileName,
+        outputFilenames: element.separatedFilenames,
+      }
+      this.pipelineToStore[i] = pipelineElement;
+      console.log("==> savePipeline(): this.pipelineToStore = ", this.pipelineToStore);
+    }
+
+    this.http.post('/api/utils/save-pipeline', this.pipelineToStore).subscribe(
+      response => {
+        console.log("==> savePipeline: response = ", response)
+      },
+      error => {
+        console.error(error);
+              
+      
+      }
+    );
   }
   
   
@@ -638,6 +689,8 @@ export class UploadAudioFileComponent implements OnInit {
       default:
         break;
     }
+    console.log("==> onRunTask : this.pipeline = ", this.pipeline);
+
   }
 
   deletePipelineStep(step){

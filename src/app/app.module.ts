@@ -18,6 +18,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { FeaturesComponent } from './pages/features/features.component';
 import { PreprocessingComponent } from './pages/preprocessing/preprocessing.component';
 import { PipelinesComponent } from './pages/pipelines/pipelines.component';
+import { StoredPipelinesComponent } from './pages/stored-pipelines/stored-pipelines.component';
 
 
 
@@ -40,7 +41,7 @@ import { PipelinesComponent } from './pages/pipelines/pipelines.component';
   exports:[
     
   ],
-  declarations: [AppComponent, AdminLayoutComponent, AuthLayoutComponent, UploadAudioFileComponent, PageNotFoundComponent, FeaturesComponent, PreprocessingComponent, PipelinesComponent],
+  declarations: [AppComponent, AdminLayoutComponent, AuthLayoutComponent, UploadAudioFileComponent, PageNotFoundComponent, FeaturesComponent, PreprocessingComponent, PipelinesComponent, StoredPipelinesComponent],
   providers: [],
   bootstrap: [AppComponent]
 })
