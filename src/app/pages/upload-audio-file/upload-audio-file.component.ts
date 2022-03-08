@@ -17,6 +17,15 @@ interface AudioAnalysisStep {
   api:string;
 }
 
+
+interface Pipeline {
+  name: string;
+  author: string;
+  creationTime: string;
+  notes: string;
+  steps: PipelineStepToStore[],
+}
+
 interface PipelineStep {
     file: File | null,
     fileName: string,
@@ -32,7 +41,6 @@ interface PipelineStep {
     processing: boolean,
     processing_error: string | null,
     processed: boolean,
-    
 }
 
 
@@ -504,7 +512,16 @@ export class UploadAudioFileComponent implements OnInit {
   }
 
   pipeline : PipelineStep [] = [];
-  pipelineToStore: any = {};
+  savingPipeline:boolean=false;
+  savedPilpeline:boolean=false;
+  pipelineToStore: Pipeline = {
+    author:"Valerio Francesco Puglisi",
+    creationTime: new Date().toISOString(),
+    name:"",
+    notes:"",
+    steps:[]
+    
+  };
   pipelineFiles: File[] = []
   separatedFilenames :any;
   separatedFileBlobs: any = [];
@@ -517,7 +534,12 @@ export class UploadAudioFileComponent implements OnInit {
     this.getFiles();
   }
 
+  openSavePipeline(){
+    this.savingPipeline =true; 
+  }
+
   savePipeline(){
+   
     for (let i = 0; i < this.pipeline.length; i++) {
       let element = this.pipeline[i];
       let pipelineElement : PipelineStepToStore = {
@@ -529,13 +551,15 @@ export class UploadAudioFileComponent implements OnInit {
         inputFilename: element.fileName,
         outputFilenames: element.separatedFilenames,
       }
-      this.pipelineToStore[i] = pipelineElement;
+      this.pipelineToStore.steps[i] = pipelineElement;
       console.log("==> savePipeline(): this.pipelineToStore = ", this.pipelineToStore);
     }
 
     this.http.post('/api/utils/save-pipeline', this.pipelineToStore).subscribe(
       response => {
         console.log("==> savePipeline: response = ", response)
+        this.savingPipeline = false;
+        this.savedPilpeline = true;
       },
       error => {
         console.error(error);
@@ -544,7 +568,10 @@ export class UploadAudioFileComponent implements OnInit {
       }
     );
   }
-  
+
+  closeSavePipeline(){
+    this.savingPipeline = false;
+  }
   
   onFileSelected(event) {
     const file:File = event.target.files[0];
@@ -562,7 +589,7 @@ export class UploadAudioFileComponent implements OnInit {
           this.initWaveSurfer(colorMap, this.fileToUpload)
         })
       }
-    }
+  }
     
   getFiles(){
     this.http.get("/api/audiofiles").subscribe(
@@ -602,6 +629,7 @@ export class UploadAudioFileComponent implements OnInit {
     this.http.get("/api/audiofiles/"+ filename, { responseType: 'blob' }).subscribe(
       data => {
         this.fileToUpload = new File([data], filename)
+        this.pipelineFiles.push(this.fileToUpload);
         this.fileName = filename;
         console.log(this.fileToUpload.type)
         this.formData.append("title", this.fileName); 
@@ -610,9 +638,9 @@ export class UploadAudioFileComponent implements OnInit {
           url: '../../assets/hot-colormap.json', 
           responseType: 'json' }).on('success', colorMap => {
             this.initWaveSurfer(colorMap, this.fileToUpload)
-          })
-        }
-        )
+        })
+      }
+    )
   }
   
   deleteFile(f){

@@ -18,6 +18,13 @@
     </span>
   </ngb-alert>
   <div class=" row">
+    <div class=" col-sm-12 text-center" style="margin-bottom: 2vh;">
+      <h5 class=" card-category">Pipeline Creation</h5>
+      <h2 class=" card-title">Deep Learning Audio Analysis</h2>
+      <!-- <img src="../../../assets/img/librosa.png" style="width: 50vh; height: 20vh;"> -->
+    </div>
+
+
     <div class=" col-12">
       <div class=" card card-chart">
         <div class=" card-header">
@@ -29,95 +36,92 @@
           </div>
         </div>
         <div class=" card-body text-center">
-        
-        <!-- Upload file from pc -->
-        <div class="col-sm-12" *ngIf="this.fileToUpload == null">
-          <h2 class=" card-title">Insert Audio to Analyse </h2>
-          <label for="step">Choose a file:</label>
-          <input 
-            id = "step"
-            type="file" 
-            (change)="onFileSelected($event)"
-            accept="audio/*"
-          >
-          <div *ngIf="this.fileToUpload">
-            <button  
-            class="btn btn-warnings" data-action="play" 
-            (click)="uploadFile()" >
-            <i class="glyphicon glyphicon-play"></i>
-            Upload
-          </button>
-        </div>
+        <div class="row">
+          <!-- Upload file from pc -->
+          <div class="col-sm-6 col-md-6" *ngIf="this.fileToUpload == null">
+            <h2 class=" card-title">Insert Audio to Analyse </h2>
+            <label for="step">Choose a file</label>
+            <input 
+              id = "step"
+              type="file" 
+              (change)="onFileSelected($event)"
+              accept="audio/*"
+            >
+            <div *ngIf="this.fileToUpload">
+              <button  
+              class="btn btn-warnings" data-action="play" 
+              (click)="uploadFile()" >
+              <i class="glyphicon glyphicon-play"></i>
+              Upload
+            </button>
+          </div>
+          </div>
 
-
-        <!-- Select file from Server -->
-        <div style=" overflow: auto;height: 40vh;">
-          <h2 class="card-title">Download a File</h2>
-          <table class="table">
-            <thead>
-              <tr>
-                <th class="text-center">#</th>
-                <th>ID</th>
-                <th>Title</th>
-                <th class="text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody *ngFor="let file of this.filesList | keyvalue; let i = index">
-              <tr>
-                <td class="text-center">{{i}}</td>
-                <td>{{ file.key }} </td>
-                <td>{{ file.value.title }} </td>
-                <td class="td-actions text-right">
-                  <button 
-                  type="button" 
-                  rel="tooltip" 
-                  class="btn btn-info btn-sm btn-icon"
-                  (click)="this.downloadFile(file.value.title)"
-                  >
-                    <i class="tim-icons icon-cloud-download-93"></i>
-                  </button>
-                  
-                  <button type="button" rel="tooltip" class="btn btn-danger btn-sm btn-icon">
-                    <i class="tim-icons icon-simple-remove"></i>
-                  </button>
-                </td>
-              </tr>
-              
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-        <!-- Here be waveform -->
-        <div class=" col-sm-12"  *ngIf="this.fileName && this.fileName!==''" >
-          <h2 class=" card-title">Audio Player & Visualizer</h2>
-          <h3 class=" card-title">{{this.fileName}}</h3>
-          <div  class=" card-body" id="demo">
-            <div id="waveform">
-              <div class="progress progress-striped active" id="progress-bar">
-                <div class="progress-bar progress-bar-info"></div>
-              </div> 
+          <div class="col-sm-6 col-md-6" *ngIf="this.fileToUpload == null">
+            <!-- Select file from Server -->
+            <h2 class="card-title">Download a File</h2>
+            <div style="overflow: scroll; height: 40vh;">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Actions</th>
+                    <th class="text-left">Title</th>
+                  </tr>
+                </thead>
+                <tbody *ngFor="let file of this.filesList | keyvalue; let i = index">
+                  <tr>
+                    <td>
+                      <button 
+                      type="button" 
+                      rel="tooltip" 
+                      class="btn btn-info btn-sm btn-icon"
+                      (click)="this.downloadFile(file.value.title)"
+                      >
+                        <i class="tim-icons icon-cloud-download-93"></i>
+                      </button> 
+                      <!-- <button type="button" rel="tooltip" class="btn btn-danger btn-sm btn-icon">
+                        <i class="tim-icons icon-simple-remove"></i>
+                      </button> -->
+                    </td>
+                    <td class="text-left">{{ file.value.title }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <div class="controls text-center">
-              <button class="btn btn-warnings" data-action="play" 
-              (click)="this.wavesurfer.play()" >
-                <i class="tim-icons icon-triangle-right-17"></i>Play
-              </button>
-              
-              <button class="btn btn-warnings" data-action="play" 
-              (click)="this.wavesurfer.pause()" >          
-                <i class=" tim-icons icon-button-pause"></i>Pause
-              </button>
+          </div>
 
-              <button class="btn btn-warnings" data-action="play" 
-              (click)="this.addStep()" >
-                <i class="tim-icons ui-1_simple-add"></i>Add Step
-              </button>
-                    
+          <!-- Here be waveform -->
+          <div class=" col-sm-12"  *ngIf="this.fileName && this.fileName!==''" >
+            <h2 class=" card-title">Audio Player & Visualizer</h2>
+            <h3 class=" card-title">{{this.fileName}}</h3>
+            <div  class=" card-body" id="demo">
+              <div id="waveform">
+                <div class="progress progress-striped active" id="progress-bar">
+                  <div class="progress-bar progress-bar-info"></div>
+                </div> 
+              </div>
+              <div class="controls text-center">
+                <button class="btn btn-warnings" data-action="play" 
+                (click)="this.wavesurfer.play()" >
+                  <i class="tim-icons icon-triangle-right-17"></i>Play
+                </button>
+                
+                <button class="btn btn-warnings" data-action="play" 
+                (click)="this.wavesurfer.pause()" >          
+                  <i class=" tim-icons icon-button-pause"></i>Pause
+                </button>
+
+                <button class="btn btn-warnings" data-action="play" 
+                (click)="this.addStep()" >
+                  <i class="tim-icons ui-1_simple-add"></i>Add Step
+                </button>
+                      
+              </div>
+
             </div>
-
           </div>
         </div>
+       
       </div>
       
     </div>
@@ -145,7 +149,6 @@
       </div>
       <div  class=" card-body" id="demo" >
         <div class="row">
-
           <div class="col-sm-12">
             <!-- Here select audio file from pipeline -->
           <div *ngIf="!step.fileName" style=" overflow: auto;height: 40vh;" >
@@ -153,15 +156,14 @@
             <table class="table" >
               <thead>
                 <tr>
-                  <th class="text-center">#</th>
-                  <th>Title</th>
+                  <!-- <th class="text-center">#</th> -->
                   <th class="text-right">Actions</th>
+                  <th>Title</th>
                 </tr>
               </thead>
               <tbody *ngFor="let file of this.pipelineFiles; let i = index">
                 <tr>
-                  <td class="text-center">{{i}}</td>
-                  <td>{{ file.name }} </td>
+                  <!-- <td >{{i}}</td> -->
                   <td class="td-actions text-right">
                     <button 
                     type="button" 
@@ -172,26 +174,25 @@
                       <i class="tim-icons icon-check-2"></i>
                     </button>
                   </td>
-                </tr>
-                
+                  <td>{{ file.name }} </td>
+                </tr>      
               </tbody>
             </table>
           </div>
           </div>
         </div>
 
-
         <div class="row" *ngIf="step.api == '' && step.fileName">
           <div class="col-sm-12 col-md-12"> 
             <button type="button"  
-            class="btn btn-primary" 
-            *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps1 | keyvalue;"
-            (click)="onSelectTask(AudioAnalysisStep.key)"> 
-              {{AudioAnalysisStep.key}} 
+              class="btn btn-primary" 
+              *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps1 | keyvalue;"
+              (click)="onSelectTask(AudioAnalysisStep.key)"> 
+                {{AudioAnalysisStep.key}} 
             </button>
           </div>
           <div class="col-sm-12 col-md-12" 
-          *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps1 | keyvalue;">  
+            *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps1 | keyvalue;">  
             <div *ngIf="AudioAnalysisStep.key == step.task">
               <div class="card card-chart">
                 <div class=" card-header">
@@ -214,7 +215,7 @@
                           <th>api</th>
                         </tr>
                       </thead>
-                      <tbody *ngFor="let step of AudioAnalysisStep.value">
+                        <tbody *ngFor="let step of AudioAnalysisStep.value">
                         <tr>
                           
                           <td class="text-center">{{i}}</td>
@@ -231,9 +232,7 @@
                           
                         </tbody>
                       </table>
-                    </div>
-                    
-                    
+                    </div>                 
                   </div>
                 </div>
               </div>
@@ -287,17 +286,66 @@
               
             </div>
           </div>
-
           <div class="col-sm-12 col-md-12 text-center" *ngIf="step.processed">
-            <button class="btn btn-warnings" data-action="play" 
+            <button class="btn btn-warnings"
               (click)="this.addStep()" >
                 <i class="tim-icons icon-simple-add"></i>Add Step
-              </button>
+            </button>
+            <button class="btn btn-warnings"
+            (click)="this.openSavePipeline()" >
+              <i class="tim-icons icon-pin"></i>Save Pipeline
+            </button>
+          </div>
+        </div>
 
-              <button class="btn btn-warnings" data-action="play" 
-              (click)="this.savePipeline()" >
-                <i class="tim-icons icon-pin"></i>Save Pipeline
-              </button>
+        <div class="row" *ngIf="this.savingPipeline">
+          <div class="col-sm-12 text-center" >
+            <div class=" card card-chart">
+              <div class=" card-header">
+                <div class="row" align="center">
+                  <div class="col-sm-12 text-right">
+                    <button class="btn btn-warnings" data-action="play" 
+                    (click)="this.closeSavePipeline()" >
+                      <i class="tim-icons icon-simple-remove"></i>
+                    </button>
+                  </div>
+                  <div class=" col-sm-12 text-center">
+                    <h5 class=" card-category">Pipeline Details</h5>
+                    <h2 class=" card-title">Insert Pipeline Name  </h2>
+                  </div> 
+                </div>
+              </div>
+              <div class=" card-body text-center">
+                <div class="row">
+                  <div class="col-sm-12 col-md-3">Pipeline</div>
+                  <div class="col-sm-12 col-md-9">
+                    <input [(ngModel)]="pipelineToStore.name" type="text" style="width: 100%;">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12 col-md-3">Author</div>
+                  <div class="col-sm-12 col-md-9">
+                    <input [(ngModel)]="pipelineToStore.author" type="text" style="width: 100%;">
+                  </div>
+                    
+                </div>
+                <div class="row">
+                  <div class="col-sm-12 col-md-3">Notes</div>
+                  <div class="col-sm-12 col-md-9">
+                    <input [(ngModel)]="pipelineToStore.notes" type="text" style="width: 100%;">
+                  </div>
+                </div>
+                
+                <div class="col-sm-12">
+                  <button class="btn btn-warnings" data-action="play" 
+                    (click)="this.savePipeline()" >
+                      <i class="tim-icons icon-pin"></i>Save
+                  </button>
+                </div>
+
+              
+              </div>
+            </div>
           </div>
         </div>
         
