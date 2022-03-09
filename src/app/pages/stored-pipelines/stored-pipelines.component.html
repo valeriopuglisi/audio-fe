@@ -18,7 +18,7 @@
                 </div>
                 <div class=" card-body">
                     <!-- Upload file from pc -->
-                    <div class="col-sm-12 col-md-6  text-center" >
+                    <div class="col-sm-12 col-md-6 text-center" >
                         <div class="file-upload">   
                             <input 
                             type="file" 
@@ -93,7 +93,7 @@
 
         
           
-        <div class="col-sm-12 col-md-12" >
+        <div class="col-sm-12 col-md-12" *ngIf="this.fileToUpload != null">
             <div class=" card card-chart">
                 <div class=" card-header">
                   <div class=" row">
@@ -103,25 +103,25 @@
                   </div>
                 </div>
                 <div  class="card-body" >
-                  <div style="overflow:auto; height:30vh">
+                  <div style="overflow:auto;">
                     <table class="table" >
                       <thead>
                         <tr>
                           <!-- <th class="text-center">#</th> -->
-                          <!-- <th>library</th> -->
+                          <th>ID</th>
                           <th>Name</th>
                           <th>Process</th>
                         </tr>
                       </thead>
-                      <tbody *ngFor="let pipeline of this.pipelines; let i = index">
+                      <tbody *ngFor="let pipeline of this.pipelines| keyvalue; let i = index">
                         <tr>
                           <!-- <td class="text-center">{{i}}</td> -->
-                          <!-- <td>{{ preprocessStep.library }} </td> -->
-                          <td>{{ pipeline.name }} </td>
-                          <td style="width: 10%;">{{ pipeline.description }} </td>                    
-                          <td> <button 
+                          <td style="width: 5%;">{{ pipeline.key }} </td>
+                          <td>{{ pipeline.value.name }} </td>
+                          <td style="width: 45%;">{{ pipeline.value.description }} </td>                    
+                          <td style="width: 5%;"> <button 
                             class="btn btn-primary btn-fab btn-icon btn-round" 
-                            (click)="selectPipeline(pipeline)"
+                            (click)="getPipeline(pipeline.key)"
                             [disabled]="this.fileToUpload ? false : true"
                             > 
                             <i class="tim-icons icon-triangle-right-17"></i></button></td>
@@ -135,6 +135,47 @@
                 </div>
               </div>
         </div>
+
+
+        <div class="col-sm-12 col-md-12" *ngIf="this.pipeline != null">
+          <div class=" card card-chart">
+              <div class=" card-header">
+                <div class=" row">
+                  <div class=" col-sm-12 text-center">
+                    <h2 class=" card-title">Author: {{this.pipeline?.author}}</h2>
+                  </div>
+                </div>
+              </div>
+              <div  class="card-body" >
+                
+                <div class="row" [align]="'center'">
+                  <div class="col-sm-12">
+                    <h4>Pipeline: {{this.pipeline?.name}} </h4>
+                  </div>
+                  <div class="col-sm-12">
+                    <h4>Description: {{this.pipeline?.notes}}</h4>
+                  </div>
+                  <div class="col-sm-12">
+                    <h5> Creation Time: {{this.pipeline?.creationTime | date}}</h5>
+                  </div>
+
+                  <div class="col-sm-12" [align]="'center'">
+                    <div class="row" *ngFor="let step of this.pipeline?.steps| keyvalue; let j = index">
+                      <div class="col-sm-12">
+                        <h4>Pipeline Step ID : {{step.key}}</h4>
+                      </div>
+                      <div class="col-sm-12">Task : {{step.value.task}}</div>
+                      <div class="col-sm-12">System : {{step.value.system}}</div>
+                      <div class="col-sm-12">Performance : {{step.value.performance}}</div>
+                      <div class="col-sm-12">API : {{step.value.api}}</div>
+                    </div>
+                  </div>
+
+                </div>
+                
+              </div>
+            </div>
+      </div>
 
 
         <div class="col-sm-12" *ngIf="this.preprocess">

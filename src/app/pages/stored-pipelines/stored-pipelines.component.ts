@@ -7,6 +7,53 @@ import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline';
 import Regions from 'wavesurfer.js/src/plugin/regions';
 import * as saveAs from 'file-saver';
 
+
+interface AudioAnalysisStep {
+  task:	string;
+  dataset: string; 
+  system: string;
+  performance: string;
+  api:string;
+}
+
+
+interface Pipeline {
+  name: string;
+  author: string;
+  creationTime: string;
+  notes: string;
+  steps: PipelineStepToStore[],
+}
+
+interface PipelineStep {
+    file: File | null,
+    fileName: string,
+    task:string,
+    api:string,
+    dataset:string,
+    performance:string,
+    system:string,
+    analysisResult:string,
+    separatedFilenames :string[],
+    separatedFileBlobs: Blob[],
+    separatedFileWavesurfer: any[], 
+    processing: boolean,
+    processing_error: string | null,
+    processed: boolean,
+}
+
+
+interface PipelineStepToStore {
+  task:string,
+  api:string,
+  dataset:string,
+  performance:string,
+  system:string,
+  inputFilename: string,
+  outputFilenames :string[],
+}
+
+
 @Component({
   selector: 'app-stored-pipelines',
   templateUrl: './stored-pipelines.component.html',
@@ -34,7 +81,7 @@ export class StoredPipelinesComponent implements OnInit {
   public formData : FormData;
 
   pipelines: any;
-
+  pipeline: Pipeline;
   preprocessTitle: string = "";
   preprocess : boolean = false;
   preprocessError : boolean = false;
@@ -170,6 +217,15 @@ export class StoredPipelinesComponent implements OnInit {
       },
       error => {
 
+      }
+    )
+  }
+
+  getPipeline(id){
+    this.http.get<Pipeline>('/api/stored-pipelines/'+ id).subscribe(
+      response => {
+        this.pipeline = response;
+        console.log("==> getPipeline(id): ", response);
       }
     )
   }
