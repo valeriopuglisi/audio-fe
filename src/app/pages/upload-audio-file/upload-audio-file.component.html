@@ -19,8 +19,9 @@
   </ngb-alert>
   <div class=" row">
     <div class=" col-sm-12 text-center" style="margin-bottom: 2vh;">
-      <h5 class=" card-category">Pipeline Creation</h5>
-      <h2 class=" card-title">Deep Learning Audio Analysis</h2>
+      <h5 class=" card-category">Deep Learning Audio Analysis</h5>
+      <h2 class=" card-title">Pipeline Creation</h2>
+      <img src="../../../assets/img/logo (2).png" style="width: 20vh; height: 10vh;" >
       <!-- <img src="../../../assets/img/librosa.png" style="width: 50vh; height: 20vh;"> -->
     </div>
 
@@ -296,62 +297,61 @@
               <i class="tim-icons icon-pin"></i>Save Pipeline
             </button>
           </div>
+        </div>  
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<div class="row" *ngIf="this.savingPipeline">
+  <div class="col-sm-12 text-center" >
+    <div class=" card card-chart">
+      <div class=" card-header">
+        <div class="row" align="center">
+          <div class="col-sm-12 text-right">
+            <button class="btn btn-warnings" data-action="play" 
+            (click)="this.closeSavePipeline()" >
+              <i class="tim-icons icon-simple-remove"></i>
+            </button>
+          </div>
+          <div class=" col-sm-12 text-center">
+            <h5 class=" card-category">Pipeline Details</h5>
+            <h2 class=" card-title">Insert Pipeline Name  </h2>
+          </div> 
         </div>
-
-        <div class="row" *ngIf="this.savingPipeline">
-          <div class="col-sm-12 text-center" >
-            <div class=" card card-chart">
-              <div class=" card-header">
-                <div class="row" align="center">
-                  <div class="col-sm-12 text-right">
-                    <button class="btn btn-warnings" data-action="play" 
-                    (click)="this.closeSavePipeline()" >
-                      <i class="tim-icons icon-simple-remove"></i>
-                    </button>
-                  </div>
-                  <div class=" col-sm-12 text-center">
-                    <h5 class=" card-category">Pipeline Details</h5>
-                    <h2 class=" card-title">Insert Pipeline Name  </h2>
-                  </div> 
-                </div>
-              </div>
-              <div class=" card-body text-center">
-                <div class="row">
-                  <div class="col-sm-12 col-md-3">Pipeline</div>
-                  <div class="col-sm-12 col-md-9">
-                    <input [(ngModel)]="pipelineToStore.name" type="text" style="width: 100%;">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-sm-12 col-md-3">Author</div>
-                  <div class="col-sm-12 col-md-9">
-                    <input [(ngModel)]="pipelineToStore.author" type="text" style="width: 100%;">
-                  </div>
-                    
-                </div>
-                <div class="row">
-                  <div class="col-sm-12 col-md-3">Notes</div>
-                  <div class="col-sm-12 col-md-9">
-                    <input [(ngModel)]="pipelineToStore.notes" type="text" style="width: 100%;">
-                  </div>
-                </div>
-                
-                <div class="col-sm-12">
-                  <button class="btn btn-warnings" data-action="play" 
-                    (click)="this.savePipeline()" >
-                      <i class="tim-icons icon-pin"></i>Save
-                  </button>
-                </div>
-
-              
-              </div>
-            </div>
+      </div>
+      <div class=" card-body text-center">
+        <div class="row">
+          <div class="col-sm-12 col-md-3">Pipeline</div>
+          <div class="col-sm-12 col-md-9">
+            <input [(ngModel)]="pipelineToStore.name" type="text" style="width: 100%;">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12 col-md-3">Author</div>
+          <div class="col-sm-12 col-md-9">
+            <input [(ngModel)]="pipelineToStore.author" type="text" style="width: 100%;">
+          </div>
+            
+        </div>
+        <div class="row">
+          <div class="col-sm-12 col-md-3">Notes</div>
+          <div class="col-sm-12 col-md-9">
+            <input [(ngModel)]="pipelineToStore.notes" type="text" style="width: 100%;">
           </div>
         </div>
         
+        <div class="col-sm-12">
+          <button class="btn btn-warnings" data-action="play" 
+            (click)="this.savePipeline()" >
+              <i class="tim-icons icon-pin"></i>Save
+          </button>
+        </div>
+
       
+      </div>
     </div>
-  </div>
   </div>
 </div>
 

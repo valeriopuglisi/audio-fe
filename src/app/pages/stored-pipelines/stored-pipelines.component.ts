@@ -33,6 +33,8 @@ export class StoredPipelinesComponent implements OnInit {
   filesList: any;
   public formData : FormData;
 
+  pipelines: any;
+
   preprocessTitle: string = "";
   preprocess : boolean = false;
   preprocessError : boolean = false;
@@ -156,6 +158,20 @@ export class StoredPipelinesComponent implements OnInit {
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
+
+    this.getPipelines();
+  }
+
+  getPipelines(){
+    this.http.get('/api/stored-pipelines').subscribe(
+      response => {
+        console.log("==> getPipelines(): response = ", response); 
+        this.pipelines = response;
+      },
+      error => {
+
+      }
+    )
   }
 
   onFileSelected(event) {

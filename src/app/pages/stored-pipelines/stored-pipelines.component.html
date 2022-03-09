@@ -1,9 +1,9 @@
 <div class="content container-fluid">
     <div class=" row">
       <div class=" col-sm-12 text-center" style="margin-bottom: 2vh;">
-        <h5 class=" card-category">Librosa Library</h5>
-        <h2 class=" card-title">Audio Preprocessing & Features Extraction</h2>
-        <img src="../../../assets/img/librosa.png" style="width: 50vh; height: 20vh;">
+        <h5 class=" card-category">Deep Learning Audio Analysis</h5>
+        <h2 class=" card-title">Pipelines</h2>
+        <img src="../../../assets/img/logo (2).png" style="width: 50vh; height: 20vh;">
       </div>
         <div class=" col-sm-12 col-md-12">
             <div class=" card card-chart">
@@ -98,7 +98,7 @@
                 <div class=" card-header">
                   <div class=" row">
                     <div class=" col-sm-12 text-center">
-                      <h2 class=" card-title">Librosa Spectral Features</h2>
+                      <h2 class=" card-title">Audio Analysis Pipelines</h2>
                     </div>
                   </div>
                 </div>
@@ -109,20 +109,19 @@
                         <tr>
                           <!-- <th class="text-center">#</th> -->
                           <!-- <th>library</th> -->
-                          <th>preprocess</th>
-                          <th>description</th>
-                          <th>api</th>
+                          <th>Name</th>
+                          <th>Process</th>
                         </tr>
                       </thead>
-                      <tbody *ngFor="let preprocessStep of this.PreprocessingSteps; let i = index">
+                      <tbody *ngFor="let pipeline of this.pipelines; let i = index">
                         <tr>
                           <!-- <td class="text-center">{{i}}</td> -->
                           <!-- <td>{{ preprocessStep.library }} </td> -->
-                          <td>{{ preprocessStep.preprocess }} </td>
-                          <td style="width: 10%;">{{ preprocessStep.description }} </td>                    
+                          <td>{{ pipeline.name }} </td>
+                          <td style="width: 10%;">{{ pipeline.description }} </td>                    
                           <td> <button 
                             class="btn btn-primary btn-fab btn-icon btn-round" 
-                            (click)="preprocessFile(preprocessStep.api, preprocessStep.preprocess)"
+                            (click)="selectPipeline(pipeline)"
                             [disabled]="this.fileToUpload ? false : true"
                             > 
                             <i class="tim-icons icon-triangle-right-17"></i></button></td>
