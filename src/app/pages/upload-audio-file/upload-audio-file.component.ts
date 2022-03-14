@@ -28,7 +28,9 @@ interface Pipeline {
 
 interface PipelineStep {
     file: File | null,
-    fileName: string,
+    fileName: string | null,
+    inputFileId: string | null,
+    outputFileIds: string [],
     task:string,
     api:string,
     dataset:string,
@@ -47,6 +49,8 @@ interface PipelineStep {
 interface PipelineStepToStore {
   task:string,
   api:string,
+  inputFileId : string,
+  outputFileIds: string[],
   dataset:string,
   performance:string,
   system:string,
@@ -522,7 +526,7 @@ export class UploadAudioFileComponent implements OnInit {
     steps:[]
     
   };
-  pipelineFiles: File[] = []
+  pipelineFiles: any[] = []
   separatedFilenames :any;
   separatedFileBlobs: any = [];
   separatedFileWavesurfer: any = []; 
@@ -549,6 +553,8 @@ export class UploadAudioFileComponent implements OnInit {
         performance: element.performance,
         api: element.api,
         inputFilename: element.fileName,
+        inputFileId: element.inputFileId,
+        outputFileIds : element.outputFileIds,
         outputFilenames: element.separatedFilenames,
       }
       this.pipelineToStore.steps[i] = pipelineElement;
@@ -576,10 +582,14 @@ export class UploadAudioFileComponent implements OnInit {
   onFileSelected(event) {
     const file:File = event.target.files[0];
     if (file) {
-      this.pipelineFiles.push(file);
-      console.log("==> onFileSelected: this.pipelineFiles = ", this.pipelineFiles)
       this.fileToUpload = file
       this.fileName = file.name;
+      let pipelineFile = {
+        file :this.fileToUpload,
+        file_id : "input_0_0",
+      }
+      this.pipelineFiles.push(pipelineFile);
+      console.log("==> onFileSelected: this.pipelineFiles = ", this.pipelineFiles)
       console.log(file.type)
       this.formData.append("title", this.fileName); 
       this.formData.append("audiofile", file);
@@ -617,20 +627,25 @@ export class UploadAudioFileComponent implements OnInit {
       );
   }
 
-  selectPipelineFile(file){
-    console.log("selectPipelineFile(file): ", file);
-    this.pipeline[this.pipeline.length -1].file = file;
-    this.pipeline[this.pipeline.length -1].fileName = file.name;
+  selectPipelineFile(step:any, pipelineFile){
+    console.log("selectPipelineFile(file): ", pipelineFile.file);
+    this.pipeline[this.pipeline.length -1].file = pipelineFile.file;
+    this.pipeline[this.pipeline.length -1].fileName = pipelineFile.file.name;
+    this.pipeline[this.pipeline.length -1].inputFileId = pipelineFile.file_id;
     console.log(this.pipeline);
 
   }
       
-  downloadFile(filename:string){
+  downloadFile(step:any, filename:string){
     this.http.get("/api/audiofiles/"+ filename, { responseType: 'blob' }).subscribe(
       data => {
         this.fileToUpload = new File([data], filename)
-        this.pipelineFiles.push(this.fileToUpload);
         this.fileName = filename;
+        let pipelineFile = {
+          file :this.fileToUpload,
+          file_id : "input_0_0",
+        }
+        this.pipelineFiles.push(pipelineFile);
         console.log(this.fileToUpload.type)
         this.formData.append("title", this.fileName); 
         this.formData.append("audiofile", this.fileToUpload);
@@ -654,6 +669,8 @@ export class UploadAudioFileComponent implements OnInit {
         {
           file: null,
           fileName: null,
+          inputFileId: null,
+          outputFileIds: [],
           task:"",
           api:"",
           dataset:"",
@@ -785,7 +802,12 @@ export class UploadAudioFileComponent implements OnInit {
         step.separatedFileWavesurfer.push(wavesurfer)  
         step.separatedFileWavesurfer[index].loadBlob(data);
         step.separatedFileBlobs.push(data); 
-        this.pipelineFiles.push(new File([data], filename))
+        let pipelineFile = {
+          file: new File([data], filename),
+          file_id : "output_"+ step_index + "_" + index
+        }
+        step.outputFileIds.push("output_"+ step_index + "_" + index)
+        this.pipelineFiles.push(pipelineFile)
         console.log("==> this.pipelineFiles: ",this.pipelineFiles)
       }
     )

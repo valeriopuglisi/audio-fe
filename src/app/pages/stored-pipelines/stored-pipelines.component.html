@@ -158,21 +158,52 @@
                   <div class="col-sm-12">
                     <h5> Creation Time: {{this.pipeline?.creationTime | date}}</h5>
                   </div>
-
-                  <div class="col-sm-12" [align]="'center'">
-                    <div class="row" *ngFor="let step of this.pipeline?.steps| keyvalue; let j = index">
-                      <div class="col-sm-12">
-                        <h4>Pipeline Step ID : {{step.key}}</h4>
-                      </div>
-                      <div class="col-sm-12">Task : {{step.value.task}}</div>
-                      <div class="col-sm-12">System : {{step.value.system}}</div>
-                      <div class="col-sm-12">Performance : {{step.value.performance}}</div>
-                      <div class="col-sm-12">API : {{step.value.api}}</div>
+                </div>
+                <div 
+                class="col-sm-12" 
+                style="border: 1pt; border-color: violet; border-style: solid; margin-bottom: 5%;" 
+                *ngFor="let step of this.pipeline?.steps| keyvalue; let j = index">
+                  <div class="row text-center">
+                    <div class="col-sm-12">
+                      <h4>Step: {{step.key}}</h4>
+                    </div>
+                    <div class="col-sm-12">
+                      <h6>Input : {{step.value.inputFileId}}</h6>
+                    </div>
+                    <div class="col-sm-12">
+                      <i class=" tim-icons icon-minimal-down"></i>
                     </div>
                   </div>
-
+                  <div class="row text-center" style="border: 1pt; border-color: red; border-style: solid;">
+                    <div class="col-sm-12 col-md-12">
+                      <h6>Task : </h6>{{step.value.task}}
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                      <h6>System : </h6>{{step.value.system}}
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                      <h6>Performance : </h6>{{step.value.performance}}
+                    </div>
+                    <!-- <div class="col-sm-12 col-md-12">
+                      <h6>API : </h6>{{step.value.api}}
+                    </div> -->
+                  </div>
+                  <div class="row d-flex justify-content-center">
+                    <div *ngFor="let outputFileId of step.value.outputFileIds" class="col-sm-12 col-md-3 text-center">
+                      <i class=" tim-icons icon-minimal-down"></i>  
+                      <p>{{outputFileId}}</p> 
+                    </div>
+                  </div>
                 </div>
-                
+
+                <div class="row">
+                  <div class="col-sm-12 text-center">
+                    <button 
+                      class="btn btn-primary" 
+                      (click)="runPipeline(this.fileUpload)" 
+                    >Run</button>
+                  </div>
+                </div>
               </div>
             </div>
       </div>

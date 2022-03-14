@@ -302,5 +302,27 @@ export class StoredPipelinesComponent implements OnInit {
     this.wavesurfer.zoom(Number(event));
   }
 
+  runPipeline(file:File){
+    console.log("==> runPipeline ", file)
+    this.formData = new FormData();
+    this.formData.append("title", file.name); 
+    this.formData.append("audiofile", file);
+    let api = ''
+    this.http.post(api, this.formData).subscribe(
+      response => {
+        // step.processing =false;
+        // step.processing_error = null;  
+        // step.analysisResult = response.toString();    
+        // step.processed = true;     
+      },
+      error => {
+        console.error(error);
+        // step.processing =false;
+        // step.processing_error = error;  
+        // step.processed = true;
+      }
+    );
+  }
+
 
 }
