@@ -32,14 +32,14 @@ export const ROUTES: RouteInfo[] = [
   },
   {
     path: "/pipelines",
-    title: "Pipelines",
+    title: "Create Pipeline",
     rtlTitle: "لوحة القيادة",
     icon: "icon-atom",
     class: ""
   },
   {
     path: "/stored-pipelines",
-    title: "Stored Pipelines",
+    title: "Pipelines",
     rtlTitle: "لوحة القيادة",
     icon: "icon-atom",
     class: ""

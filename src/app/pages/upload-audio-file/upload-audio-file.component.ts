@@ -792,21 +792,21 @@ export class UploadAudioFileComponent implements OnInit {
     );
   }
 
-  downloadSeparatedFile(step: PipelineStep, api:string, filename:string, step_index, index:number){
+  downloadSeparatedFile(step: PipelineStep, api:string, filename:string, step_index, file_index:number){
     this.http.get(api + "/"+ filename, { responseType: 'blob' }).subscribe(
       data => {
         let wavesurfer = WaveSurfer.create({
-          container: '#waveform-' + step_index+'-'+index,
+          container: '#waveform-' + step_index+'-'+file_index,
           backgroundColor:'black',
         });
         step.separatedFileWavesurfer.push(wavesurfer)  
-        step.separatedFileWavesurfer[index].loadBlob(data);
+        step.separatedFileWavesurfer[file_index].loadBlob(data);
         step.separatedFileBlobs.push(data); 
         let pipelineFile = {
           file: new File([data], filename),
-          file_id : "output_"+ step_index + "_" + index
+          file_id : "output_"+ step_index + "_" + file_index
         }
-        step.outputFileIds.push("output_"+ step_index + "_" + index)
+        step.outputFileIds.push("output_"+ step_index + "_" + file_index)
         this.pipelineFiles.push(pipelineFile)
         console.log("==> this.pipelineFiles: ",this.pipelineFiles)
       }

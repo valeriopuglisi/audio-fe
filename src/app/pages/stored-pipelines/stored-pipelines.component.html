@@ -121,7 +121,7 @@
                           <td style="width: 45%;">{{ pipeline.value.description }} </td>                    
                           <td style="width: 5%;"> <button 
                             class="btn btn-primary btn-fab btn-icon btn-round" 
-                            (click)="getPipeline(pipeline.key)"
+                            (click)="getPipeline(pipeline)"
                             [disabled]="this.fileToUpload ? false : true"
                             > 
                             <i class="tim-icons icon-triangle-right-17"></i></button></td>
@@ -200,7 +200,7 @@
                   <div class="col-sm-12 text-center">
                     <button 
                       class="btn btn-primary" 
-                      (click)="runPipeline(this.fileUpload)" 
+                      (click)="runPipeline(this.selectedPipeline, this.fileUpload)" 
                     >Run</button>
                   </div>
                 </div>
@@ -208,25 +208,91 @@
             </div>
       </div>
 
+      <div class="col-sm-12 text-center" *ngIf="this.processing">
+        <div class="lds-facebook"><div></div><div></div><div></div></div>
+      </div>
 
-        <div class="col-sm-12" *ngIf="this.preprocess">
+
+        <div class="col-sm-12" *ngIf="this.process">
             <div class=" card card-chart">
                 <div class=" card-header">
                   <div class=" row">
                     <div class=" col-sm-12 text-center">
-                      <h5 class=" card-category">Preprocessing</h5>
-                      <h2 class=" card-title">{{this.preprocessTitle}}</h2>
-                      <img [src]="imageURL">
+                      <h5 class=" card-category">Pipeline Results</h5>
+                      <h2 class=" card-title">{{this.selectedPipeline.name}}</h2>
                     </div>
                   </div>
                 </div>
-                <div  class=" card-body" id="demo">
-                
+                <div  class="card-body" id="demo">
+                  <div class=" row"  *ngFor="let step of this.selectedPipeline?.steps; let i  = index;">
+                    <div class=" col-sm-12">
+                      <div class=" card card-chart">
+                        <div class=" card-header">
+                          <div class=" row" >
+                            <div class=" col-sm-12 text-center">
+                              <h5 class=" card-category">Step {{i + 1}}</h5>
+                              <h1 class="card-title">Task: {{step.task}} - {{step.system}} - {{step.dataset}} - {{step.performance}}</h1>
+                              <h3 class="card-title text-center">Input File: </h3>
+                              <h4>{{step.inputFilename}}</h4>
+                            </div>
+                          </div>
+                        </div>
+                        <div  class=" card-body" id="demo" >
+                        
+    
+                          <div class="row">
+                            
+                  
+                            <div class="col-sm-12 text-center" *ngIf="step.processing">
+                              <div class="lds-facebook"><div></div><div></div><div></div></div>
+                            </div>
+                            
+                            <div class="col-sm-12 col-md-12 text-center" *ngIf="step.analysisResult"> {{step.analysisResult}}</div>
+                            <div class="col-sm-12 col-md-4 text-center" *ngFor="let separatedFile of step.outputFilenames; let j = index">  
+                              <h3 class="text-center"> Output File {{j}}: </h3>
+                              <h4 class="text-center"> {{separatedFile}} </h4>
+                              <div align="right">
+                                <button 
+                                class="btn btn-warnings" 
+                                (click)="this.saveSeparatedFile(step, j)"
+                                 >          
+                                  <i class=" tim-icons icon-cloud-download-93"></i>
+                                </button>
+                              </div>
+                              <div [id]="'waveform-'+ i +'-'+j">
+                                <!-- Here be waveform -->
+                              </div>
+                              <div [id]="'wave-spectrogram-'+i+'-'+j"></div>
+                              <div [id]="'wave-timeline-'+i+'-'+j"></div>
+                              <div class="controls text-center">
+                                <button 
+                                class="btn btn-warnings" 
+                                data-action="play" 
+                                (click)="step.separatedFileWavesurfer[j].play()" >
+                                  <i class="tim-icons icon-triangle-right-17"></i>Play
+                                </button>
+                                
+                                <button 
+                                class="btn btn-warnings" 
+                                data-action="play" 
+                                (click)="step.separatedFileWavesurfer[j].pause()"
+                                 >          
+                                  <i class=" tim-icons icon-button-pause"></i>Pause
+                                </button>
+                                
+                              </div>
+                            </div>
+                            
+                          </div>  
+                      </div>
+                    </div>
+                    </div>
+                  </div>
                 </div>
               </div>
         </div>
 
-        <div class="col-sm-12" *ngIf="this.preprocessError">
+        <div class="col-sm-12" *ngIf="this.processError">
             <div class=" card card-chart">
                 <div class=" card-header">
                   <div class=" row">

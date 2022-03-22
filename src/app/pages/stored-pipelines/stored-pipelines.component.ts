@@ -6,6 +6,7 @@ import SpectrogramPlugin from 'wavesurfer.js/src/plugin/spectrogram';
 import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline';
 import Regions from 'wavesurfer.js/src/plugin/regions';
 import * as saveAs from 'file-saver';
+import { toJSDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-calendar';
 
 
 interface AudioAnalysisStep {
@@ -83,8 +84,8 @@ export class StoredPipelinesComponent implements OnInit {
   pipelines: any;
   pipeline: Pipeline;
   preprocessTitle: string = "";
-  preprocess : boolean = false;
-  preprocessError : boolean = false;
+  process : boolean = false;
+  processError : boolean = false;
   
   staticAlertClosed5:boolean=true;
   staticAlertClosed6:boolean=true;
@@ -194,7 +195,8 @@ export class StoredPipelinesComponent implements OnInit {
       api: '/api/preprocess/spectral_contrast'
     },
   ]
-  
+  processing:boolean = false;
+  selectedPipeline :any ;
   separatedFilenames :any;
   separatedFileBlobs: any = [];
   separatedFileWavesurfer: any = [];  
@@ -221,11 +223,13 @@ export class StoredPipelinesComponent implements OnInit {
     )
   }
 
-  getPipeline(id){
-    this.http.get<Pipeline>('/api/stored-pipelines/'+ id).subscribe(
+  getPipeline(pipeline:any ){
+    console.log("==> getPipeline(pipeline:any): ", pipeline)
+    this.selectedPipeline = pipeline
+    this.http.get<Pipeline>('/api/stored-pipelines/'+ pipeline.key).subscribe(
       response => {
         this.pipeline = response;
-        console.log("==> getPipeline(id): ", response);
+        console.log("==> getPipeline(id): ", this.selectedPipeline);
       }
     )
   }
@@ -273,28 +277,7 @@ export class StoredPipelinesComponent implements OnInit {
     this.wavesurfer.loadBlob(file)
   }
 
-  preprocessFile(preprocessApi: string, description:string){
-    this.preprocessTitle = description; 
-    this.formData = new FormData();
-    this.formData.append("title", this.fileName); 
-    this.formData.append("audiofile", this.fileToUpload);
-    this.http.post(preprocessApi, this.formData, {responseType: 'blob'}).subscribe(
-      response => {
-        this.preprocess =true;
-        this.preprocessError =false;
-        console.log(response)
-        this.image = response
-        this.imageURL = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(this.image))
-        
-      },
-      error => {
-        console.error(error);
-        this.preprocess =true;
-        this.preprocessError = true;
-
-      }
-    );
-  }
+  
 
   setZoom(event){
     this.slider = event
@@ -302,27 +285,63 @@ export class StoredPipelinesComponent implements OnInit {
     this.wavesurfer.zoom(Number(event));
   }
 
-  runPipeline(file:File){
-    console.log("==> runPipeline ", file)
+  runPipeline(){
+    this.processing = true;
+    console.log("==> runPipeline ", this.selectedPipeline);
     this.formData = new FormData();
-    this.formData.append("title", file.name); 
-    this.formData.append("audiofile", file);
-    let api = ''
+    this.formData.append("title", this.fileToUpload.name); 
+    this.formData.append("audiofile", this.fileToUpload);
+    let api = '/api/stored-pipelines/'+this.selectedPipeline.key;
     this.http.post(api, this.formData).subscribe(
       response => {
-        // step.processing =false;
-        // step.processing_error = null;  
-        // step.analysisResult = response.toString();    
-        // step.processed = true;     
+        this.processing=false;
+        this.selectedPipeline = response;
+        this.process =true;
+        console.log("==> this.selectedPipeline ", this.selectedPipeline );
+
+        for (let i = 0; i < this.selectedPipeline['steps'].length; i++) {          
+          this.selectedPipeline['steps'][i].separatedFileWavesurfer = [];
+          this.selectedPipeline['steps'][i].separatedFileBlobs =[]; 
+          console.log("==> this.selectedPipeline['steps'][i]",this.selectedPipeline['steps'][i])
+          this.selectedPipeline['steps'][i]['inputFilename'] = this.selectedPipeline['steps'][i]['inputFilename'].replace(/^.*[\\\/]/, '');
+          
+          for (let j = 0; j < this.selectedPipeline['steps'][i]['outputFilenames'].length; j++) {
+            const element = this.selectedPipeline['steps'][i]['outputFilenames'][j];
+            this.selectedPipeline['steps'][i]['outputFilenames'][j] = element.replace(/^.*[\\\/]/, '');
+            // console.log("==> this.selectedPipeline['steps'][i][j]", element);
+            this.downloadSeparatedFile(
+              this.selectedPipeline['steps'][i], 
+              this.selectedPipeline['steps'][i].api, 
+              this.selectedPipeline['steps'][i]['outputFilenames'][j],
+              i, j); 
+          }
+        }
       },
       error => {
         console.error(error);
-        // step.processing =false;
+        this.processing =false;
         // step.processing_error = error;  
-        // step.processed = true;
+        this.processError = true;
       }
     );
   }
 
+  downloadSeparatedFile(step: any, api:string, filename:string, step_index, file_index:number){
+    this.http.get(api + "/"+ filename, { responseType: 'blob' }).subscribe(
+      data => {
+        let wavesurfer = WaveSurfer.create({
+          container: '#waveform-' + step_index+'-'+file_index,
+          backgroundColor:'black',
+        });
+        step.separatedFileWavesurfer.push(wavesurfer)  ;
+        step.separatedFileWavesurfer[file_index].loadBlob(data);
+        step.separatedFileBlobs.push(data); 
+        step.outputFileIds.push("output_"+ step_index + "_" + file_index);
+      },
+      error => {
+        console.error(error);
+      }
+    )
+  }
 
 }
