@@ -6,6 +6,7 @@ import SpectrogramPlugin from 'wavesurfer.js/src/plugin/spectrogram';
 import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline';
 import Regions from 'wavesurfer.js/src/plugin/regions';
 import * as saveAs from 'file-saver';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-features',
@@ -468,6 +469,7 @@ export class FeaturesComponent implements OnInit {
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
+
   }
 
   onFileSelected(event) {
@@ -528,7 +530,7 @@ export class FeaturesComponent implements OnInit {
         break;
       
       case "Voice Activity Detection":
-        this.analyzeFile(processApi.api);
+        this.separateFile(processApi.api);
         break;
 
       case "Emotion Recognition":

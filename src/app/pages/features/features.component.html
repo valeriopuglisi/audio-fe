@@ -183,7 +183,7 @@
     
     
     <div class="row" 
-    *ngIf="this.analysisStep.task == 'Speech Separation' || this.analysisStep.task == 'Speech Enhancement'">
+    *ngIf="this.analysisStep.task == 'Speech Separation' || this.analysisStep.task == 'Speech Enhancement' || this.analysisStep.task == 'Voice Activity Detection'">
     <div class="col-sm-12 col-md-12" *ngFor="let separatedFile of this.separatedFilenames; let i = index"> 
       <h4> {{separatedFile}} </h4>
       <div align="right">

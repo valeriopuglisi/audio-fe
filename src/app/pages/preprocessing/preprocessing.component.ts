@@ -206,6 +206,7 @@ export class PreprocessingComponent implements OnInit {
   }
 
   preprocessFile(preprocessApi: string, description:string){
+    console.log("==>preprocessFile")
     this.preprocessTitle = description; 
     this.formData = new FormData();
     this.formData.append("title", this.fileName); 

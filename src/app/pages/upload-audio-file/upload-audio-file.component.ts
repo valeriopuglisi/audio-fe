@@ -716,7 +716,7 @@ export class UploadAudioFileComponent implements OnInit {
         break;
       
       case "Voice Activity Detection":
-        this.analyzeFile(step);
+        this.separateFile(step, step_index);
         break;
 
       case "Emotion Recognition":
