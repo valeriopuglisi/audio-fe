@@ -22,177 +22,10 @@ export class FeaturesComponent implements OnInit {
     performance: ""
   }
   
-  // AudioAnalysisSteps = [
-  //   // {
-  //   //   task:	"Automatic Speech Recognition",
-  //   //   dataset: "LibriSpeech", 
-  //   //   system: "wav2vec2",
-  //   //   performance: "WER=1.90% (test-clean)"
-  //   // },
-  //   // {
-  //   //   task:	"Automatic Speech Recognition	", 
-  //   //   dataset: "LibriSpeech", 
-  //   //   system: "CNN + Transformer", 
-  //   //   performance:"WER=2.46% (test-clean)"
-  //   // },
-  //   // {
-  //   //   task:	"Automatic Speech Recognition	",
-  //   //   dataset: "TIMIT", 
-  //   //   system: "CRDNN + distillation",
-  //   //   performance: "PER=13.1% (test)"
-  //   // },
-  //   // {
-  //   //   task:	"Automatic Speech Recognition	",
-  //   //   dataset: "TIMIT", 
-  //   //   system:"wav2vec2 + CTC/Att.",
-  //   //   performance:	"PER=8.04% (test)"
-  //   // },
-  //   {
-  //     task: "Automatic Speech Recognition",	
-  //     dataset: "CommonVoice (English)", 
-  //     system: "wav2vec2 + CTC",
-  //     performance:	"WER=15.69% (test)",
-  //     api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_en'
-  //   },
-  //   {
-  //     task: "Automatic Speech Recognition",	
-  //     dataset: "CommonVoice (French)", 
-  //     system:"wav2vec2 + CTC", 
-  //     performance: "WER=9.96% (test)",
-  //     api : '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_fr'
-  //   },
-  //   {
-  //     task: "	Automatic Speech Recognition",
-  //     dataset: "CommonVoice (Italian)", 
-  //     system:	"wav2vec2 + seq2seq",
-  //     performance: "WER=9.86% (test)",
-  //     api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_it'
-  //   },
-  //   {
-  //     task: "Automatic Speech Recognition",
-  //     dataset: "CommonVoice (Kinyarwanda)" , 
-  //     system:	"wav2vec2 + seq2seq", 
-  //     performance:	"WER=18.91% (test)",
-  //     api: '/api/automatic_speech_recognition/asr_wav2vec2_commonvoice_rw'
-  //   },
-  //   {
-  //     task: "Automatic Speech Recognition",
-  //     dataset: "AISHELL (Mandarin)", 
-  //     system:	"wav2vec2 + seq2seq", 
-  //     performance:	"CER=5.58% (test)",
-  //     api: '/api/automatic_speech_recognition/asr_wav2vec2_transformer_aishell_mandarin_chinese'
-      
-  //   },
-  //   // {
-  //   //   task:	"Speech translation",
-  //   //   dataset: "Fisher-callhome (spanish)", 
-  //   //   system:	"conformer (ST + ASR)", 
-  //   //   performance: "BLEU=48.04 (test)"
-  //   // },
-  //   // {
-  //   //   task:	"Speaker Verification	",
-  //   //   dataset: "VoxCeleb2", 
-  //   //   system: "ECAPA-TDNN",
-  //   //   performance:	"EER=0.69% (vox1-test)"
-  //   // },
-  //   // {
-  //   //   task:	"Speaker Diarization	",
-  //   //   dataset: "AMI", 
-  //   //   system:"ECAPA-TDNN",
-  //   //   performance:	"DER=3.01% (eval)"
-  //   // },
-  //   {
-  //     task:	"Speech Enhancement", 
-  //     dataset: "VoiceBank",
-  //     system: "MetricGAN+",
-  //     performance: "PESQ=3.08 (test)",
-  //     api: '/api/speech_enhancement/enhancement_metricganplus_voicebank'
-  //   },
-  //   {
-  //     task:	"Speech Separation", 
-  //     dataset: "WSJ2MIX", 
-  //     system: "SepFormer",
-  //     performance: "SDRi=22.6 dB (test)",
-  //     api: '/api/audioseparation/speech_separation_sepformer_wsj02mix'
-  //   },
-  //   {
-  //     task:	"Speech Separation", 
-  //     dataset: "WSJ3MIX", 
-  //     system: "SepFormer",
-  //     performance: "SDRi=20.0 dB (test)",
-  //     api: '/api/audioseparation/speech_separation_sepformer_wsj02mix'
+ 
+  
+  AudioFeatures : any = {};
 
-  //   },
-  //   {
-  //     task:	"Speech Separation", 
-  //     dataset: "WHAM!", 
-  //     system: "SepFormer",
-  //     performance: "SDRi= 16.4 dB (test)",
-  //     api: '/api/audioseparation/speech_separation_sepformer_wham'
-  //   },
-  //   {
-  //     task:	"Speech Separation", 
-  //     dataset: "WHAMR!", 
-  //     system: "SepFormer",
-  //     performance: "SDRi= 14.0 dB (test)",
-  //     api: '/api/audioseparation/speech_separation_sepformer_whamr'
-  //   },
-  //   // {
-  //   //   task:	"Speech Separation", 
-  //   //   dataset: "Libri2Mix", 
-  //   //   system: "SepFormer",
-  //   //   performance: "SDRi= 20.6 dB (test-clean)",
-     
-  //   // },
-  //   // {
-  //   //   task:	"Speech Separation", 
-  //   //   dataset: "Libri3Mix", 
-  //   //   system: "SepFormer",
-  //   //   performance: "SDRi= 18.7 dB (test-clean)",
-  //   // },
-  //   {
-  //     task:	"Voice Activity Detection",
-  //     dataset: "LibryParty", 
-  //     system: "CRDNN",
-  //     performance:	"F-score=0.9477 (test)",
-  //     api: '/api/voice_activity_detection/vad_crdnn_libriparty'
-  //   },
-  //   {
-  //     task:	"Emotion Recognition", 
-  //     dataset: "IEMOCAP", 
-  //     system: "wav2vec", 
-  //     performance:	"Accuracy=79.8% (test)",
-  //     api: '/api/emotion_recognition/wav2vec2_IEMOCAP'
-  //   },
-  //   {
-  //     task:	"Language Identification", 
-  //     dataset: "CommonLanguage", 
-  //     system: "ECAPA-TDNN",	
-  //     performance: "Accuracy=84.9% (test)",
-  //     api: '/api/language_id/langid_commonlanguage_ecapa'
-  //   },
-  //   // {
-  //   //   task:	"Spoken, Language Understanding",
-  //   //   dataset: "Timers and Such", 
-  //   //   system:	"CRDNN Intent",
-  //   //   performance: "Accuracy=89.2% (test)"
-  //   // },
-  //   // {
-  //   //   task:"Spoken, Language Understanding", 
-  //   //   dataset: "SLURP", 
-  //   //   system:	"CRDNN	Intent", 
-  //   //   performance:"Accuracy=87.54% (test)"
-  //   // },
-  //   {
-  //     task:"Language Identification",
-  //     dataset: "VoxLingua 107", 
-  //     system:"ECAPA-TDNN Sentence", 
-  //     performance: "Accuracy=93.3% (test)",
-  //     api: '/api/language_id/langid_voxlingua107_ecapa'
-  //   },
-  // ]
-  
-  
   AudioAnalysisSteps1 = {
     "Automatic Speech Recognition": [
     {
@@ -469,7 +302,27 @@ export class FeaturesComponent implements OnInit {
   constructor(private http: HttpClient, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
+    this.getDeepLearningFeatures();
+  }
 
+  getDeepLearningFeatures(){
+    this.http.get('/api/deep-learning-features').subscribe(
+      response => {
+        let apiList = JSON.parse(response.toString());
+        for (var key in apiList) {
+            this.AudioFeatures[apiList[key].task] = []    
+        }
+        for (var key in apiList) {
+          this.AudioFeatures[apiList[key].task].push(apiList[key])    
+        }
+        console.log("this.AudioFeatures:", this.AudioFeatures);
+        console.log("this.AudioAnalysisSteps1: ", this.AudioAnalysisSteps1)
+      },
+      error => {
+        console.error(error)
+      }
+      
+      )
   }
 
   onFileSelected(event) {

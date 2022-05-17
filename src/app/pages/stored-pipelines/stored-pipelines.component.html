@@ -167,32 +167,28 @@
                     <div class="col-sm-12">
                       <h4>Step: {{step.key}}</h4>
                     </div>
-                    <div class="col-sm-12">
+                    <div class="col-sm-3">
                       <h6>Input : {{step.value.inputFileId}}</h6>
                     </div>
-                    <div class="col-sm-12">
-                      <i class=" tim-icons icon-minimal-down"></i>
+                    <div class="col-sm-1 col-md-1">
+                      <i class=" tim-icons icon-minimal-right"></i>
                     </div>
-                  </div>
-                  <div class="row text-center" style="border: 1pt; border-color: red; border-style: solid;">
-                    <div class="col-sm-12 col-md-12">
-                      <h6>Task : </h6>{{step.value.task}}
+
+                     <div class="col-sm-3 col-md-4 text-center">
+                      <h6>Task : {{step.value.task}}</h6>
+                      <h6>Dateset: {{step.value.dataset}}</h6>
+                      <h6>System : {{step.value.system}}</h6>
+                      <h6>Performance : {{step.value.performance}}</h6>
                     </div>
-                    <div class="col-sm-12 col-md-12">
-                      <h6>System : </h6>{{step.value.system}}
+
+                    <div class="col-sm-1 col-md-1">
+                      <i class=" tim-icons icon-minimal-right"></i>
                     </div>
-                    <div class="col-sm-12 col-md-12">
-                      <h6>Performance : </h6>{{step.value.performance}}
+
+                    <div class="col-sm-12 col-md-3 text-center">
+                      <p *ngFor="let outputFileId of step.value.outputFileIds" >{{outputFileId}}</p> 
                     </div>
-                    <!-- <div class="col-sm-12 col-md-12">
-                      <h6>API : </h6>{{step.value.api}}
-                    </div> -->
-                  </div>
-                  <div class="row d-flex justify-content-center">
-                    <div *ngFor="let outputFileId of step.value.outputFileIds" class="col-sm-12 col-md-3 text-center">
-                      <i class=" tim-icons icon-minimal-down"></i>  
-                      <p>{{outputFileId}}</p> 
-                    </div>
+                  
                   </div>
                 </div>
 

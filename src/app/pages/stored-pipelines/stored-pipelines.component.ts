@@ -286,6 +286,7 @@ export class StoredPipelinesComponent implements OnInit {
   }
 
   runPipeline(){
+    console.log("-------------------------------RUN PIPELINE")
     this.processing = true;
     console.log("==> runPipeline ", this.selectedPipeline);
     this.formData = new FormData();
@@ -302,13 +303,14 @@ export class StoredPipelinesComponent implements OnInit {
         for (let i = 0; i < this.selectedPipeline['steps'].length; i++) {          
           this.selectedPipeline['steps'][i].separatedFileWavesurfer = [];
           this.selectedPipeline['steps'][i].separatedFileBlobs =[]; 
+          
           console.log("==> this.selectedPipeline['steps'][i]",this.selectedPipeline['steps'][i])
           this.selectedPipeline['steps'][i]['inputFilename'] = this.selectedPipeline['steps'][i]['inputFilename'].replace(/^.*[\\\/]/, '');
           
           for (let j = 0; j < this.selectedPipeline['steps'][i]['outputFilenames'].length; j++) {
             const element = this.selectedPipeline['steps'][i]['outputFilenames'][j];
             this.selectedPipeline['steps'][i]['outputFilenames'][j] = element.replace(/^.*[\\\/]/, '');
-            // console.log("==> this.selectedPipeline['steps'][i][j]", element);
+            console.log("==> this.selectedPipeline['steps'][i][j]", element);
             this.downloadSeparatedFile(
               this.selectedPipeline['steps'][i], 
               this.selectedPipeline['steps'][i].api, 
