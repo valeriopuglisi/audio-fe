@@ -9,19 +9,8 @@
     font-size: 1.3em;
     text-align:center;
   }
-  
-  .dropzone {
-      height: 200px;
-      display: table;
-      width: 100%;
-      background-color: #eee;
-      border: dotted 1px #aaa;
-  }
-  
-  input[type="file"]{
-    display:none;
-  }
 
+ 
   .textLink{
     background-color: #f45e61;
     color:#fff;
@@ -38,10 +27,6 @@
       margin-right: 10px;
   }
 
-
-  .file-input {
-    display: none;
-  }
 
 
   .lds-facebook {

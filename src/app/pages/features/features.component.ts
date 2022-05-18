@@ -59,6 +59,7 @@ export class FeaturesComponent implements OnInit {
   public formData : FormData;
   selectedTask: string = "";
   process : boolean = false;
+  processing : boolean = false;
   processError : boolean = false;
   analysisTitle: string = "";
   analysisResult: string = "";
@@ -203,6 +204,7 @@ export class FeaturesComponent implements OnInit {
 
 
   analyzeFile(api:string){
+    this.processing = true;
     console.log("==> analyzeApi : ", api)
     this.formData = new FormData();
     this.formData.append("title", this.fileName); 
@@ -212,31 +214,35 @@ export class FeaturesComponent implements OnInit {
         this.process =true;
         this.processError =false;
         console.log(response)  
-        this.analysisResult = response.toString();         
+        this.analysisResult = response.toString();
+        this.processing = false;         
       },
       error => {
         console.error(error);
         this.process =false;
         this.processError = true;
-
+        this.processing = false;
       }
     );
   }
 
   separateFile(api:string){
+    this.processing = true;
     this.formData = new FormData();
     this.formData.append("title", this.fileName); 
     this.formData.append("audiofile", this.fileToUpload);
     this.http.post(api , this.formData).subscribe(
       response => {
-        this.process =true;
-        this.processError =false;
+       
         this.separatedFilenames = response;
         console.log(this.separatedFilenames);
         for (let i = 0; i < this.separatedFilenames.length; i++) {
           const separatedFilename = this.separatedFilenames[i];
           this.downloadSeparatedFile(api, separatedFilename, i) 
         }
+        this.process =true;
+        this.processError =false;
+        this.processing = false;
       },
       error => {
         console.error(error);

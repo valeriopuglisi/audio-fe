@@ -2,14 +2,14 @@
   <div class=" row">
     <div class=" col-sm-12 text-center">
       <a href="https://speechbrain.github.io/">
+        <img src="../../../assets/img/speechbrain.jfif" 
+        style="width: 10vh; height: 10vh;">
         <h5 class=" card-category">Speechbrain</h5>
         <h2 class=" card-title">Deep Learning Speech Analysis</h2>
-        <img src="../../../assets/img/speechbrain.jfif" 
-        style="width: 20vh; height: 20vh;">
       </a>
     </div>
     
-    <div class=" col-sm-12 col-md-6">
+    <div class=" col-sm-12 col-md-12">
       <div class=" card card-chart">
         <div class=" card-header">
           <div class=" row">
@@ -21,8 +21,8 @@
         </div>
         <div class=" card-body">
           <!-- Upload file from pc -->
-          <div class="col-sm-12 col-md-6  text-center" >
-            <div class="file-upload">   
+          <div class="col-sm-12 col-md-12  text-center" >
+            <div class="file-upload" style="margin-left:8%">   
               <input 
               type="file" 
               class="file-input"     
@@ -92,7 +92,7 @@
 </div>  
 </div>
 
-<div *ngIf="this.fileToUpload" class="col-sm-12 col-md-6 text-center">
+<div *ngIf="this.fileToUpload" class="col-sm-12 col-md-12 text-center">
   <div class="card card-chart" style="overflow: auto; height: 49vh;">
     <div class="card-header">
       <div class=" row">
@@ -159,6 +159,10 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="col-sm-12 text-center" *ngIf="this.processing">
+    <div class="lds-facebook"><div></div><div></div><div></div></div>
 </div>
 
 <div class="col-sm-12" *ngIf="this.process">
