@@ -1,0 +1,18 @@
+export interface PipelineStep {
+    file: File | null,
+    fileName: string | null,
+    inputFileId: string | null,
+    outputFileIds: string [],
+    task:string,
+    api:string,
+    dataset:string,
+    performance:string,
+    system:string,
+    analysisResult:string,
+    separatedFilenames :string[],
+    separatedFileBlobs: Blob[],
+    separatedFileWavesurfer: any[], 
+    processing: boolean,
+    processing_error: string | null,
+    processed: boolean,
+}

@@ -113,7 +113,7 @@
   </div>
 </div>
 
-<div class="col-sm-12 col-md-12" *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps1 | keyvalue; let i = index">  
+<div class="col-sm-12 col-md-12" *ngFor="let AudioAnalysisStep of this.AudioFeatures | keyvalue; let i = index">  
   <!-- AudioAnalysisStep.key: {{AudioAnalysisStep.key}} ==> {{this.selectedTask}} -->
   <div *ngIf="AudioAnalysisStep.key == this.selectedTask">
   <div class="card card-chart">

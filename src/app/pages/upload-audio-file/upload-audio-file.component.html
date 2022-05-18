@@ -75,7 +75,7 @@
                       type="button" 
                       rel="tooltip" 
                       class="btn btn-info btn-sm btn-icon"
-                      (click)="this.downloadFile(file.value.title)"
+                      (click)="this.downloadStartFile(file.value.title)"
                       >
                         <i class="tim-icons icon-cloud-download-93"></i>
                       </button> 
@@ -186,13 +186,13 @@
           <div class="col-sm-12 col-md-12"> 
             <button type="button"  
               class="btn btn-primary" 
-              *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps1 | keyvalue;"
+              *ngFor="let AudioAnalysisStep of this.AudioFeatures | keyvalue;"
               (click)="onSelectTask(AudioAnalysisStep.key)"> 
                 {{AudioAnalysisStep.key}} 
             </button>
           </div>
           <div class="col-sm-12 col-md-12" 
-            *ngFor="let AudioAnalysisStep of this.AudioAnalysisSteps1 | keyvalue;">  
+            *ngFor="let AudioAnalysisStep of this.AudioFeatures | keyvalue;">  
             <div *ngIf="AudioAnalysisStep.key == step.task">
               <div class="card card-chart">
                 <div class=" card-header">
