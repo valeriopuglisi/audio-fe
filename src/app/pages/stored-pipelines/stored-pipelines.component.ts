@@ -7,7 +7,9 @@ import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline';
 import Regions from 'wavesurfer.js/src/plugin/regions';
 import * as saveAs from 'file-saver';
 import { toJSDate } from '@ng-bootstrap/ng-bootstrap/datepicker/ngb-calendar';
-
+declare var $: any;
+import * as RecordRTC from 'recordrtc';
+import { Form } from '@angular/forms';
 
 interface AudioAnalysisStep {
   task:	string;
@@ -75,7 +77,8 @@ export class StoredPipelinesComponent implements OnInit {
   public spectogram: any = null;
   public colorMap: any =null;
   // Define a default variable for selected file.
-  
+  inputFiles: FileList;
+  inputFilesForm: FormData;
   fileName: string;
   fileToUpload: File | null = null;
   filesList: any;
@@ -205,7 +208,7 @@ export class StoredPipelinesComponent implements OnInit {
   imageURL:SafeUrl
 
 
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer) { }
+  constructor(private http: HttpClient, private domSanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
 
@@ -236,6 +239,11 @@ export class StoredPipelinesComponent implements OnInit {
   }
 
   onFileSelected(event) {
+    this.filesList = event.target.files
+    let inputFilesForm = new FormData();
+    inputFilesForm.append("files", this.filesList);
+
+
     const file:File = event.target.files[0];
     if (file) {
         this.fileToUpload = file
@@ -245,7 +253,22 @@ export class StoredPipelinesComponent implements OnInit {
     }
   }
 
+  deleteSelectedFile(file){
+    var dt = new DataTransfer();
+
+    for (let i = 0; i < this.filesList.length; i++) {
+      const _file = this.filesList.item(i);
+      if(_file != file){
+        dt.items.add(_file);
+      }
+    }
+
+    this.filesList = dt.files; 
+  }
+
+
   initWaveSurfer(file){
+    document.getElementById("waveform").innerHTML = ""
     this.wavesurfer = WaveSurfer.create({
       container: '#waveform',
       backgroundColor:'black',
@@ -291,6 +314,7 @@ export class StoredPipelinesComponent implements OnInit {
     this.processing = true;
     console.log("==> runPipeline ", this.selectedPipeline);
     this.formData = new FormData();
+
     this.formData.append("title", this.fileToUpload.name); 
     this.formData.append("audiofile", this.fileToUpload);
     let api = '/api/stored-pipelines/'+this.selectedPipeline.key;
@@ -355,6 +379,74 @@ export class StoredPipelinesComponent implements OnInit {
         saveAs(this.report, this.report_id);
       }
     )
+  }
+
+  title = 'micRecorder';
+  //Lets declare Record OBJ
+  record;
+  //Will use this flag for toggeling recording
+  recording = false;
+  //URL of Blob
+  url;
+  error;
+  sanitize(url: string) {
+  return this.domSanitizer.bypassSecurityTrustUrl(url);
+  }
+  /**
+  * Start recording.
+  */
+  initiateRecording() {
+  this.filesList = undefined;
+  this.recording = true;
+  let mediaConstraints = {
+  video: false,
+  audio: true
+  };
+  
+  navigator.mediaDevices.getUserMedia(mediaConstraints).then(this.successCallback.bind(this), this.errorCallback.bind(this));
+  }
+  /**
+  * Will be called automatically.
+  */
+  successCallback(stream) {
+  var options = {
+  mimeType: "audio/wav",
+  numberOfAudioChannels: 2,
+  sampleRate: 44000,
+  };
+  //Start Actuall Recording
+  var StereoAudioRecorder = RecordRTC.StereoAudioRecorder;
+  this.record = new StereoAudioRecorder(stream);
+  this.record.record();
+  }
+  /**
+  * Stop recording.
+  */
+  stopRecording() {
+  this.recording = false;
+  this.record.stop(this.processRecording.bind(this));
+  }
+  /**
+  * processRecording Do what ever you want with blob
+  * @param  {any} blob Blog
+  */
+  processRecording(blob) {
+  // this.url = URL.createObjectURL(blob);
+  console.log("blob", blob);
+  console.log("url", this.url);
+  const file:File = new File([blob], "prova_live.wav");
+    if (file) {
+        this.fileToUpload = file
+        this.fileName = file.name;
+        console.log(file.type)
+        this.initWaveSurfer(this.fileToUpload)
+    }
+  }
+  /**
+  * Process Error.
+  */
+  errorCallback(error) {
+  this.error = 'Can not play audio in your browser';
   }
 
 }

@@ -6,9 +6,10 @@ import SpectrogramPlugin from 'wavesurfer.js/src/plugin/spectrogram';
 import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline';
 import Regions from 'wavesurfer.js/src/plugin/regions';
 import * as saveAs from 'file-saver';
-import { ThrowStmt } from '@angular/compiler';
 import { DeepLearningFeaturesService } from 'src/app/services/deep-learning-features.service';
 import { DeepLearningAudioFeatures } from 'src/app/interfaces/deep-learning-audio-features';
+declare var $: any;
+import * as RecordRTC from 'recordrtc';
 
 @Component({
   selector: 'app-features',
@@ -76,7 +77,7 @@ export class FeaturesComponent implements OnInit {
   imageURL:SafeUrl
 
 
-  constructor(private http: HttpClient, private deepLearningFeaturesService: DeepLearningFeaturesService) { }
+  constructor(private http: HttpClient, private deepLearningFeaturesService: DeepLearningFeaturesService,  private domSanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
     this.getDLFeatures();
@@ -95,24 +96,6 @@ export class FeaturesComponent implements OnInit {
   }
 
 
-
-  getDeepLearningFeatures(){
-    this.http.get('/api/deep-learning-features').subscribe(
-      response => {
-        let apiList = JSON.parse(response.toString());
-        for (var key in apiList) {
-            this.AudioFeatures[apiList[key].task] = []    
-        }
-        for (var key in apiList) {
-          this.AudioFeatures[apiList[key].task].push(apiList[key])    
-        }
-      },
-      error => {
-        console.error(error)
-      }
-      
-      )
-  }
 
   onFileSelected(event) {
     const file:File = event.target.files[0];
@@ -277,6 +260,74 @@ export class FeaturesComponent implements OnInit {
   console.log("==> task: ", task);
   this.selectedTask = task
   }
+
+  title = 'micRecorder';
+  //Lets declare Record OBJ
+  record;
+  //Will use this flag for toggeling recording
+  recording = false;
+  //URL of Blob
+  url;
+  error;
+  sanitize(url: string) {
+  return this.domSanitizer.bypassSecurityTrustUrl(url);
+  }
+  /**
+  * Start recording.
+  */
+  initiateRecording() {
+    this.recording = true;
+    let mediaConstraints = {
+    video: false,
+    audio: true
+    };
+    navigator.mediaDevices.getUserMedia(mediaConstraints).then(this.successCallback.bind(this), this.errorCallback.bind(this));
+  }
+  /**
+  * Will be called automatically.
+  */
+  successCallback(stream) {
+    var options = {
+    mimeType: "audio/wav",
+    numberOfAudioChannels: 2,
+    sampleRate: 44000,
+    };
+    //Start Actuall Recording
+    var StereoAudioRecorder = RecordRTC.StereoAudioRecorder;
+    this.record = new StereoAudioRecorder(stream);
+    this.record.record();
+  }
+  /**
+  * Stop recording.
+  */
+  stopRecording() {
+  this.recording = false;
+  this.record.stop(this.processRecording.bind(this));
+  }
+  /**
+  * processRecording Do what ever you want with blob
+  * @param  {any} blob Blog
+  */
+  processRecording(blob) {
+  // this.url = URL.createObjectURL(blob);
+  console.log("blob", blob);
+  console.log("url", this.url);
+  const file:File = new File([blob], "prova_live.wav");
+    if (file) {
+        this.fileToUpload = file
+        this.fileName = file.name;
+        console.log(file.type)
+        this.initWaveSurfer(this.fileToUpload)
+    }
+
+  }
+  /**
+  * Process Error.
+  */
+  errorCallback(error) {
+  this.error = 'Can not play audio in your browser';
+  }
+
 
 
 

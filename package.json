@@ -75,6 +75,7 @@
     "core-js": "3.15.2",
     "file-saver": "^2.0.5",
     "ngx-toastr": "14.0.0",
+    "recordrtc": "^5.6.2",
     "rxjs": "^7.2.0",
     "tslib": "2.3.0",
     "wavesurfer.js": "^5.2.0",
