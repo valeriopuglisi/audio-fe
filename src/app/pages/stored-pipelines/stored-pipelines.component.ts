@@ -80,7 +80,8 @@ export class StoredPipelinesComponent implements OnInit {
   fileToUpload: File | null = null;
   filesList: any;
   public formData : FormData;
-
+  report : Blob = null;
+  report_id: string | null = null;
   pipelines: any;
   pipeline: Pipeline;
   preprocessTitle: string = "";
@@ -296,7 +297,8 @@ export class StoredPipelinesComponent implements OnInit {
     this.http.post(api, this.formData).subscribe(
       response => {
         this.processing=false;
-        this.selectedPipeline = response;
+        this.selectedPipeline = response[0];
+        this.report_id = response[1];
         this.process =true;
         console.log("==> this.selectedPipeline ", this.selectedPipeline );
 
@@ -342,6 +344,15 @@ export class StoredPipelinesComponent implements OnInit {
       },
       error => {
         console.error(error);
+      }
+    )
+  }
+
+  getReport(){
+    this.http.get("/api/report/"+ this.report_id, { responseType: 'blob' }).subscribe(
+      data => {
+        this.report = data;
+        saveAs(this.report, this.report_id);
       }
     )
   }

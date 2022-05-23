@@ -7,6 +7,17 @@
         <h2 class=" card-title">Pipelines</h2>
         <!-- <img src="../../../assets/img/logo (2).png" style="width: 30vh; height: 20vh;"> -->
       </div>
+      <div *ngIf="this.report_id" class="row align-items-end">
+        <div class="col-sm-12">
+          <button 
+            class="btn btn-warnings" 
+            (click)="this.getReport()" 
+            >
+            Download Report
+          </button>
+        </div>
+      </div>
+      
         <div class=" col-sm-12 col-md-12">
             <div class=" card card-chart">
                 <div class=" card-header">
