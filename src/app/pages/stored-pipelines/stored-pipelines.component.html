@@ -1,368 +1,400 @@
-  <div class="content container-fluid">
-      <div class=" row">
-        <!-- <div class=" col-sm-3 text-center"></div>
-        <div class=" col-sm-3 text-center"></div> -->
-        <div class=" col-sm-12 text-center" style="margin-bottom: 2vh;">
-          <h5 class=" card-category">Deep Learning Audio Analysis</h5>
-          <h2 class=" card-title">Pipelines</h2>
-          <!-- <img src="../../../assets/img/logo (2).png" style="width: 30vh; height: 20vh;"> -->
-        </div>
-
-      
-
-
-
-        <div *ngIf="this.report_id" class="row align-items-end">
-          <div class="col-sm-12">
-            <button 
-              class="btn btn-warnings" 
-              (click)="this.getReport()" 
-              >
-              Download Report
-            </button>
+    <div class="content container-fluid">
+        <div class=" row">
+          <!-- <div class=" col-sm-3 text-center"></div>
+          <div class=" col-sm-3 text-center"></div> -->
+          <div class=" col-sm-12 text-center" style="margin-bottom: 2vh;">
+            <h5 class=" card-category">Deep Learning Audio Analysis</h5>
+            <h2 class=" card-title">Pipelines</h2>
+            <!-- <img src="../../../assets/img/logo (2).png" style="width: 30vh; height: 20vh;"> -->
           </div>
-        </div>
+
         
-          <div class=" col-sm-12 col-md-12">
-              <div class=" card card-chart">
-                  <div class=" card-header">
-                      <div class=" row">
-                        
-                          <div class=" col-sm-12 text-center">
-                              <h5 class=" card-category">Step 1</h5>
-                              <h2 class=" card-title">Audio Selection</h2>
-                          </div> 
-                      </div>
-                  </div>
-                  <div class=" card-body">
-                      <!-- Upload file from pc -->
-                      <div class="row">
-                      <div class="col-sm-12 col-md-6 text-center" >
-                          <div class="file-upload " style="margin-left:8%" >   
-                              <input 
-                              type="file" 
-                              class="file-input btn btn-primary"     
-                              (change)="onFileSelected($event)"
-                              accept="audio/*"
-                              id="files"
-                              name="files"
-                              multiple
-                              > 
-                          </div>
-                      </div>
 
-                      <div class="col-sm-12 col-md-6 text-center">
-                        <button (click)="initiateRecording()" class="btn btn-primary" *ngIf="!recording" style="cursor: pointer;background-color: green;color: white;"> Start Recording </button>
-                          <button (click)="stopRecording()" class="btn btn-danger" *ngIf="recording" style="cursor: pointer;background-color: red;color: white;"> Stop Recording </button>
-                          <div class="clearfix"></div>
-                          <audio controls="" *ngIf="url">
-                              <source [src]="sanitize(url)" type="audio/wav">
-                          </audio>
-                      </div>
 
-                      <div *ngIf="this.filesList?.length > 1" class="col-sm-12">
-                      <div style="overflow:auto;">
-                            <table class="table" >
-                              <thead>
-                                <tr>
-                                  <th>No.</th>
-                                  <th>Name</th>
-                                  <th>Process</th>
-                                </tr>
-                              </thead>
-                              <tbody *ngFor="let file of this.filesList| keyvalue; let i = index">
-                                <tr >
-                                  <!-- <td class="text-center">{{i}}</td> -->
-                                  <td (click)="this.initWaveSurfer(file.value)"style="width: 5%;">{{ file.key }} </td>
-                                  <td (click)="this.initWaveSurfer(file.value)">{{ file.value.name }} </td>
-                                  <td style="width: 5%;"> <button 
-                                    class="btn btn-primary btn-fab btn-icon btn-round" 
-                                    (click)="this.deleteSelectedFile(file.value)"
-                                    > 
-                                    <i class="tim-icons icon-simple-remove"></i></button></td>
-                                </tr>
-                                
-                              </tbody>
-                            </table>
-                          </div>
-                      </div>
 
-                        
-                      <div class="col-md-12" [ngStyle]="{ display: !this.fileToUpload ? 'none' : 'block' }"  
-                      >
-                        <div id="waveform">
-                            <div class="progress progress-striped active" id="progress-bar">
-                                <div class="progress-bar progress-bar-info"></div>
+          <div *ngIf="this.report_id" class="row align-items-end">
+            <div class="col-sm-12">
+              <button 
+                class="btn btn-warnings" 
+                (click)="this.getReport(this.report_id)" 
+                >
+                Download Report
+              </button>
+            </div>
+          </div>
+          
+            <div class=" col-sm-12 col-md-12">
+                <div class=" card card-chart">
+                    <div class=" card-header">
+                        <div class=" row">
+                          
+                            <div class=" col-sm-12 text-center">
+                                <h5 class=" card-category">Step 1</h5>
+                                <h2 class=" card-title">Audio Selection</h2>
                             </div> 
-                            <!-- Here be waveform -->
                         </div>
-                        <div id="wave-spectrogram"></div>
-                        <div id="wave-timeline"></div>
-                        <div class="controls text-center">
-                            <div class="row">
-                                <div class="col-sm-7">
-                                    <button 
-                                    class="btn btn-warnings" 
-                                    (click)="this.wavesurfer.play()" 
-                                    >
-                                    <i class="tim-icons icon-triangle-right-17"></i>Play
-                                    </button>
-                                    
-                                    <button 
-                                    class="btn btn-warnings" 
-                                    (click)="this.wavesurfer.pause()" 
-                                    >          
-                                      <i class=" tim-icons icon-button-pause"></i>Pause
-                                    </button>
-                        
-                                  </div>
-                    
-                                  <div class="col-sm-1">
-                                      <i class="glyphicon glyphicon-zoom-in"></i>
-                                  </div>
-                                  
-                                  <div class="col-sm-3">
-                                      <input 
-                                      [(ngModel)]="slider" 
-                                      (ngModelChange)="setZoom($event)"
-                                      data-action="zoom" 
-                                      type="range" 
-                                      [min]="0" 
-                                      [max]="10000" 
-                                      
-                                      style="width: 100%" />
-                                  </div>
-                                  
-                                  <div class="col-sm-1">
-                                      <i class="glyphicon glyphicon-zoom-out"></i>
-                                  </div>
-                    
-                    
+                    </div>
+                    <div class=" card-body">
+                        <!-- Upload file from pc -->
+                        <div class="row">
+                        <div class="col-sm-12 col-md-6 text-center" >
+                            <div class="file-upload " style="margin-left:8%" >   
+                                <input 
+                                type="file" 
+                                class="file-input btn btn-primary"     
+                                (change)="onFileSelected($event)"
+                                accept="audio/*"
+                                id="files"
+                                name="files"
+                                multiple
+                                > 
                             </div>
                         </div>
-            
-                      </div>
-                      
-                      </div>
-                      
 
+                        <div class="col-sm-12 col-md-6 text-center">
+                          <button (click)="initiateRecording()" class="btn btn-primary" *ngIf="!recording" style="cursor: pointer;background-color: green;color: white;"> Start Recording </button>
+                            <button (click)="stopRecording()" class="btn btn-danger" *ngIf="recording" style="cursor: pointer;background-color: red;color: white;"> Stop Recording </button>
+                            <div class="clearfix"></div>
+                            <audio controls="" *ngIf="url">
+                                <source [src]="sanitize(url)" type="audio/wav">
+                            </audio>
+                        </div>
+
+                        <div *ngIf="this.filesList?.length > 1" class="col-sm-12">
+                        <div style="overflow:auto; height:30vh">
+                              <table class="table" >
+                                <thead>
+                                  <tr>
+                                    <th>No.</th>
+                                    <th>Name</th>
+                                    <th>Process</th>
+                                  </tr>
+                                </thead>
+                                <tbody *ngFor="let file of this.filesList| keyvalue; let i = index">
+                                  <tr >
+                                    <!-- <td class="text-center">{{i}}</td> -->
+                                    <td (click)="this.initWaveSurfer(file.value)" style="width: 5%;">{{ file.key }} </td>
+                                    <td (click)="this.initWaveSurfer(file.value)" style="width: 30vw;">{{ file.value.name }} </td>
+                                    <td style="width: 5%;"> <button 
+                                      class="btn btn-primary btn-fab btn-icon btn-round" 
+                                      (click)="this.deleteSelectedFile(file.value)"
+                                      > 
+                                      <i class="tim-icons icon-simple-remove"></i></button></td>
+                                  </tr>
+                                  
+                                </tbody>
+                              </table>
+                            </div>
+                        </div>
+
+                          
+                        <div class="col-md-12" [ngStyle]="{ display: !this.fileToUpload ? 'none' : 'block' }" >
+                          <h3 class="text-center">{{this.fileName}}</h3>
+                          <div id="waveform">
+                              <div class="progress progress-striped active" id="progress-bar">
+                                  <div class="progress-bar progress-bar-info"></div>
+                              </div> 
+                              <!-- Here be waveform -->
+                          </div>
+                          <div id="wave-spectrogram"></div>
+                          <div id="wave-timeline"></div>
+                          <div class="controls text-center">
+                              <div class="row">
+                                  <div class="col-sm-7">
+                                      <button 
+                                      class="btn btn-warnings" 
+                                      (click)="this.wavesurfer.play()" 
+                                      >
+                                      <i class="tim-icons icon-triangle-right-17"></i>Play
+                                      </button>
+                                      
+                                      <button 
+                                      class="btn btn-warnings" 
+                                      (click)="this.wavesurfer.pause()" 
+                                      >          
+                                        <i class=" tim-icons icon-button-pause"></i>Pause
+                                      </button>
+                          
+                                    </div>
+                      
+                                    <div class="col-sm-1">
+                                        <i class="glyphicon glyphicon-zoom-in"></i>
+                                    </div>
+                                    
+                                    <div class="col-sm-3">
+                                        <input 
+                                        [(ngModel)]="slider" 
+                                        (ngModelChange)="setZoom($event)"
+                                        data-action="zoom" 
+                                        type="range" 
+                                        [min]="0" 
+                                        [max]="10000" 
+                                        
+                                        style="width: 100%" />
+                                    </div>
+                                    
+                                    <div class="col-sm-1">
+                                        <i class="glyphicon glyphicon-zoom-out"></i>
+                                    </div>
+                      
+                      
+                              </div>
+                          </div>
+              
+                        </div>
+                        
+                        </div>
+                        
+
+                    </div>
+                  </div>  
+
+            </div>
+
+            
+              
+            <div class="col-sm-12 col-md-12" *ngIf="this.fileToUpload != null">
+                <div class=" card card-chart">
+                    <div class=" card-header">
+                      <div class=" row">
+                        <div class=" col-sm-12 text-center">
+                          <h2 class=" card-title">Audio Analysis Pipelines</h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div  class="card-body" >
+                      <div style="overflow:auto;">
+                        <table class="table" >
+                          <thead>
+                            <tr>
+                              <!-- <th class="text-center">#</th> -->
+                              <th>ID</th>
+                              <th>Name</th>
+                              <th>Process</th>
+                            </tr>
+                          </thead>
+                          <tbody *ngFor="let pipeline of this.pipelines| keyvalue; let i = index">
+                            <tr>
+                              <!-- <td class="text-center">{{i}}</td> -->
+                              <td style="width: 5%;">{{ pipeline.key }} </td>
+                              <td>{{ pipeline.value.name }} </td>
+                              <td style="width: 45%;">{{ pipeline.value.description }} </td>                    
+                              <td style="width: 5%;"> <button 
+                                class="btn btn-primary btn-fab btn-icon btn-round" 
+                                (click)="getPipeline(pipeline)"
+                                [disabled]="this.fileToUpload ? false : true"
+                                > 
+                                <i class="tim-icons icon-triangle-right-17"></i></button></td>
+                            </tr>
+                            
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      
+                    </div>
                   </div>
-                </div>  
+            </div>
 
-          </div>
 
-          
-            
-          <div class="col-sm-12 col-md-12" *ngIf="this.fileToUpload != null">
+            <div class="col-sm-12 col-md-12" *ngIf="this.pipeline != null">
               <div class=" card card-chart">
                   <div class=" card-header">
                     <div class=" row">
                       <div class=" col-sm-12 text-center">
-                        <h2 class=" card-title">Audio Analysis Pipelines</h2>
+                        <h2 class=" card-title">Author: {{this.pipeline?.author}}</h2>
                       </div>
                     </div>
                   </div>
                   <div  class="card-body" >
-                    <div style="overflow:auto;">
-                      <table class="table" >
-                        <thead>
-                          <tr>
-                            <!-- <th class="text-center">#</th> -->
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Process</th>
-                          </tr>
-                        </thead>
-                        <tbody *ngFor="let pipeline of this.pipelines| keyvalue; let i = index">
-                          <tr>
-                            <!-- <td class="text-center">{{i}}</td> -->
-                            <td style="width: 5%;">{{ pipeline.key }} </td>
-                            <td>{{ pipeline.value.name }} </td>
-                            <td style="width: 45%;">{{ pipeline.value.description }} </td>                    
-                            <td style="width: 5%;"> <button 
-                              class="btn btn-primary btn-fab btn-icon btn-round" 
-                              (click)="getPipeline(pipeline)"
-                              [disabled]="this.fileToUpload ? false : true"
-                              > 
-                              <i class="tim-icons icon-triangle-right-17"></i></button></td>
-                          </tr>
-                          
-                        </tbody>
-                      </table>
+                    
+                    <div class="row" [align]="'center'">
+                      <div class="col-sm-12">
+                        <h4>Pipeline: {{this.pipeline?.name}} </h4>
+                      </div>
+                      <div class="col-sm-12">
+                        <h4>Description: {{this.pipeline?.notes}}</h4>
+                      </div>
+                      <div class="col-sm-12">
+                        <h5> Creation Time: {{this.pipeline?.creationTime | date}}</h5>
+                      </div>
                     </div>
-                    
-                    
+                    <div 
+                    class="col-sm-12" 
+                    style="border: 1pt; border-color: violet; border-style: solid; margin-bottom: 5%;" 
+                    *ngFor="let step of this.pipeline?.steps| keyvalue; let j = index">
+                      <div class="row text-center">
+                        <div class="col-sm-12">
+                          <h4>Step: {{step.key}}</h4>
+                        </div>
+                        <div class="col-sm-3">
+                          <h6>Input : {{step.value.inputFileId}}</h6>
+                        </div>
+                        <div class="col-sm-1 col-md-1">
+                          <i class=" tim-icons icon-minimal-right"></i>
+                        </div>
+
+                        <div class="col-sm-3 col-md-4 text-center">
+                          <h6>Task : {{step.value.task}}</h6>
+                          <h6>Dateset: {{step.value.dataset}}</h6>
+                          <h6>System : {{step.value.system}}</h6>
+                          <h6>Performance : {{step.value.performance}}</h6>
+                        </div>
+
+                        <div class="col-sm-1 col-md-1">
+                          <i class=" tim-icons icon-minimal-right"></i>
+                        </div>
+
+                        <div class="col-sm-12 col-md-3 text-center">
+                          <p *ngFor="let outputFileId of step.value.outputFileIds" >{{outputFileId}}</p> 
+                        </div>
+                      
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-sm-12 text-center">
+                        <button 
+                          class="btn btn-primary" 
+                          (click)="runPipeline(this.selectedPipeline, this.fileToUpload)" 
+                        >Run
+                        </button>
+                        <button 
+                          class="btn btn-warning" 
+                          (click)="runPipelineMultipleFile(this.selectedPipeline, this.filesList)" 
+                        >Run All
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
           </div>
 
-
-          <div class="col-sm-12 col-md-12" *ngIf="this.pipeline != null">
-            <div class=" card card-chart">
-                <div class=" card-header">
-                  <div class=" row">
-                    <div class=" col-sm-12 text-center">
-                      <h2 class=" card-title">Author: {{this.pipeline?.author}}</h2>
-                    </div>
-                  </div>
-                </div>
-                <div  class="card-body" >
-                  
-                  <div class="row" [align]="'center'">
-                    <div class="col-sm-12">
-                      <h4>Pipeline: {{this.pipeline?.name}} </h4>
-                    </div>
-                    <div class="col-sm-12">
-                      <h4>Description: {{this.pipeline?.notes}}</h4>
-                    </div>
-                    <div class="col-sm-12">
-                      <h5> Creation Time: {{this.pipeline?.creationTime | date}}</h5>
-                    </div>
-                  </div>
-                  <div 
-                  class="col-sm-12" 
-                  style="border: 1pt; border-color: violet; border-style: solid; margin-bottom: 5%;" 
-                  *ngFor="let step of this.pipeline?.steps| keyvalue; let j = index">
-                    <div class="row text-center">
-                      <div class="col-sm-12">
-                        <h4>Step: {{step.key}}</h4>
-                      </div>
-                      <div class="col-sm-3">
-                        <h6>Input : {{step.value.inputFileId}}</h6>
-                      </div>
-                      <div class="col-sm-1 col-md-1">
-                        <i class=" tim-icons icon-minimal-right"></i>
-                      </div>
-
-                      <div class="col-sm-3 col-md-4 text-center">
-                        <h6>Task : {{step.value.task}}</h6>
-                        <h6>Dateset: {{step.value.dataset}}</h6>
-                        <h6>System : {{step.value.system}}</h6>
-                        <h6>Performance : {{step.value.performance}}</h6>
-                      </div>
-
-                      <div class="col-sm-1 col-md-1">
-                        <i class=" tim-icons icon-minimal-right"></i>
-                      </div>
-
-                      <div class="col-sm-12 col-md-3 text-center">
-                        <p *ngFor="let outputFileId of step.value.outputFileIds" >{{outputFileId}}</p> 
-                      </div>
-                    
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-sm-12 text-center">
-                      <button 
-                        class="btn btn-primary" 
-                        (click)="runPipeline(this.selectedPipeline, this.fileUpload)" 
-                      >Run</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-        </div>
-
-        <div class="col-sm-12 text-center" *ngIf="this.processing">
-          <div class="lds-facebook"><div></div><div></div><div></div></div>
-        </div>
+          <div class="col-sm-12 text-center" *ngIf="this.processing">
+            <div class="lds-facebook"><div></div><div></div><div></div></div>
+          </div>
 
 
-          <div class="col-sm-12" *ngIf="this.process">
-              <div class=" card card-chart">
-                  <div class=" card-header">
-                    <div class=" row">
-                      <div class=" col-sm-12 text-center">
-                        <h5 class=" card-category">Pipeline Results</h5>
-                        <h2 class=" card-title">{{this.selectedPipeline.name}}</h2>
-                      </div>
-                    </div>
-                  </div>
-                  <div  class="card-body" id="demo">
-                    <div class=" row"  *ngFor="let step of this.selectedPipeline?.steps; let i  = index;">
-                      <div class=" col-sm-12">
-                        <div class=" card card-chart">
-                          <div class=" card-header">
-                            <div class=" row" >
-                              <div class=" col-sm-12 text-center">
-                                <h5 class=" card-category">Step {{i + 1}}</h5>
-                                <h1 class="card-title">Task: {{step.task}} - {{step.system}} - {{step.dataset}} - {{step.performance}}</h1>
-                                <h3 class="card-title text-center">Input File: </h3>
-                                <h4>{{step.inputFilename}}</h4>
-                              </div>
-                            </div>
-                          </div>
-                          <div  class=" card-body" id="demo" >
-                          
-      
-                            <div class="row">
-                              
-                    
-                              <div class="col-sm-12 text-center" *ngIf="step.processing">
-                                <div class="lds-facebook"><div></div><div></div><div></div></div>
-                              </div>
-                              
-                              <div class="col-sm-12 col-md-12 text-center" *ngIf="step.analysisResult"> {{step.analysisResult}}</div>
-                              <div class="col-sm-12 col-md-4 text-center" *ngFor="let separatedFile of step.outputFilenames; let j = index">  
-                                <h3 class="text-center"> Output File {{j}}: </h3>
-                                <h4 class="text-center"> {{separatedFile}} </h4>
-                                <div align="right">
-                                  <button 
-                                  class="btn btn-warnings" 
-                                  (click)="this.saveSeparatedFile(step, j)"
-                                  >          
-                                    <i class=" tim-icons icon-cloud-download-93"></i>
-                                  </button>
-                                </div>
-                                <div [id]="'waveform-'+ i +'-'+j">
-                                  <!-- Here be waveform -->
-                                </div>
-                                <div [id]="'wave-spectrogram-'+i+'-'+j"></div>
-                                <div [id]="'wave-timeline-'+i+'-'+j"></div>
-                                <div class="controls text-center">
-                                  <button 
-                                  class="btn btn-warnings" 
-                                  data-action="play" 
-                                  (click)="step.separatedFileWavesurfer[j].play()" >
-                                    <i class="tim-icons icon-triangle-right-17"></i>Play
-                                  </button>
-                                  
-                                  <button 
-                                  class="btn btn-warnings" 
-                                  data-action="play" 
-                                  (click)="step.separatedFileWavesurfer[j].pause()"
-                                  >          
-                                    <i class=" tim-icons icon-button-pause"></i>Pause
-                                  </button>
-                                  
-                                </div>
-                              </div>
-                              
-                            </div>  
+            <div class="col-sm-12" *ngIf="this.process">
+                <div class=" card card-chart">
+                    <div class=" card-header">
+                      <div class=" row">
+                        <div class=" col-sm-12 text-center">
+                          <h5 class=" card-category">Pipeline Results</h5>
+                          <h2 class=" card-title">{{this.selectedPipeline.name}}</h2>
                         </div>
                       </div>
+                    </div>
+                    <div  class="card-body" id="demo">
+                      <div class=" row" >
+                          <div class="col-sm-12" style="overflow:auto; height:30vh">
+                              <table class="table" >
+                                <thead>
+                                  <tr>
+                                    <th>No.</th>
+                                    <th>Task</th>
+                                    <th>Report</th>
+                                    <th>Download</th>
+                                  </tr>
+                                </thead>
+                                <tbody *ngFor="let result of this.resultsArr | keyvalue; let i = index">
+                                  <tr >
+                                    <!-- <td class="text-center">{{i}}</td> -->
+                                    <td style="width: 5%;">{{ i }} </td>
+                                    <td (click)="this.loadResult(result.value)">{{ result.value[0].name }} </td>
+                                    <td (click)="this.loadResult(result.value)">{{ result.value[1] }} </td>
+                                    <td style="width: 5%;"> <button 
+                                      class="btn btn-primary btn-fab btn-icon btn-round" 
+                                      (click)="this.getReport(result.value[1])"
+                                      > 
+                                      <i class="tim-icons icon-cloud-download-93"></i></button></td>
+                                  </tr>
+                                  
+                                </tbody>
+                              </table>
+                           </div>
+                      </div>
+                      <div class=" row"  *ngFor="let step of this.selectedPipeline?.steps; let i  = index;">
+                        <div class=" col-sm-12">
+                          <div class=" card card-chart">
+                            <div class=" card-header">
+                              <div class=" row" >
+                                <div class=" col-sm-12 text-center">
+                                  <h5 class=" card-category">Step {{i + 1}}</h5>
+                                  <h1 class="card-title">Task: {{step.task}} - {{step.system}} - {{step.dataset}} - {{step.performance}}</h1>
+                                  <h3 class="card-title text-center">Input File: </h3>
+                                  <h4>{{step.inputFilename}}</h4>
+                                </div>
+                              </div>
+                            </div>
+                            <div  class=" card-body" id="demo" >
+                            
+        
+                              <div class="row">
+                                <div class="col-sm-12 text-center" *ngIf="step.processing">
+                                  <div class="lds-facebook"><div></div><div></div><div></div></div>
+                                </div>
+                                
+                                <div *ngIf="step.analysisResult" class="col-sm-12 col-md-12 text-center" > {{step.analysisResult}}</div>
+                                <div *ngFor="let separatedFile of step.outputFilenames; let j = index" class="col-sm-12 col-md-12 text-center" >  
+                                  <h3 class="text-center"> Output File {{j}}: </h3>
+                                  <h4 class="text-center"> {{separatedFile}} </h4>
+                                  <div align="right">
+                                    <button 
+                                    class="btn btn-warnings" 
+                                    (click)="this.saveSeparatedFile(step, j)"
+                                    >          
+                                      <i class=" tim-icons icon-cloud-download-93"></i>
+                                    </button>
+                                  </div>
+                                  <div [id]="'waveform-'+ i +'-'+j">
+                                    <!-- Here be waveform -->
+                                  </div>
+                                  <div [id]="'wave-spectrogram-'+i+'-'+j"></div>
+                                  <div [id]="'wave-timeline-'+i+'-'+j"></div>
+                                  <div class="controls text-center">
+                                    <button 
+                                    class="btn btn-warnings" 
+                                    data-action="play" 
+                                    (click)="step.separatedFileWavesurfer[j].play()" >
+                                      <i class="tim-icons icon-triangle-right-17"></i>Play
+                                    </button>
+                                    
+                                    <button 
+                                    class="btn btn-warnings" 
+                                    data-action="play" 
+                                    (click)="step.separatedFileWavesurfer[j].pause()"
+                                    >          
+                                      <i class=" tim-icons icon-button-pause"></i>Pause
+                                    </button>
+                                    
+                                  </div>
+                                </div>
+                                
+                              </div>  
+                          </div>
+                        </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-          </div>
+            </div>
 
-          <div class="col-sm-12" *ngIf="this.processError">
-              <div class=" card card-chart">
-                  <div class=" card-header">
-                    <div class=" row">
-                      <div class=" col-sm-12 text-center">
-                        <h5 class=" card-category">Preprocessing</h5>
-                        <h2 class=" card-title">Audio Error</h2>
-                        Something went wrong !!!
+            <div class="col-sm-12" *ngIf="this.processError">
+                <div class=" card card-chart">
+                    <div class=" card-header">
+                      <div class=" row">
+                        <div class=" col-sm-12 text-center">
+                          <h5 class=" card-category">Preprocessing</h5>
+                          <h2 class=" card-title">Audio Error</h2>
+                          Something went wrong !!!
+                        </div>
                       </div>
                     </div>
+                    <div  class=" card-body" id="demo">
+                    
+                    </div>
                   </div>
-                  <div  class=" card-body" id="demo">
-                  
-                  </div>
-                </div>
-          </div>
-      </div>
-  </div>
+            </div>
+        </div>
+    </div>
