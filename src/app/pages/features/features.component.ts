@@ -108,6 +108,7 @@ export class FeaturesComponent implements OnInit {
   }
 
   initWaveSurfer(file){
+    document.getElementById("waveform").innerHTML = ""
     this.wavesurfer = WaveSurfer.create({
       container: '#waveform',
       backgroundColor:'black',
@@ -309,16 +310,16 @@ export class FeaturesComponent implements OnInit {
   * @param  {any} blob Blog
   */
   processRecording(blob) {
-  // this.url = URL.createObjectURL(blob);
-  console.log("blob", blob);
-  console.log("url", this.url);
-  const file:File = new File([blob], "prova_live.wav");
-    if (file) {
-        this.fileToUpload = file
-        this.fileName = file.name;
-        console.log(file.type)
-        this.initWaveSurfer(this.fileToUpload)
-    }
+    this.url = URL.createObjectURL(blob);
+    console.log("blob", blob);
+    console.log("url", this.url);
+    const file:File = new File([blob], "prova_live.wav");
+      if (file) {
+          this.fileToUpload = file
+          this.fileName = file.name;
+          console.log(file.type)
+          this.initWaveSurfer(this.fileToUpload)
+      }
 
   }
   /**
