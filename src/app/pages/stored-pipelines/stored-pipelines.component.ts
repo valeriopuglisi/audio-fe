@@ -342,7 +342,7 @@ import { isThisTypeNode } from 'typescript';
         this.http.get("/api/report/"+ reportId, { responseType: 'blob' }).subscribe(
           data => {
             this.report = data;
-            saveAs(this.report, this.report_id);
+            saveAs(data, reportId);
           }
         )
       }
