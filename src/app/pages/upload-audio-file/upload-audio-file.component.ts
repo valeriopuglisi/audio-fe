@@ -407,6 +407,9 @@ export class UploadAudioFileComponent implements OnInit {
         step.outputFileIds.push("output_"+ step_index + "_" + file_index)
         this.pipelineFiles.push(pipelineFile)
         console.log("==> this.pipelineFiles: ",this.pipelineFiles)
+      },
+      error =>{
+        console.error(error)
       }
     )
   }

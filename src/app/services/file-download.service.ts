@@ -43,7 +43,7 @@ export class FileDownloadService {
   downloadFile(api:string, filename:string){
     return this.http.get<Blob>(api + "/"+ filename)
       .pipe(
-        tap(_ => this.log('fetched heroes')),
+        tap(_ => this.log('fetched file')),
         catchError(this.handleError<Blob>('downloadFile', null))
       );
   }

@@ -31,6 +31,13 @@ export const ROUTES: RouteInfo[] = [
     class: ""
   },
   {
+    path: "/evaluation",
+    title: "Evaluation",
+    rtlTitle: "لوحة القيادة",
+    icon: "icon-support-17",
+    class: ""
+  },
+  {
     path: "/pipelines",
     title: "Create Pipeline",
     rtlTitle: "لوحة القيادة",
