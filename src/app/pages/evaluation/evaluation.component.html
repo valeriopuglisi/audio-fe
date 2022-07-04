@@ -126,6 +126,54 @@
         </div>
     </div>
 
+    <div class="col-sm-12 col-md-12" *ngFor="let dataset of this.Datasets | keyvalue; let i = index">  
+        <!-- dataset.key: {{dataset.key}} ==> {{this.selectedTask}} -->
+        <div *ngIf="dataset.key == this.selectedTask">
+        <div class="card card-chart">
+        <div class=" card-header">
+            <div class=" row">
+            <div class=" col-sm-12 text-center">
+                <h5 class=" card-category">Step 3</h5>
+                <h2 class=" card-title">Select {{this.selectedTask}} Evaluation Metrics</h2>
+            </div>
+            </div>
+        </div>
+        <div  class="card-body" >
+            <div style="overflow:auto; height: 60vh;">
+            <table class="table" >
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>References</th>
+                    <th>Select</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let dataset of dataset.value">
+                        <td>{{ dataset.name }} </td>
+                        <td>{{ dataset.description }} </td>
+                        <td>{{ dataset.references }} </td>
+                        <td> <button 
+                        class="btn btn-primary btn-fab btn-icon btn-round" 
+                        (click)="selectDataset(dataset)"
+                        > 
+                        <i class="tim-icons icon-triangle-right-17"></i></button></td>
+                    </tr>
+                    <tr *ngIf="dataset.value.length == 0 " class="text-center">
+                        No data available
+                    </tr>
+                </tbody>
+                
+                </table>
+            </div>
+            
+            
+            </div>
+        </div>
+        </div>
+    </div>
+
     <div class="col-sm-12 text-center" *ngIf="this.processing">
         <div class="lds-facebook"><div></div><div></div><div></div></div>
     </div>
