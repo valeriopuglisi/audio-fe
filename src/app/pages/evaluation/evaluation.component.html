@@ -6,40 +6,78 @@
         </div>      
 
         <div class="col-sm-12 col-md-12 text-center">
-            <div class="card card-chart" style="overflow: auto; height: 49vh;">
+            <div class="card">
             <div class="card-header">
                 <div class=" row">
-                <div class=" col-sm-12 text-center">
-                    <h5 class=" card-category">Step 1</h5>
-                    <h2 class=" card-title">Select Task</h2>
-                </div> 
+                    <div class="col-sm-2 text-right">
+                        <button 
+                            [class] ="selectedTask ? 'btn btn-success': 'btn btn-warning' " 
+                            disabled 
+                        >{{ selectedTask ? "Selected" : "Select"}}
+                        </button>
+                    </div> 
+                    <div class=" col-sm-8 text-center">
+                        <h5 class=" card-category">Step 1</h5>
+                        <h2 class=" card-title">Select Task</h2>
+                        <h2 class=" card-title">{{this.selectedTask}}</h2>
+
+                    </div>
+                    <div class="col-sm-2 text-right">
+                        <button 
+                            class="btn btn-primary" 
+                            (click)="this.toggleTaskCard()" 
+                        >{{ showTaskCard ? "Hide" : "Show"}}
+                        </button>
+                    </div>
+
+                    
                 </div>
             </div>
-            <div class="row">
-                <div 
-                class="col-sm-12 col-md-6"
-                *ngFor="let AudioAnalysisStep of this.AudioFeatures | keyvalue; let i = index"> 
-                <button type="button" 
-                class="btn btn-primary" (click)="onSelectTask(AudioAnalysisStep.key)"> {{AudioAnalysisStep.key}} </button>
+            <div class="card-body" >
+                <div class="row" *ngIf="this.showTaskCard">
+                    <div 
+                        class="col-sm-12 col-md-6"
+                        *ngFor="let AudioAnalysisStep of this.AudioFeatures | keyvalue; let i = index"
+                        > 
+                        <button type="button" 
+                        class="btn btn-primary" (click)="onSelectTask(AudioAnalysisStep.key)"> {{AudioAnalysisStep.key}} </button>
+                    </div>
                 </div>
+                
             </div>
             </div>
         </div>
 
         <div class="col-sm-12 col-md-12" *ngFor="let AudioAnalysisStep of this.AudioFeatures | keyvalue; let i = index">  
             <!-- AudioAnalysisStep.key: {{AudioAnalysisStep.key}} ==> {{this.selectedTask}} -->
-            <div class="card card-chart"  >
             <div *ngIf="AudioAnalysisStep.key == this.selectedTask">
+            <div class="card card-chart"  >
             <div class=" card-header">
                 <div class=" row">
-                <div class=" col-sm-12 text-center">
+                <div class="col-sm-2 text-right">
+                        <button 
+                            [class] ="selectedFeature ? 'btn btn-success': 'btn btn-warning'" 
+                            disabled 
+                        >{{ selectedFeature ? "Selected" : "Select"}}
+                        </button>
+                </div> 
+                <div class=" col-sm-8 text-center">
                     <h5 class=" card-category">Step 2</h5>
                     <h2 class=" card-title">Select {{this.selectedTask}} model</h2>
-                    <input *ngIf="this.selectedTask" [(ngModel)]="models_filter"  class="form-control" type="text" placeholder="Filter Models">
+                    <h2 class=" card-title">{{this.selectedFeature.system}} pretrained on {{this.selectedFeature.dataset}} ({{this.selectedFeature.performance}})</h2>
+
                 </div>
+                <div class="col-sm-2 text-right">
+                      <button 
+                        class="btn btn-primary" 
+                        (click)="this.toggleModelCard()" 
+                      >{{ showTaskCard ? "Hide" : "Show"}}
+                      </button>
+                    </div>
                 </div>
             </div>
-            <div  class="card-body" >
+            <div  class="card-body" *ngIf="this.showModelCard" >
+                <input *ngIf="this.selectedTask" [(ngModel)]="models_filter"  class="form-control" type="text" placeholder="Filter Models">
                 <div style="overflow:auto; height: 60vh;">
                 <table class="table" >
                     <thead>
@@ -83,14 +121,29 @@
             <div class="card card-chart" >
             <div class=" card-header">
                 <div class=" row">
-                <div class=" col-sm-12 text-center">
-                    <h5 class=" card-category">Step 3</h5>
-                    <h2 class=" card-title">Select {{this.selectedTask}} Test Dataset</h2>
-                    <input [(ngModel)]="dataset_filter" type="text" class="form-control" type="text" placeholder="Filter Dataset">
-                </div>
+                    <div class="col-sm-2 text-right">
+                            <button 
+                                [class] ="selectedDataset ? 'btn btn-success': 'btn btn-warning'" 
+                                disabled 
+                            >{{ selectedDataset ? "Selected" : "Select"}}
+                            </button>
+                    </div> 
+                    <div class=" col-sm-8 text-center">
+                        <h5 class=" card-category">Step 3</h5>
+                        <h2 class=" card-title">Select {{this.selectedTask}} Test Dataset</h2>
+                        <h2 class=" card-title">{{this.selectedDataset.name}}</h2>
+                    </div>
+                    <div class="col-sm-2 text-right">
+                        <button 
+                            class="btn btn-primary" 
+                            (click)="this.toggleDatasetCard()" 
+                        >{{ showTaskCard ? "Hide" : "Show"}}
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div  class="card-body" >
+            <div  class="card-body" *ngIf="this.showDatasetCard">
+                <input [(ngModel)]="dataset_filter" type="text" class="form-control" type="text" placeholder="Filter Dataset">
                 <div style="overflow:auto; height: 60vh;">
                 <table class="table" >
                     <thead>
@@ -132,13 +185,28 @@
             <div class="card card-chart"  >
             <div class=" card-header">
                 <div class=" row">
-                <div class=" col-sm-12 text-center">
-                    <h5 class=" card-category">Step 3</h5>
-                    <h2 class=" card-title">Select {{this.selectedTask}} Evaluation Metrics</h2>
-                </div>
+                    <div class="col-sm-2 text-right">
+                            <button 
+                                [class] ="selectedMetric ? 'btn btn-success': 'btn btn-warning'" 
+                                disabled 
+                            >{{ selectedMetric ? "Selected" : "Select"}}
+                            </button>
+                    </div> 
+                    <div class=" col-sm-8 text-center">
+                        <h5 class=" card-category">Step 4</h5>
+                        <h2 class=" card-title">Select {{this.selectedTask}} Evaluation Metrics</h2>
+                        <h2 class=" card-title">{{this.selectedMetric.name}}</h2>
+                    </div>
+                    <div class="col-sm-2 text-right">
+                        <button 
+                            class="btn btn-primary" 
+                            (click)="this.toggleMetricsCard()" 
+                        >{{ showMetricCard ? "Hide" : "Show"}}
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div  class="card-body" >
+            <div  class="card-body" *ngIf="this.showMetricCard">
                 <div style="overflow:auto; height: 60vh;">
                 <table class="table" >
                     <thead>

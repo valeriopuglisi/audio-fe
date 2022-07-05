@@ -85,7 +85,11 @@ export class EvaluationComponent implements OnInit {
   selectedFeature: any = "";
   selectedDataset: any = "";
   selectedMetric: any = "";
-  
+
+  showTaskCard: boolean = true;
+  showModelCard: boolean = false;
+  showDatasetCard: boolean = false;
+  showMetricCard: boolean = false;
 
   staticAlertClosed5:boolean=true;
   staticAlertClosed6:boolean=true;
@@ -159,27 +163,61 @@ export class EvaluationComponent implements OnInit {
   }
 
   onSelectTask(task:string){
-    console.log("==> task: ", task);
-    this.selectedTask = task
+    console.log("this.selectedTask: ",this.selectedTask, "==> task: ", task);
+    if(this.selectedTask  && this.selectedTask != task){
+
+      this.selectedFeature = "";
+      this.selectedDataset = "";
+      this.selectedMetric = "";
+    } 
+    this.selectedTask = task;
+    this.toggleTaskCard();
+    this.toggleModelCard();
   }
 
   selectFeature(feature){
     console.log("selectFeature: ", feature)
+    if(this.selectedMetric && this.selectedFeature != feature){
+      this.selectedDataset = "";
+      this.selectedMetric = ""; 
+    }
     this.selectedFeature = feature; 
+    this.toggleModelCard();
+    this.toggleDatasetCard();
   }
 
   selectDataset(dataset){
     console.log("selectDataset: ", dataset)
     this.selectedDataset = dataset;
+    this.toggleDatasetCard();
+    this.toggleMetricsCard();
   }
 
   selectMetric(metric){
     console.log("selectMetric: ", metric)
     this.selectedMetric = metric;
+    this.toggleMetricsCard();
   }
 
   runEvaluation(){
     
+  }
+
+
+  toggleTaskCard(){
+    this.showTaskCard = !this.showTaskCard;
+  }
+
+  toggleModelCard(){
+    this.showModelCard = !this.showModelCard;
+  }
+
+  toggleDatasetCard(){
+    this.showDatasetCard = !this.showDatasetCard;
+  }
+
+  toggleMetricsCard(){
+    this.showMetricCard = !this.showMetricCard;
   }
 
  
