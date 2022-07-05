@@ -82,20 +82,19 @@ export class EvaluationComponent implements OnInit {
   filesList: any;
   public formData : FormData;
   selectedTask: string = "";
-  process : boolean = false;
-  processing : boolean = false;
-  processError : boolean = false;
-  analysisTitle: string = "";
-  analysisResult: string = "";
-  separatedFilenames :any = [];
-  separatedFileBlobs: any = [];
-  separatedFileWavesurfer: any = [];  
+  selectedFeature: any = "";
+  selectedDataset: any = "";
+  selectedMetric: any = "";
+  
 
   staticAlertClosed5:boolean=true;
   staticAlertClosed6:boolean=true;
   succesMsg: string =" Success"
   errorMsg: string = "Error"
-  
+
+  dataset_filter : string = "";
+  models_filter : string = "";
+
   image:Blob
   imageURL:SafeUrl
 
@@ -159,23 +158,31 @@ export class EvaluationComponent implements OnInit {
     )
   }
 
+  onSelectTask(task:string){
+    console.log("==> task: ", task);
+    this.selectedTask = task
+  }
 
   selectFeature(feature){
-    console.log(feature)
+    console.log("selectFeature: ", feature)
+    this.selectedFeature = feature; 
   }
 
   selectDataset(dataset){
-    console.log(dataset)
+    console.log("selectDataset: ", dataset)
+    this.selectedDataset = dataset;
+  }
+
+  selectMetric(metric){
+    console.log("selectMetric: ", metric)
+    this.selectedMetric = metric;
   }
 
   runEvaluation(){
     
   }
 
-  onSelectTask(task:string){
-  console.log("==> task: ", task);
-  this.selectedTask = task
-  }
+ 
 
   
 

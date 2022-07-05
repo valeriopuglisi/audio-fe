@@ -1,271 +1,183 @@
-    <div class="content container-fluid">
-        <div class=" row">
+<div class="content container-fluid">
+    <div class=" row">
         <div class=" col-sm-12 text-center">
             <h5 class=" card-category">Speechbrain</h5>
             <h2 class=" card-title">Deep Learning Models Evaluation</h2>
-            
         </div>      
-        
-    
 
-    <div class="col-sm-12 col-md-12 text-center">
-        <div class="card card-chart" style="overflow: auto; height: 49vh;">
-        <div class="card-header">
-            <div class=" row">
-            <div class=" col-sm-12 text-center">
-                <h5 class=" card-category">Step 1</h5>
-                <h2 class=" card-title">Select Task</h2>
-            </div> 
+        <div class="col-sm-12 col-md-12 text-center">
+            <div class="card card-chart" style="overflow: auto; height: 49vh;">
+            <div class="card-header">
+                <div class=" row">
+                <div class=" col-sm-12 text-center">
+                    <h5 class=" card-category">Step 1</h5>
+                    <h2 class=" card-title">Select Task</h2>
+                </div> 
+                </div>
+            </div>
+            <div class="row">
+                <div 
+                class="col-sm-12 col-md-6"
+                *ngFor="let AudioAnalysisStep of this.AudioFeatures | keyvalue; let i = index"> 
+                <button type="button" 
+                class="btn btn-primary" (click)="onSelectTask(AudioAnalysisStep.key)"> {{AudioAnalysisStep.key}} </button>
+                </div>
+            </div>
             </div>
         </div>
-        <div class="row">
-            <div 
-            class="col-sm-12 col-md-6"
-            *ngFor="let AudioAnalysisStep of this.AudioFeatures | keyvalue; let i = index"> 
-            <button type="button" 
-            class="btn btn-primary" (click)="onSelectTask(AudioAnalysisStep.key)"> {{AudioAnalysisStep.key}} </button>
-            </div>
-        </div>
-        </div>
-    </div>
 
-    <div class="col-sm-12 col-md-12" *ngFor="let AudioAnalysisStep of this.AudioFeatures | keyvalue; let i = index">  
-        <!-- AudioAnalysisStep.key: {{AudioAnalysisStep.key}} ==> {{this.selectedTask}} -->
-        <div *ngIf="AudioAnalysisStep.key == this.selectedTask">
-        <div class="card card-chart">
-        <div class=" card-header">
-            <div class=" row">
-            <div class=" col-sm-12 text-center">
-                <h5 class=" card-category">Step 2</h5>
-                <h2 class=" card-title">Select {{this.selectedTask}} model</h2>
+        <div class="col-sm-12 col-md-12" *ngFor="let AudioAnalysisStep of this.AudioFeatures | keyvalue; let i = index">  
+            <!-- AudioAnalysisStep.key: {{AudioAnalysisStep.key}} ==> {{this.selectedTask}} -->
+            <div class="card card-chart"  >
+            <div *ngIf="AudioAnalysisStep.key == this.selectedTask">
+            <div class=" card-header">
+                <div class=" row">
+                <div class=" col-sm-12 text-center">
+                    <h5 class=" card-category">Step 2</h5>
+                    <h2 class=" card-title">Select {{this.selectedTask}} model</h2>
+                    <input *ngIf="this.selectedTask" [(ngModel)]="models_filter"  class="form-control" type="text" placeholder="Filter Models">
+                </div>
+                </div>
             </div>
-            </div>
-        </div>
-        <div  class="card-body" >
-            <div style="overflow:auto; height: 60vh;">
-            <table class="table" >
-                <thead>
-                <tr>
-                    <th class="text-center">#</th>
-                    <th>System</th>
-                    <th>Dataset</th>
-                    <th>Language</th>
-                    <th>Performance</th>
-                    <th>Select</th>
-                </tr>
-                </thead>
-                <tbody *ngFor="let step of AudioAnalysisStep.value">
-                <tr>
-                    <td class="text-center">{{i}}</td>
-                    <td>{{ step.system }} </td>
-                    <td>{{ step.dataset }} </td>
-                    <td>{{ step.dataset.split(" ")[1] }} </td>
-                    <td>{{ step.performance }} </td>
-                    <td> <button 
-                    class="btn btn-primary btn-fab btn-icon btn-round" 
-                    (click)="selectFeature(step)"
-                    > 
-                    <i class="tim-icons icon-triangle-right-17"></i></button></td>
+            <div  class="card-body" >
+                <div style="overflow:auto; height: 60vh;">
+                <table class="table" >
+                    <thead>
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th>System</th>
+                        <th>Dataset</th>
+                        <th>Language</th>
+                        <th>Performance</th>
+                        <th>Select</th>
                     </tr>
+                    </thead>
+                    <tbody *ngFor="let step of AudioAnalysisStep.value">
+                    <tr>
+                        <td class="text-center">{{i}}</td>
+                        <td>{{ step.system }} </td>
+                        <td>{{ step.dataset }} </td>
+                        <td>{{ step.dataset.split(" ")[1] }} </td>
+                        <td>{{ step.performance }} </td>
+                        <td> <button 
+                        class="btn btn-primary btn-fab btn-icon btn-round" 
+                        (click)="selectFeature(step)"
+                        > 
+                        <i class="tim-icons icon-triangle-right-17"></i></button></td>
+                        </tr>
+                        
+                    </tbody>
+                    </table>
+                </div>
+                
+                
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-12" *ngFor="let dataset of this.Datasets | keyvalue; let i = index">  
+            
+            <!-- dataset.key: {{dataset.key}} ==> {{this.selectedTask}} -->
+            <div *ngIf="dataset.key == this.selectedTask">
+            <div class="card card-chart" >
+            <div class=" card-header">
+                <div class=" row">
+                <div class=" col-sm-12 text-center">
+                    <h5 class=" card-category">Step 3</h5>
+                    <h2 class=" card-title">Select {{this.selectedTask}} Test Dataset</h2>
+                    <input [(ngModel)]="dataset_filter" type="text" class="form-control" type="text" placeholder="Filter Dataset">
+                </div>
+                </div>
+            </div>
+            <div  class="card-body" >
+                <div style="overflow:auto; height: 60vh;">
+                <table class="table" >
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>References</th>
+                        <th>Select</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let dataset of dataset.value">
+                            <td  style="width:15%">{{ dataset.name }} </td>
+                            <td  style="width:60%">{{ dataset.description }} </td>
+                            <td  style="width:20%">{{ dataset.references }} </td>
+                            <td  style="width:5%"> <button 
+                            class="btn btn-primary btn-fab btn-icon btn-round" 
+                            (click)="selectDataset(dataset)"
+                            > 
+                            <i class="tim-icons icon-triangle-right-17"></i></button></td>
+                        </tr>
+                        <tr *ngIf="dataset.value.length == 0 " class="text-center">
+                            No data available
+                        </tr>
+                    </tbody>
                     
-                </tbody>
-                </table>
-            </div>
-            
-            
-            </div>
-        </div>
-        </div>
-    </div>
-
-    <div class="col-sm-12 col-md-12" *ngFor="let dataset of this.Datasets | keyvalue; let i = index">  
-        <!-- dataset.key: {{dataset.key}} ==> {{this.selectedTask}} -->
-        <div *ngIf="dataset.key == this.selectedTask">
-        <div class="card card-chart">
-        <div class=" card-header">
-            <div class=" row">
-            <div class=" col-sm-12 text-center">
-                <h5 class=" card-category">Step 3</h5>
-                <h2 class=" card-title">Select {{this.selectedTask}} Test Dataset</h2>
-            </div>
-            </div>
-        </div>
-        <div  class="card-body" >
-            <div style="overflow:auto; height: 60vh;">
-            <table class="table" >
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>References</th>
-                    <th>Select</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let dataset of dataset.value">
-                        <td>{{ dataset.name }} </td>
-                        <td>{{ dataset.description }} </td>
-                        <td>{{ dataset.references }} </td>
-                        <td> <button 
-                        class="btn btn-primary btn-fab btn-icon btn-round" 
-                        (click)="selectDataset(dataset)"
-                        > 
-                        <i class="tim-icons icon-triangle-right-17"></i></button></td>
-                    </tr>
-                    <tr *ngIf="dataset.value.length == 0 " class="text-center">
-                        No data available
-                    </tr>
-                </tbody>
+                    </table>
+                </div>
                 
-                </table>
-            </div>
-            
-            
-            </div>
-        </div>
-        </div>
-    </div>
-
-    <div class="col-sm-12 col-md-12" *ngFor="let dataset of this.Metrics | keyvalue; let i = index">  
-        <!-- dataset.key: {{dataset.key}} ==> {{this.selectedTask}} -->
-        <div *ngIf="dataset.key == this.selectedTask">
-        <div class="card card-chart">
-        <div class=" card-header">
-            <div class=" row">
-            <div class=" col-sm-12 text-center">
-                <h5 class=" card-category">Step 3</h5>
-                <h2 class=" card-title">Select {{this.selectedTask}} Evaluation Metrics</h2>
-            </div>
-            </div>
-        </div>
-        <div  class="card-body" >
-            <div style="overflow:auto; height: 60vh;">
-            <table class="table" >
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>References</th>
-                    <th>Select</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let dataset of dataset.value">
-                        <td>{{ dataset.name }} </td>
-                        <td>{{ dataset.description }} </td>
-                        <td>{{ dataset.references }} </td>
-                        <td> <button 
-                        class="btn btn-primary btn-fab btn-icon btn-round" 
-                        (click)="selectDataset(dataset)"
-                        > 
-                        <i class="tim-icons icon-triangle-right-17"></i></button></td>
-                    </tr>
-                    <tr *ngIf="dataset.value.length == 0 " class="text-center">
-                        No data available
-                    </tr>
-                </tbody>
                 
-                </table>
+                </div>
             </div>
-            
-            
             </div>
         </div>
-        </div>
-    </div>
 
-    <div class="col-sm-12 text-center" *ngIf="this.processing">
-        <div class="lds-facebook"><div></div><div></div><div></div></div>
-    </div>
-
-    <div class="col-sm-12" *ngIf="this.process">
-        <div class=" card card-chart">
-        <div class=" card-header">
-            <div class=" row">
-            <div class=" col-sm-12 text-center">
-                <h5 class=" card-category">Step 3</h5>
-                <h2 class=" card-title">{{this.analysisStep.task}}: {{this.analysisStep.system}} {{this.analysisStep.dataset}}</h2>
+        <div class="col-sm-12 col-md-12" *ngFor="let dataset of this.Metrics | keyvalue; let i = index">  
+            <!-- dataset.key: {{dataset.key}} ==> {{this.selectedTask}} -->
+            <div *ngIf="dataset.key == this.selectedTask">
+            <div class="card card-chart"  >
+            <div class=" card-header">
+                <div class=" row">
+                <div class=" col-sm-12 text-center">
+                    <h5 class=" card-category">Step 3</h5>
+                    <h2 class=" card-title">Select {{this.selectedTask}} Evaluation Metrics</h2>
+                </div>
+                </div>
+            </div>
+            <div  class="card-body" >
+                <div style="overflow:auto; height: 60vh;">
+                <table class="table" >
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Select</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let dataset of dataset.value">
+                            <td>{{ dataset.name }} </td>
+                            <td style="width:50%">{{ dataset.description }} </td>
+                            <td  style="width:5%"> <button 
+                            class="btn btn-primary btn-fab btn-icon btn-round" 
+                            (click)="selectMetric(dataset)"
+                            > 
+                            <i class="tim-icons icon-triangle-right-17"></i></button></td>
+                        </tr>
+                        <tr *ngIf="dataset.value.length == 0 " class="text-center">
+                            No data available
+                        </tr>
+                    </tbody>
+                    
+                    </table>
+                </div>
+                
+                
+                </div>
             </div>
             </div>
         </div>
-        <div  class=" card-body" id="demo" >
-            <div class="row" 
-            *ngIf="this.analysisStep.task !== 'Speech Separation' && this.analysisStep.task !== 'Speech Enhancement'">
-            <div class="col-12 text-center">
-            <h5>
-                {{this.analysisResult}}
-            </h5>
-            </div>
+
+
+        Run {{this.selectedTask}} evaluate with {{this.selectedMetric.name}} using {{this.selectedFeature.system}} model pretrained with 
+        {{this.selectedFeature.dataset}} on  {{this.selectedDataset.name}}  
+        <div class="col-sm-12 col-md-12 text-center" *ngIf="this.selectedTask && this.selectedFeature && this.selectedDataset &&this.selectedMetric">  
+            <button class="btn btn-primary" (click)="runEvaluation()"> Run Evaluation</button>
         </div>
         
-        
-        <div class="row" 
-        *ngIf="this.analysisStep.task == 'Speech Separation' || this.analysisStep.task == 'Speech Enhancement' || this.analysisStep.task == 'Voice Activity Detection'">
-        <div class="col-sm-12 col-md-12" *ngFor="let separatedFile of this.separatedFilenames; let i = index"> 
-            <h4> {{separatedFile}} </h4>
-            <div align="right">
-            <button 
-            class="btn btn-warnings" 
-            (click)="this.saveSeparatedFile(i)"
-            >          
-            <i class=" tim-icons icon-cloud-download-93"></i>
-            </button>
-        </div>
-        <div [id]="'waveform-'+ i">
-            
-            <!-- <div class="progress progress-striped active" id="progress-bar">
-            <div class="progress-bar progress-bar-info"></div>
-            </div>  -->
-            <!-- Here be waveform -->
-        </div>
-        <div [id]="'wave-spectrogram-' + i"></div>
-        <div [id]="'wave-timeline-' + i"></div>
-        <div class="controls text-center">
-            <button 
-            class="btn btn-warnings" 
-            data-action="play" 
-            (click)="this.separatedFileWavesurfer[i].play()" >
-            <i class="tim-icons icon-triangle-right-17"></i>Play
-        </button>
-        
-        <button 
-        class="btn btn-warnings" 
-        data-action="play" 
-        (click)="this.separatedFileWavesurfer[i].pause()"
-        >          
-        <i class=" tim-icons icon-button-pause"></i>Pause
-        </button>
-        
-        <!-- <button 
-        class="btn btn-warnings" 
-        data-action="play" 
-        (click)="separateFile()" >          
-        <i class=" tim-icons icon-zoom-split"></i>Analyze
-        </button> -->
     </div>
-    </div>
-    </div>
-
-
-    </div>
-    </div>
-    </div>
-
-    <div class="col-sm-12" *ngIf="this.processError">
-        <div class=" card card-chart">
-        <div class=" card-header">
-            <div class=" row">
-            <div class=" col-sm-12 text-center">
-                <h5 class=" card-category">Processing</h5>
-                <h2 class=" card-title">Audio Error</h2>
-                Something went wrong !!!
-            </div>
-            </div>
-        </div>
-        <div  class=" card-body" id="demo">
-            
-        </div>
-        </div>
-    </div>
-    </div>
-    </div>
+</div>

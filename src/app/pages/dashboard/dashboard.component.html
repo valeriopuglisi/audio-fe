@@ -7,7 +7,7 @@
         <div class=" card-header">
           <h5 class=" card-category">Total Tasks</h5>
           <h3 class=" card-title">
-            <i class=" tim-icons icon-bell-55 text-danger-states"> </i> {{totalTask}}
+            <i class=" tim-icons icon-bell-55 text-danger-states"> </i> {{this.reports.length + this.evaluations.length}}
           </h3>
         </div>
         <div class=" card-body">
@@ -135,7 +135,7 @@
           <div class=" row">
             <div class=" col-sm-12 text-left">
               <h5 class=" card-category">Total Shipments</h5>
-              <h2 class=" card-title">Pipeline Reports</h2>
+              <h2 class=" card-title">Evaluation Reports</h2>
             </div>
             
           </div>
@@ -144,27 +144,31 @@
               <div class=" row" >
                       <div class="col-sm-12 col-lg-8" style="overflow:auto; height:100vh">
                           <table class="table" >
-                            <thead>
-                              <tr>
+                            <thead >
+                              <tr >
                                 <th>No.</th>
                                 <!-- <th>Report name</th> -->
                                 <th>Date</th>
-                                <th>Author</th>
-                                <th>Task</th>
-                                <th>Notes</th>
-                                <th>No. Steps in Pipeline</th>
-                                <th>Download Report</th>
+                                <th>Model</th>
+                                <th>Dataset</th>
+                                <th>No. test</th>
+                                <th>Metrics</th>
+
                               </tr>
                             </thead>
-                            <tbody *ngFor="let result of this.reports | keyvalue; let i = index">
+                            <tbody *ngFor="let result of this.evaluations | keyvalue; let i = index">
                               <tr >
                                 <td style="width: 5%;">{{ i }} </td>
                                 <!-- <td style="width: 5%;">{{result.value.report_name}}</td> -->
-                                <td style="width: 5%;">{{result.value.report_datetime | date:'short'}}</td>
-                                <td style="width: 5%;">{{result.value.author}}</td>
-                                <td (click)="this.loadResult(result.value)">{{ result.value.name }} </td>
-                                <td (click)="this.loadResult(result.value)">{{ result.value.notes }} </td>
-                                <td (click)="this.loadResult(result.value)">{{ result.value.steps.length }} </td>
+                                <td style="width: 5%;">{{result.value._timestamp | date:'short'}}</td>
+                                <td style="width: 5%;">{{(result.value.model).split("/").at(-1)}}</td>
+                                <td (click)="this.loadResult(result.value)">{{ result.value.dataset }} </td>
+                                <td (click)="this.loadResult(result.value)">{{ result.value.n_test }} </td>
+                                <td (click)="this.loadResult(result.value)"> 
+                                  <div  *ngFor="let metric of result.value.evaluation | keyvalue" >
+                                    {{ metric.key }} : {{metric.value}}
+                                  </div>
+                                </td>
                                 <td style="width: 5%;"> <button 
                                   class="btn btn-primary btn-fab btn-icon btn-round" 
                                   (click)="this.getReport(result.value.report_name)"
