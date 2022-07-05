@@ -126,7 +126,7 @@
         </div>
     </div>
 
-    <div class="col-sm-12 col-md-12" *ngFor="let dataset of this.Datasets | keyvalue; let i = index">  
+    <div class="col-sm-12 col-md-12" *ngFor="let dataset of this.Metrics | keyvalue; let i = index">  
         <!-- dataset.key: {{dataset.key}} ==> {{this.selectedTask}} -->
         <div *ngIf="dataset.key == this.selectedTask">
         <div class="card card-chart">

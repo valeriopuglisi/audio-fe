@@ -12,6 +12,7 @@ import { DeepLearningAudioFeatures } from 'src/app/interfaces/deep-learning-audi
 declare var $: any;
 import * as RecordRTC from 'recordrtc';
 import { DatasetsService } from 'src/app/services/datasets.service';
+import { MetricsService } from 'src/app/services/metrics.service';
 @Component({
   selector: 'app-evaluation',
   templateUrl: './evaluation.component.html',
@@ -39,6 +40,16 @@ export class EvaluationComponent implements OnInit {
   };
 
   Datasets : DeepLearningAudioFeatures = {
+    'Automatic Speech Recognition': [],
+    'Language Identification': [],
+    'Language Identification + Automatic Speech Recognition': [],
+    'Speech Separation': [],
+    'Speech Enhancement': [],
+    'Emotion Recognition': [],
+    'Voice Activity Detection': []
+  };
+
+  Metrics : DeepLearningAudioFeatures = {
     'Automatic Speech Recognition': [],
     'Language Identification': [],
     'Language Identification + Automatic Speech Recognition': [],
@@ -92,11 +103,13 @@ export class EvaluationComponent implements OnInit {
   constructor(private http: HttpClient, 
     private deepLearningFeaturesService: DeepLearningFeaturesService,  
     private datasetsService: DatasetsService,
+    private metricsService: MetricsService,
     private domSanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
     this.getDLFeatures();
     this.getDatasets();
+    this.getMetrics();
   }
 
   getDLFeatures(){
@@ -125,6 +138,23 @@ export class EvaluationComponent implements OnInit {
           // console.log(task, datasets_json[task])
         }
         console.log("getDatasets: ", this.Datasets)
+      }
+    )
+  }
+
+  getMetrics(){
+    this.metricsService.getDeepLearningMetrics().subscribe(
+      response => {
+        let datasets_json = JSON.parse(response.toString());
+        console.log("getDatasets: ", datasets_json)
+        for (var task in datasets_json) {
+          for (var dataset in datasets_json[task]) {
+            // console.log(dataset, datasets_json[task][dataset])
+            this.Metrics[task].push(datasets_json[task][dataset])    
+          }
+          // console.log(task, datasets_json[task])
+        }
+        console.log("getDatasets: ", this.Metrics)
       }
     )
   }

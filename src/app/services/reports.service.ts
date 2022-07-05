@@ -6,15 +6,15 @@ import { DeepLearningAudioFeatures } from '../interfaces/deep-learning-audio-fea
 @Injectable({
   providedIn: 'root'
 })
-export class MetricsService {
+export class ReportsService {
   constructor(private http: HttpClient, private messageService: MessageService) { }
     
   public AudioFeatures: any = {}
-  private deepLearningMetricsDictUrl = '/api/metrics';
+  private deepLearningReportsDictUrl = '/api/reports';
 
-  /** Log a MetricsService message with the MessageService */
+  /** Log a ReportsService message with the MessageService */
   private log(message: string) {
-    this.messageService.add(`MetricsService: ${message}`);
+    this.messageService.add(`ReportsService: ${message}`);
   }
 
 
@@ -39,12 +39,21 @@ export class MetricsService {
     };
   }
 
-  /** GET Metricses from the server */
-  getDeepLearningMetrics(): Observable<Object> {
-    return this.http.get<Object>(this.deepLearningMetricsDictUrl)
+  /** GET Reportses from the server */
+  getDeepLearningReports(): Observable<any> {
+    return this.http.get<any>(this.deepLearningReportsDictUrl)
       .pipe(
-        tap(_ => this.log('fetched Metricses')),
-        catchError(this.handleError<Object>('getDeepLearningMetricsDict', []))
+        tap(_ => this.log('fetched Reportses')),
+        catchError(this.handleError<any>('getDeepLearningReportsDict', []))
       );
+  }
+
+  getReport(reportId: string): Observable<Blob>{
+    return this.http.get("/api/report/"+ reportId, { responseType: 'blob' }).pipe(
+      tap(_ => this.log('fetched Report id: ' + reportId)),
+      catchError(this.handleError<Blob>('getDeepLearningReportDict', null))
+    );
+    
+
   }
 }

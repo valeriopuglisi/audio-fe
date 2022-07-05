@@ -11,6 +11,7 @@
   import * as RecordRTC from 'recordrtc';
   import { Form } from '@angular/forms';
 import { isThisTypeNode } from 'typescript';
+import { ReportsService } from 'src/app/services/reports.service';
 
   interface AudioAnalysisStep {
     task:	string;
@@ -121,7 +122,7 @@ import { isThisTypeNode } from 'typescript';
     showPipelineDetailCard:boolean= true;
     showResultCard:boolean= true;
 
-    constructor(private http: HttpClient, private domSanitizer: DomSanitizer) { }
+    constructor(private http: HttpClient, private domSanitizer: DomSanitizer, private reportService: ReportsService) { }
 
     ngOnInit(): void {
 
@@ -328,7 +329,7 @@ import { isThisTypeNode } from 'typescript';
     }
 
     getReport(reportId: string){
-      this.http.get("/api/report/"+ reportId, { responseType: 'blob' }).subscribe(
+      this.reportService.getReport(reportId).subscribe(
         data => {
           this.report = data;
           saveAs(this.report, this.report_id);
@@ -339,7 +340,7 @@ import { isThisTypeNode } from 'typescript';
     getReports(){
       for (let i = 0; i < this.resultsArr.length; i++) {
         const reportId = this.resultsArr[i][1];
-        this.http.get("/api/report/"+ reportId, { responseType: 'blob' }).subscribe(
+        this.reportService.getReport(reportId).subscribe(
           data => {
             this.report = data;
             saveAs(data, reportId);

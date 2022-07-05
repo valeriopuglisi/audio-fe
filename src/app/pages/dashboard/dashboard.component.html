@@ -1,76 +1,13 @@
 
 <div class=" content">
-  <div class=" row">
-    <div class=" col-12">
-      <div class=" card card-chart">
-        <div class=" card-header">
-          <div class=" row">
-            <div class=" col-sm-6 text-left">
-              <h5 class=" card-category">Total Shipments</h5>
-              <h2 class=" card-title">Performance</h2>
-            </div>
-            <div class=" col-sm-6">
-              <div
-                class=" btn-group btn-group-toggle float-right"
-                data-toggle="buttons"
-              >
-                <label class=" btn btn-sm btn-danger btn-simple" (click)="data=datasets[0];updateOptions();clicked=true;clicked1=false;clicked2=false" [ngClass]="{'active':clicked===true}">
-                  <input checked="checked" name="options" type="radio" />
-
-                  <span
-                    class=" d-none d-sm-block d-md-block d-lg-block d-xl-block"
-                  >
-                    Accounts
-                  </span>
-                  <span class=" d-block d-sm-none">
-                    <i class=" tim-icons icon-single-02"> </i>
-                  </span>
-                </label>
-                <label class=" btn btn-sm btn-danger btn-simple" (click)="data=datasets[1];updateOptions();clicked=false;clicked1=true;clicked2=false" [ngClass]="{'active':clicked1===true}">
-                  <input
-                    class=" d-none d-sm-none"
-                    name="options"
-                    type="radio"
-                  />
-
-                  <span
-                    class=" d-none d-sm-block d-md-block d-lg-block d-xl-block"
-                  >
-                    Purchases
-                  </span>
-                  <span class=" d-block d-sm-none">
-                    <i class=" tim-icons icon-gift-2"> </i>
-                  </span>
-                </label>
-                <label class=" btn btn-sm btn-danger btn-simple" (click)="data=datasets[2];updateOptions();clicked=false;clicked1=false;clicked2=true" [ngClass]="{'active':clicked2===true}">
-                  <input class=" d-none" name="options" type="radio" />
-
-                  <span
-                    class=" d-none d-sm-block d-md-block d-lg-block d-xl-block"
-                  >
-                    Sessions
-                  </span>
-                  <span class=" d-block d-sm-none">
-                    <i class=" tim-icons icon-tap-02"> </i>
-                  </span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class=" card-body">
-          <div class=" chart-area"><canvas id="chartBig1"> </canvas></div>
-        </div>
-      </div>
-    </div>
-  </div>
+  
   <div class=" row">
     <div class=" col-lg-4">
       <div class=" card card-chart">
         <div class=" card-header">
-          <h5 class=" card-category">Total Shipments</h5>
+          <h5 class=" card-category">Total Tasks</h5>
           <h3 class=" card-title">
-            <i class=" tim-icons icon-bell-55 text-danger-states"> </i> 763,215
+            <i class=" tim-icons icon-bell-55 text-danger-states"> </i> {{totalTask}}
           </h3>
         </div>
         <div class=" card-body">
@@ -78,33 +15,201 @@
         </div>
       </div>
     </div>
-    <div class=" col-lg-4">
-      <div class=" card card-chart">
-        <div class=" card-header">
-          <h5 class=" card-category">Daily Sales</h5>
-          <h3 class=" card-title">
-            <i class=" tim-icons icon-delivery-fast text-info"> </i> 3,500€
-          </h3>
-        </div>
-        <div class=" card-body">
-          <div class=" chart-area"><canvas id="CountryChart"> </canvas></div>
-        </div>
-      </div>
-    </div>
+   
     <div class=" col-lg-4">
       <div class=" card card-chart">
         <div class=" card-header">
           <h5 class=" card-category">Completed Tasks</h5>
           <h3 class=" card-title">
-            <i class=" tim-icons icon-send text-success"> </i> 12,100K
+            <i class=" tim-icons icon-send text-success"> </i> {{totalTask}}
           </h3>
         </div>
         <div class=" card-body">
-          <div class=" chart-area"><canvas id="chartLineGreen"> </canvas></div>
+          <div class=" chart-area"><canvas id="completedTaskGraph"> </canvas></div>
         </div>
       </div>
     </div>
+    <div class=" col-lg-4">
+      <div class=" card card-chart">
+        <div class=" card-header">
+          <h5 class=" card-category">inProcessing Tasks</h5>
+          <h3 class=" card-title">
+            <i class=" tim-icons icon-send text-success"> </i> {{inProcessingTask.length}}
+          </h3>
+        </div>
+        <div class=" card-body">
+          <div class=" chart-area"><canvas id="inProcessingTaskGraph"> </canvas></div>
+        </div>
+      </div>
+    </div>
+    
+    
   </div>
+  
+  <div class=" row">
+    <div class=" col-12">
+      <div class=" card card-chart">
+        <div class=" card-header">
+          <div class=" row">
+            <div class=" col-sm-12 text-left">
+              <h5 class=" card-category">Total Shipments</h5>
+              <h2 class=" card-title">Pipeline Reports</h2>
+            </div>
+            
+          </div>
+        </div>
+        <div class=" card-body">
+              <div class=" row" >
+                      <div class="col-sm-12 col-lg-8" style="overflow:auto; height:100vh">
+                          <table class="table" >
+                            <thead>
+                              <tr>
+                                <th>No.</th>
+                                <!-- <th>Report name</th> -->
+                                <th>Date</th>
+                                <th>Author</th>
+                                <th>Task</th>
+                                <th>Notes</th>
+                                <th>No. Steps in Pipeline</th>
+                                <th>Download Report</th>
+                              </tr>
+                            </thead>
+                            <tbody *ngFor="let result of this.reports | keyvalue; let i = index">
+                              <tr >
+                                <td style="width: 5%;">{{ i }} </td>
+                                <!-- <td style="width: 5%;">{{result.value.report_name}}</td> -->
+                                <td style="width: 5%;">{{result.value.report_datetime | date:'short'}}</td>
+                                <td style="width: 5%;">{{result.value.author}}</td>
+                                <td (click)="this.loadResult(result.value)">{{ result.value.name }} </td>
+                                <td (click)="this.loadResult(result.value)">{{ result.value.notes }} </td>
+                                <td (click)="this.loadResult(result.value)">{{ result.value.steps.length }} </td>
+                                <td style="width: 5%;"> <button 
+                                  class="btn btn-primary btn-fab btn-icon btn-round" 
+                                  (click)="this.getReport(result.value.report_name)"
+                                  > 
+                                  <i class="tim-icons icon-cloud-download-93"></i></button></td>
+                              </tr>
+                              
+                            </tbody>
+                          </table>
+                      </div>
+                      <div class=" col-lg-4">
+                        <div class=" card card-chart">
+                          <div class=" card-header">
+                            <h5 class=" card-category">Pipelines in Progress</h5>
+                            <h3 class=" card-title">
+                              <i class=" tim-icons icon-send text-success"> </i> 0
+                            </h3>
+                          </div>
+                          <div class=" card-body">
+                            <div class=" chart-area"><canvas id="inProgressPipelines"> </canvas></div>
+                          </div>
+                        </div>
+
+                        <div class=" card card-chart">
+                          <div class=" card-header">
+                            <h5 class=" card-category">Pipelines Completed </h5>
+                            <h3 class=" card-title">
+                              <i class=" tim-icons icon-send text-success"> </i> {{reports.length}}
+                            </h3>
+                          </div>
+                          <div class=" card-body">
+                            <div class=" chart-area"><canvas id="completedPipelines"> </canvas></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-sm-12 text-center">
+                        <button class="btn btn-primary" (click)="getReports()">Download Results </button>
+                      </div>
+                      
+                  </div>        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class=" row">
+    <div class=" col-12">
+      <div class=" card card-chart">
+        <div class=" card-header">
+          <div class=" row">
+            <div class=" col-sm-12 text-left">
+              <h5 class=" card-category">Total Shipments</h5>
+              <h2 class=" card-title">Pipeline Reports</h2>
+            </div>
+            
+          </div>
+        </div>
+        <div class=" card-body">
+              <div class=" row" >
+                      <div class="col-sm-12 col-lg-8" style="overflow:auto; height:100vh">
+                          <table class="table" >
+                            <thead>
+                              <tr>
+                                <th>No.</th>
+                                <!-- <th>Report name</th> -->
+                                <th>Date</th>
+                                <th>Author</th>
+                                <th>Task</th>
+                                <th>Notes</th>
+                                <th>No. Steps in Pipeline</th>
+                                <th>Download Report</th>
+                              </tr>
+                            </thead>
+                            <tbody *ngFor="let result of this.reports | keyvalue; let i = index">
+                              <tr >
+                                <td style="width: 5%;">{{ i }} </td>
+                                <!-- <td style="width: 5%;">{{result.value.report_name}}</td> -->
+                                <td style="width: 5%;">{{result.value.report_datetime | date:'short'}}</td>
+                                <td style="width: 5%;">{{result.value.author}}</td>
+                                <td (click)="this.loadResult(result.value)">{{ result.value.name }} </td>
+                                <td (click)="this.loadResult(result.value)">{{ result.value.notes }} </td>
+                                <td (click)="this.loadResult(result.value)">{{ result.value.steps.length }} </td>
+                                <td style="width: 5%;"> <button 
+                                  class="btn btn-primary btn-fab btn-icon btn-round" 
+                                  (click)="this.getReport(result.value.report_name)"
+                                  > 
+                                  <i class="tim-icons icon-cloud-download-93"></i></button></td>
+                              </tr>
+                              
+                            </tbody>
+                          </table>
+                      </div>
+                      <div class=" col-lg-4">
+                        <div class=" card card-chart">
+                          <div class=" card-header">
+                            <h5 class=" card-category">Pipelines in Progress</h5>
+                            <h3 class=" card-title">
+                              <i class=" tim-icons icon-send text-success"> </i> 0
+                            </h3>
+                          </div>
+                          <div class=" card-body">
+                            <div class=" chart-area"><canvas id="inProgressPipelines"> </canvas></div>
+                          </div>
+                        </div>
+
+                        <div class=" card card-chart">
+                          <div class=" card-header">
+                            <h5 class=" card-category">Pipelines Completed </h5>
+                            <h3 class=" card-title">
+                              <i class=" tim-icons icon-send text-success"> </i> {{reports.length}}
+                            </h3>
+                          </div>
+                          <div class=" card-body">
+                            <div class=" chart-area"><canvas id="completedPipelines"> </canvas></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-sm-12 text-center">
+                        <button class="btn btn-primary" (click)="getReports()">Download Results </button>
+                      </div>
+                      
+                  </div>        </div>
+      </div>
+    </div>
+  </div>
+  
   <div class=" row">
     <div class=" col-lg-6 col-md-12">
       <div class=" card card-tasks">

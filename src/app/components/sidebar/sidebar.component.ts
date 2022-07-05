@@ -25,30 +25,31 @@ export const ROUTES: RouteInfo[] = [
   },
   {
     path: "/features",
-    title: "Features",
+    title: "Deep Learning Models",
     rtlTitle: "لوحة القيادة",
     icon: "icon-support-17",
     class: ""
   },
-  {
-    path: "/evaluation",
-    title: "Evaluation",
-    rtlTitle: "لوحة القيادة",
-    icon: "icon-support-17",
-    class: ""
-  },
+  
   {
     path: "/pipelines",
-    title: "Create Pipeline",
+    title: "Dynamic Pipeline Creation",
     rtlTitle: "لوحة القيادة",
     icon: "icon-atom",
     class: ""
   },
   {
     path: "/stored-pipelines",
-    title: "Pipelines",
+    title: "Deep Learing Pipelines",
     rtlTitle: "لوحة القيادة",
     icon: "icon-atom",
+    class: ""
+  },
+  {
+    path: "/evaluation",
+    title: "DL Models Evaluation",
+    rtlTitle: "لوحة القيادة",
+    icon: "icon-support-17",
     class: ""
   },
   {
