@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders, } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import Chart from 'chart.js';
 import * as saveAs from 'file-saver';
-import { throwIfEmpty } from 'rxjs';
 import { DeepLearningAudioFeatures } from 'src/app/interfaces/deep-learning-audio-features';
 import { Pipeline } from 'src/app/interfaces/pipeline';
 import { PipelineStep } from 'src/app/interfaces/pipeline-step';
@@ -11,8 +10,7 @@ import { DeepLearningFeaturesService } from 'src/app/services/deep-learning-feat
 import { FileDownloadService } from 'src/app/services/file-download.service';
 import { isElementAccessChain } from 'typescript';
 import WaveSurfer from 'wavesurfer.js';
-import SpectrogramPlugin from 'wavesurfer.js/src/plugin/spectrogram';
-import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline';
+import * as RecordRTC from 'recordrtc';
 
 
 interface AudioAnalysisStep {
@@ -88,6 +86,15 @@ export class UploadAudioFileComponent implements OnInit {
   separatedFileBlobs: any = [];
   separatedFileWavesurfer: any = []; 
   public files: any[] = [];
+
+  title = 'micRecorder';
+  //Lets declare Record OBJ
+  record;
+  //Will use this flag for toggeling recording
+  recording = false;
+  //URL of Blob
+  url;
+  error;
   
   constructor(private http: HttpClient, 
     private deepLearningFeaturesService: DeepLearningFeaturesService,
@@ -168,7 +175,7 @@ export class UploadAudioFileComponent implements OnInit {
       WaveSurfer.util.fetchFile({ 
         url: '../../assets/hot-colormap.json', 
         responseType: 'json' }).on('success', colorMap => {
-          this.initWaveSurfer(colorMap, this.fileToUpload)
+          this.initWaveSurfer(this.fileToUpload)
         })
       }
   }
@@ -224,7 +231,7 @@ export class UploadAudioFileComponent implements OnInit {
         WaveSurfer.util.fetchFile({ 
           url: '../../assets/hot-colormap.json', 
           responseType: 'json' }).on('success', colorMap => {
-            this.initWaveSurfer(colorMap, this.fileToUpload)
+            this.initWaveSurfer(this.fileToUpload)
         })
       }
     )
@@ -420,13 +427,79 @@ export class UploadAudioFileComponent implements OnInit {
     saveAs(step.separatedFileBlobs[index], step.separatedFilenames[index]);
   }
    
-  initWaveSurfer(colorMap, fileName){
+  initWaveSurfer(file){
+    document.getElementById("waveform").innerHTML = ""
+    this.fileToUpload = file
+    this.fileName = file.name;
+    console.log("==> initWaveSurfer(file) : file = ", file)
+    this.fileName = file.name;
     this.wavesurfer = WaveSurfer.create({
       container: '#waveform',
       backgroundColor:'black',
      });
-     this.wavesurfer.loadBlob(fileName)
+     this.wavesurfer.loadBlob(file)
   }
+
+  initiateRecording() {
+      
+      this.recording = true;
+      let mediaConstraints = {
+      video: false,
+      audio: true
+      };
+      
+      navigator.mediaDevices.getUserMedia(mediaConstraints).then(this.successCallback.bind(this), this.errorCallback.bind(this));
+    }
+    /**
+    * Will be called automatically.
+    */
+    successCallback(stream) {
+      var options = {
+      mimeType: "audio/wav",
+      numberOfAudioChannels: 2,
+      sampleRate: 44000,
+      };
+      //Start Actuall Recording
+      var StereoAudioRecorder = RecordRTC.StereoAudioRecorder;
+      this.record = new StereoAudioRecorder(stream);
+      this.record.record();
+    }
+    /**
+    * Stop recording.
+    */
+    stopRecording() {
+      this.recording = false;
+      this.record.stop(this.processRecording.bind(this));
+    }
+    /**
+    * processRecording Do what ever you want with blob
+    * @param  {any} blob Blog
+    */
+    processRecording(blob) {
+      // this.url = URL.createObjectURL(blob);
+      // this.sanitize(this.url)
+      console.log("blob", blob);
+      console.log("url", this.url);
+      const file:File = new File([blob], "prova_live.wav");
+      if (file) {
+            this.fileToUpload = file
+            this.fileName = file.name;
+            let pipelineFile = {
+              file :this.fileToUpload,
+              file_id : "input_0_0",
+            }
+            this.pipelineFiles.push(pipelineFile);
+            console.log("processRecording => this.fileToUpload:",file)
+            this.initWaveSurfer(this.fileToUpload)
+        }
+
+    }
+    /**
+    * Process Error.
+    */
+    errorCallback(error) {
+    this.error = 'Can not play audio in your browser';
+    }
                 
 }
                 

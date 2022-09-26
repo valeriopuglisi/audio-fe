@@ -39,23 +39,30 @@
         <div class="row">
           <!-- Upload file from pc -->
           <div class="col-sm-6 col-md-6" *ngIf="this.fileToUpload == null">
-            <h2 class=" card-title">Insert Audio to Analyse </h2>
-            <label for="step">Choose a file</label>
             <input 
               id = "step"
               type="file" 
+              class="file-input btn btn-primary"
               (change)="onFileSelected($event)"
               accept="audio/*"
             >
-            <div *ngIf="this.fileToUpload">
-              <button  
-              class="btn btn-warnings" data-action="play" 
-              (click)="uploadFile()" >
-              <i class="glyphicon glyphicon-play"></i>
-              Upload
-            </button>
+            <!-- <div *ngIf="this.fileToUpload">
+                  <button  
+                  class="btn btn-warnings" data-action="play" 
+                  (click)="uploadFile()" >
+                  <i class="glyphicon glyphicon-play"></i>
+                  Upload
+                </button> 
+                </div>-->
           </div>
-          </div>
+          <!-- <div class="col-sm-12 col-md-4 text-center">
+            <button (click)="initiateRecording()" class="btn btn-primary" *ngIf="!recording" style="cursor: pointer;background-color: green;color: white;"> Start Recording </button>
+              <button (click)="stopRecording()" class="btn btn-danger" *ngIf="recording" style="cursor: pointer;background-color: red;color: white;"> Stop Recording </button>
+              <div class="clearfix"></div>
+              <audio controls="" *ngIf="url">
+                  <source [src]="sanitize(url)" type="audio/wav">
+              </audio>
+          </div> -->
 
           <div class="col-sm-6 col-md-6" *ngIf="this.fileToUpload == null">
             <!-- Select file from Server -->
