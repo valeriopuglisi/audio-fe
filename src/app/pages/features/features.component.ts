@@ -34,7 +34,8 @@ export class FeaturesComponent implements OnInit {
     'Speech Separation': [],
     'Speech Enhancement': [],
     'Emotion Recognition': [],
-    'Voice Activity Detection': []
+    'Voice Activity Detection': [],
+    'Speaker Verification':[],
   };
 
   
@@ -172,6 +173,10 @@ export class FeaturesComponent implements OnInit {
         break;
 
       case "Speech Separation":
+        this.separateFile(processApi.api);
+        break;
+      
+      case "Speaker Verification":
         this.separateFile(processApi.api);
         break;
     

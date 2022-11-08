@@ -66,7 +66,8 @@ export class UploadAudioFileComponent implements OnInit {
     'Speech Separation': [],
     'Speech Enhancement': [],
     'Emotion Recognition': [],
-    'Voice Activity Detection': []
+    'Voice Activity Detection': [],
+    'Speaker Verification':[]
   };
   
 

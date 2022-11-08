@@ -5,5 +5,6 @@ export interface DeepLearningAudioFeatures {
     "Speech Separation":[],
     "Speech Enhancement":[],
     "Emotion Recognition": [],
-    "Voice Activity Detection":[]
+    "Voice Activity Detection":[],
+    "Speaker Verification":[],
 }

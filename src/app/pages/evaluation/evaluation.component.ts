@@ -27,8 +27,6 @@ export class EvaluationComponent implements OnInit {
     performance: ""
   }
   
- 
-  
   AudioFeatures : DeepLearningAudioFeatures = {
     'Automatic Speech Recognition': [],
     'Language Identification': [],
@@ -36,7 +34,9 @@ export class EvaluationComponent implements OnInit {
     'Speech Separation': [],
     'Speech Enhancement': [],
     'Emotion Recognition': [],
-    'Voice Activity Detection': []
+    'Voice Activity Detection': [],
+    'Speaker Verification':[],
+    
   };
 
   Datasets : DeepLearningAudioFeatures = {
@@ -46,7 +46,8 @@ export class EvaluationComponent implements OnInit {
     'Speech Separation': [],
     'Speech Enhancement': [],
     'Emotion Recognition': [],
-    'Voice Activity Detection': []
+    'Voice Activity Detection': [],
+    'Speaker Verification':[],
   };
 
   Metrics : DeepLearningAudioFeatures = {
@@ -56,7 +57,8 @@ export class EvaluationComponent implements OnInit {
     'Speech Separation': [],
     'Speech Enhancement': [],
     'Emotion Recognition': [],
-    'Voice Activity Detection': []
+    'Voice Activity Detection': [],
+    'Speaker Verification':[],
   };
 
 
