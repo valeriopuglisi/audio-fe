@@ -15,7 +15,7 @@ FROM nginx:1.21.3
 
 COPY --from=build /app/dist /usr/share/nginx/html
 
-COPY nginx.conf /etc/nginx/templates/default.template
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 
 
 EXPOSE 80
