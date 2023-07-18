@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "description": "Black Dasboard Angular, a Creative Tim Desgin. Coded by Creative Tim",
   "scripts": {
-    "dev":"lite-server",
+    "dev": "lite-server",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
